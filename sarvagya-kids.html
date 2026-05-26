@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Little Stars · Vrinda & Vedant</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#fef9f0;--cloud:#fff;--sun:#ffb800;--mint:#34d399;--coral:#ff6b6b;--blue:#60a5fa;--purple:#a78bfa;--pink:#f472b6;--yellow:#fbbf24;--peach:#fb923c;
+  --ink:#2d1b00;--ink2:#7c5c2e;--ink3:#b8956a;--ln:#f0e6d3;--r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:'Nunito',sans-serif;background:var(--sky);color:var(--ink);min-height:100%;overflow-x:hidden;position:relative}
+
+/* ANIMATED SKY BG */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 40% at 20% 0%,#fff8e7 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%,#fef3e2 0%,transparent 60%),
+    radial-gradient(circle 300px at 10% 80%,#e0f7ff44,transparent),
+    radial-gradient(circle 200px at 90% 20%,#ffe0f044,transparent);
+}
+
+/* FLOATING CLOUDS */
+.clouds{position:fixed;top:0;left:0;right:0;height:120px;overflow:hidden;z-index:0;pointer-events:none}
+.cloud{position:absolute;background:white;border-radius:50px;opacity:.6;animation:float linear infinite}
+.cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%}
+@keyframes float{from{transform:translateX(-200px)}to{transform:translateX(calc(100vw + 200px))}}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:300;
+  background:rgba(255,249,240,.92);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:3px solid var(--ln);
+  display:flex;align-items:center;height:58px;padding:0 16px;gap:10px;
+}
+.logo{
+  font-family:'Baloo 2',cursive;
+  font-size:20px;font-weight:800;
+  color:var(--coral);white-space:nowrap;flex-shrink:0;
+  text-shadow:0 2px 0 #ffd5d5;
+}
+.logo span{color:var(--purple)}
+.tab-scroll{display:flex;gap:4px;overflow-x:auto;flex:1}
+.tab-scroll::-webkit-scrollbar{display:none}
+.tb{
+  background:none;border:none;
+  font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;
+  color:var(--ink3);padding:6px 11px;border-radius:99px;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.tb:hover{background:var(--ln);color:var(--ink)}
+.tb.on{background:var(--coral);color:white;box-shadow:0 3px 8px #ff6b6b44}
+.backup-btn{
+  flex-shrink:0;background:none;
+  border:2px solid var(--ln);border-radius:99px;
+  color:var(--ink3);font-family:'Nunito',sans-serif;
+  font-size:10px;font-weight:800;padding:4px 10px;cursor:pointer;
+  transition:all .18s;white-space:nowrap;
+}
+.backup-btn:hover{border-color:var(--purple);color:var(--purple)}
+
+/* PAGE */
+.page{display:none;max-width:900px;margin:0 auto;padding:22px 14px 80px;position:relative;z-index:1}
+.page.on{display:block}
+
+/* SECTION HEADER */
+.pg-title{font-family:'Baloo 2',cursive;font-size:clamp(28px,6vw,44px);font-weight:800;line-height:1.1;margin-bottom:4px}
+.pg-sub{font-size:13px;color:var(--ink2);margin-bottom:22px;line-height:1.5}
+.sec-head{font-family:'Baloo 2',cursive;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+
+/* CHILD SWITCHER */
+.child-switcher{display:flex;gap:10px;margin-bottom:22px}
+.child-btn{
+  flex:1;padding:14px;border-radius:var(--r);
+  border:3px solid var(--ln);background:var(--cloud);
+  cursor:pointer;transition:all .2s;text-align:center;
+}
+.child-btn.on.vrinda{border-color:var(--pink);background:#fff0f8;box-shadow:0 4px 16px #f472b622}
+.child-btn.on.vedant{border-color:var(--blue);background:#f0f6ff;box-shadow:0 4px 16px #60a5fa22}
+.child-btn:hover{transform:translateY(-2px)}
+.cb-emoji{font-size:28px;display:block;margin-bottom:4px}
+.cb-name{font-family:'Baloo 2',cursive;font-size:15px;font-weight:700}
+.cb-age{font-size:11px;color:var(--ink3);margin-top:2px;font-weight:600}
+
+/* CARDS */
+.card{background:var(--cloud);border:2px solid var(--ln);border-radius:var(--r);padding:16px;transition:box-shadow .18s,transform .18s}
+.card:hover{box-shadow:0 6px 20px rgba(0,0,0,.08);transform:translateY(-1px)}
+.card-fun{border-radius:20px;position:relative;overflow:hidden}
+.card-fun::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:500px){.stat-strip{grid-template-columns:repeat(2,1fr)}}
+.stat-box{background:var(--cloud);border:2px solid var(--ln);border-radius:14px;padding:14px;text-align:center;transition:all .18s;cursor:default}
+.stat-box:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.stat-n{font-family:'Baloo 2',cursive;font-size:28px;font-weight:800;line-height:1}
+.stat-l{font-size:10px;font-weight:700;color:var(--ink3);margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+
+/* VACCINE TABLE */
+.vacc-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;border-radius:11px;margin-bottom:7px;
+  background:var(--sky);border:2px solid var(--ln);
+  transition:all .15s;cursor:pointer;
+}
+.vacc-row:hover{background:white;border-color:var(--mint)}
+.vacc-row.done{background:#f0fdf4;border-color:#bbf7d0}
+.vacc-row.overdue{background:#fff5f5;border-color:#fecaca}
+.vacc-row.upcoming{background:#fffbf0;border-color:#fde68a}
+.vacc-chk{width:24px;height:24px;border-radius:7px;border:2.5px solid var(--ln);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .18s}
+.vacc-row.done .vacc-chk{background:var(--mint);border-color:var(--mint);color:white}
+.vacc-name{font-size:13px;font-weight:700;flex:1}
+.vacc-age{font-size:11px;color:var(--ink3)}
+.vacc-badge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+
+/* MILESTONE */
+.milestone-card{
+  background:var(--cloud);border:2px solid var(--ln);
+  border-radius:14px;padding:14px;margin-bottom:8px;
+  display:flex;gap:12px;align-items:flex-start;
+  transition:all .18s;cursor:pointer;
+}
+.milestone-card:hover{border-color:var(--purple);transform:translateX(3px)}
+.milestone-card.achieved{background:#f5f3ff;border-color:#ddd6fe}
+.mc-icon{font-size:24px;flex-shrink:0}
+.mc-title{font-size:13px;font-weight:700;margin-bottom:2px}
+.mc-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+.mc-date{font-size:10px;color:var(--purple);font-weight:700;margin-top:4px}
+
+/* GROWTH CHART */
+.growth-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.growth-label{font-size:12px;font-weight:700;color:var(--ink2);width:80px;flex-shrink:0}
+.growth-bar-wrap{flex:1;background:var(--ln);border-radius:99px;height:10px;overflow:hidden}
+.growth-bar{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.22,.68,0,1.2)}
+.growth-val{font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;width:60px;text-align:right;flex-shrink:0}
+
+/* AI PANEL */
+.ai-bubble{
+  background:linear-gradient(135deg,#fff0f8,#f0f6ff);
+  border:2px solid #f0d4ff;border-radius:20px;
+  padding:18px;position:relative;overflow:hidden;
+}
+.ai-bubble::before{content:'✨';position:absolute;right:14px;top:10px;font-size:20px;opacity:.3}
+.ai-bubble::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--purple),var(--blue),var(--mint))}
+.ai-output{font-size:13px;color:var(--ink);line-height:1.85;white-space:pre-wrap}
+.ai-output b{color:var(--purple);font-weight:800}
+
+/* ACTIVITY CARD */
+.act-card{
+  background:var(--cloud);border:2px solid var(--ln);
+  border-radius:16px;padding:15px;margin-bottom:9px;
+  transition:all .18s;
+}
+.act-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-1px)}
+.act-name{font-family:'Baloo 2',cursive;font-size:15px;font-weight:700;margin-bottom:4px}
+.act-type{font-size:10px;font-weight:800;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;display:inline-block;margin-bottom:8px}
+.act-body{font-size:12px;color:var(--ink2);line-height:1.7;white-space:pre-wrap}
+.act-body b{color:var(--coral);font-weight:800}
+
+/* MEMORY / JOURNAL */
+.memory-card{
+  background:var(--cloud);border:2px solid var(--ln);
+  border-radius:16px;padding:15px;margin-bottom:9px;
+  transition:all .18s;position:relative;overflow:hidden;
+}
+.memory-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.memory-img{font-size:36px;margin-bottom:8px}
+.memory-text{font-size:13px;color:var(--ink2);line-height:1.7}
+.memory-date{font-size:10px;color:var(--ink3);font-weight:700;margin-top:8px}
+
+/* HEALTH LOG */
+.health-entry{
+  display:flex;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--ln);font-size:13px;color:var(--ink2);
+}
+.health-entry:last-child{border:none}
+.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+@media(min-width:540px){.overlay{align-items:center}}
+.overlay.on{display:flex}
+.modal{
+  background:white;border-radius:24px 24px 0 0;
+  padding:22px 18px 36px;width:100%;max-width:480px;
+  max-height:92vh;overflow-y:auto;
+  animation:slideUp .25s cubic-bezier(.22,.68,0,1.2);
+}
+@media(min-width:540px){.modal{border-radius:20px;padding:24px}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.modal-handle{width:40px;height:4px;background:var(--ln);border-radius:99px;margin:0 auto 16px}
+.modal-title{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;margin-bottom:16px;color:var(--coral)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:10px;font-weight:800;color:var(--ink3);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.field input,.field textarea,.field select{width:100%;background:var(--sky);border:2px solid var(--ln);border-radius:10px;padding:10px 12px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .18s;-webkit-appearance:none;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--purple)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:380px){.field-row{grid-template-columns:1fr}}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;padding:9px 16px;border-radius:99px;cursor:pointer;border:none;transition:all .15s;letter-spacing:.02em}
+.btn-pri{background:var(--coral);color:white;box-shadow:0 3px 10px #ff6b6b33}
+.btn-pri:hover{background:#ff5252;transform:translateY(-1px)}
+.btn-sec{background:var(--sky);border:2px solid var(--ln);color:var(--ink2)}
+.btn-sec:hover{background:var(--ln)}
+.btn-add{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;
+  padding:9px 16px;border-radius:99px;cursor:pointer;
+  background:var(--coral);color:white;border:none;
+  box-shadow:0 3px 10px #ff6b6b33;transition:all .15s;
+}
+.btn-add:hover{background:#ff5252;transform:translateY(-1px)}
+.btn-purple{background:var(--purple);color:white;box-shadow:0 3px 10px #a78bfa33}
+.btn-purple:hover{background:#9061f9;transform:translateY(-1px)}
+.btn-mint{background:var(--mint);color:white;box-shadow:0 3px 10px #34d39933}
+.btn-mint:hover{opacity:.85;transform:translateY(-1px)}
+
+/* CHIP/TAG */
+.chip{font-size:10px;font-weight:800;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em}
+.focus-chip{font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;cursor:pointer;border:2px solid var(--ln);background:var(--sky);color:var(--ink2);transition:all .15s;user-select:none;display:inline-block}
+.focus-chip.on{background:var(--purple);border-color:var(--purple);color:white}
+.focus-chip:hover{border-color:var(--purple);color:var(--purple)}
+
+/* EMPTY */
+.empty{text-align:center;padding:36px 20px;font-size:13px;color:var(--ink3)}
+.empty-icon{font-size:40px;display:block;margin-bottom:8px}
+
+/* PROGRESS BAR */
+.pbar{height:6px;background:var(--ln);border-radius:99px;overflow:hidden}
+.pfill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.22,.68,0,1.2)}
+
+/* LOADING */
+@keyframes bounce2{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.loading-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--purple);margin:0 2px;animation:bounce2 .8s ease infinite}
+.loading-dots span:nth-child(2){animation-delay:.15s}
+.loading-dots span:nth-child(3){animation-delay:.3s}
+.loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink3);font-style:italic;padding:14px 0}
+
+/* BACKUP MODAL */
+.backup-modal{background:white;border-radius:20px;padding:24px;width:100%;max-width:420px;margin:16px;animation:slideUp .2s ease;max-height:90vh;overflow-y:auto}
+
+/* TIMELINE DOT */
+.tl-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px;border:3px solid white;box-shadow:0 0 0 2px currentColor}
+
+/* HOROSCOPE */
+.horo-card{background:linear-gradient(135deg,#fdf4ff,#f0f6ff);border:2px solid #e9d5ff;border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.horo-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--blue))}
+
+/* STAR PERSON CARDS */
+.star-person-card{border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;text-align:center;border:2px solid transparent}
+.star-person-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.star-person-card.on{box-shadow:0 6px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+/* PARENTING TRACKER CHIPS */
+.pt-chip{font-size:11px;font-weight:700;padding:5px 12px;border-radius:99px;cursor:pointer;border:2px solid var(--ln);background:white;color:var(--ink2);transition:all .15s;user-select:none;display:inline-block;margin-bottom:4px}
+.pt-chip.on{background:var(--coral);border-color:var(--coral);color:white}
+.pt-chip:hover{border-color:var(--coral);color:var(--coral)}
+.pt-mood{font-size:24px;cursor:pointer;transition:all .2s;display:inline-block;padding:4px;border-radius:50%;border:3px solid transparent}
+.pt-mood.on{background:var(--ln);border-color:var(--coral);transform:scale(1.2)}
+.pt-mood:hover{transform:scale(1.15)}
+/* TRACKER ENTRY CARDS */
+.pt-entry{background:white;border:2px solid var(--ln);border-radius:14px;padding:14px;margin-bottom:8px;transition:all .18s}
+.pt-entry:hover{box-shadow:0 4px 14px rgba(0,0,0,.07)}
+.pt-mood-badge{font-size:18px;flex-shrink:0}
+/* HEATMAP */
+.heatmap-cell{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;transition:all .2s;cursor:default}
+/* INSIGHT TYPE CARDS */
+.insight-type-card{background:white;border:2px solid var(--ln);border-radius:16px;padding:16px;cursor:pointer;transition:all .2s;text-align:center}
+.insight-type-card:hover{transform:translateY(-3px);box-shadow:0 5px 16px rgba(0,0,0,.08)}
+.insight-type-card.on{border-color:var(--purple);background:linear-gradient(135deg,#fdf4ff,#f5f0ff);box-shadow:0 5px 16px #a78bfa22}
+/* INSIGHT OUTPUT */
+.insight-panel{background:linear-gradient(135deg,#fdf9ff,#f5f0ff,#fff0f8);border:2px solid #e9d5ff;border-radius:20px;padding:20px;position:relative;overflow:hidden}
+.insight-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--coral),var(--yellow),var(--mint))}
+.insight-text{font-size:13px;color:var(--ink);line-height:1.85;white-space:pre-wrap}
+.insight-text b{color:var(--purple);font-weight:800}
+/* STAR SAVED ITEM */
+.star-saved-item{background:white;border:2px solid var(--ln);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .18s}
+.star-saved-item:hover{border-color:var(--purple);box-shadow:0 3px 12px rgba(167,139,250,.2)}
+@media(max-width:600px){.stat-strip{grid-template-columns:repeat(2,1fr)}.field-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- CLOUDS -->
+<div class="clouds">
+  <div class="cloud" style="width:80px;height:30px;top:20px;animation-duration:25s;animation-delay:-5s"><div style="width:40px;height:40px;border-radius:50%;position:absolute;top:-20px;left:15px;background:white"></div><div style="width:30px;height:30px;border-radius:50%;position:absolute;top:-15px;left:35px;background:white"></div></div>
+  <div class="cloud" style="width:120px;height:40px;top:40px;animation-duration:35s;animation-delay:-12s"><div style="width:60px;height:60px;border-radius:50%;position:absolute;top:-30px;left:25px;background:white"></div></div>
+  <div class="cloud" style="width:60px;height:25px;top:10px;animation-duration:20s;animation-delay:-8s"><div style="width:35px;height:35px;border-radius:50%;position:absolute;top:-18px;left:10px;background:white"></div></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">Little <span>Stars</span> ⭐</div>
+  <div class="tab-scroll">
+    <button class="tb on" onclick="go('home',this)">🏠 Home</button>
+    <button class="tb"    onclick="go('vrinda',this)">🌸 Vrinda</button>
+    <button class="tb"    onclick="go('vedant',this)">⚡ Vedant</button>
+    <button class="tb"    onclick="go('vaccines',this)">💉 Vaccines</button>
+    <button class="tb"    onclick="go('activities',this)">🎨 Activities</button>
+    <button class="tb"    onclick="go('growth',this)">📈 Growth</button>
+    <button class="tb"    onclick="go('memories',this)">📸 Memories</button>
+    <button class="tb"    onclick="go('health',this)">🩺 Health</button>
+    <button class="tb"    onclick="go('stars',this)">🔮 Stars</button>
+    <button class="tb"    onclick="go('tracker',this)">📊 Tracker</button>
+    <button class="tb"    onclick="go('insights',this)">✨ AI Insights</button>
+  </div>
+  <button class="backup-btn" onclick="showBackup()">☁️ Backup</button>
+  <div id="sync-status-dot" title="Cloud sync ready" onclick="cloudLoad()" style="width:9px;height:9px;border-radius:50%;background:#aaa;flex-shrink:0;margin-left:4px;cursor:pointer;transition:background .5s;align-self:center"></div>
+</nav>
+
+<!-- ═══════ HOME ═══════ -->
+<div id="p-home" class="page on">
+  <div class="pg-title" id="home-greeting">Hello! 👋</div>
+  <div class="pg-sub">Your little stars — Vrinda & Vedant — all in one place.</div>
+
+  <div class="stat-strip" id="home-stats"></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+    <!-- VRINDA QUICK -->
+    <div class="card card-fun" style="border-color:#f9a8d4" onclick="go('vrinda',document.querySelector('[onclick*=vrinda]'))">
+      <div class="card-fun" style="background:linear-gradient(135deg,#fff0f8,#fdf4ff);border:none;margin:-16px;padding:16px;border-radius:16px">
+        <div style="font-size:32px;margin-bottom:6px">🌸</div>
+        <div style="font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--pink)">Vrinda</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px" id="vrinda-age-home"></div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5" id="vrinda-next-vac">Loading…</div>
+      </div>
+    </div>
+    <!-- VEDANT QUICK -->
+    <div class="card card-fun" style="border-color:#93c5fd" onclick="go('vedant',document.querySelector('[onclick*=vedant]'))">
+      <div class="card-fun" style="background:linear-gradient(135deg,#f0f6ff,#f0fdf4);border:none;margin:-16px;padding:16px;border-radius:16px">
+        <div style="font-size:32px;margin-bottom:6px">⚡</div>
+        <div style="font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--blue)">Vedant</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px" id="vedant-age-home"></div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5" id="vedant-next-vac">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODAY'S IDEA -->
+  <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,#fff8f0,#fdf4ff);border-color:#fde68a">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:700">✨ Today's Activity Idea</div>
+      <button class="btn btn-pri" style="font-size:11px;padding:6px 12px" onclick="quickActivity()">New Idea</button>
+    </div>
+    <div id="home-activity"><div style="font-size:13px;color:var(--ink3);font-style:italic">Tap "New Idea" for an AI-generated activity for today!</div></div>
+  </div>
+
+  <!-- UPCOMING VACCINES -->
+  <div class="sec-head">💉 Upcoming Vaccines</div>
+  <div id="home-upcoming-vac"></div>
+
+  <!-- RECENT MEMORIES -->
+  <div class="sec-head" style="margin-top:18px">📸 Recent Memories</div>
+  <div id="home-memories"></div>
+</div>
+
+<!-- ═══════ VRINDA PROFILE ═══════ -->
+<div id="p-vrinda" class="page">
+  <div style="background:linear-gradient(135deg,#fff0f8,#fdf4ff);border:2px solid #f9a8d4;border-radius:20px;padding:20px;margin-bottom:18px">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="font-size:56px">🌸</div>
+      <div>
+        <div style="font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;color:var(--pink)">Vrinda Saraswat</div>
+        <div style="font-size:13px;color:var(--ink2);margin-top:3px" id="vrinda-full-age"></div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px">Born 23 June 2022 · 10:33 AM · Gurgaon</div>
+        <div style="font-size:12px;color:var(--purple);margin-top:4px;font-weight:700">♋ Cancer · Gemini Rising</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MILESTONE TRACKER -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec-head" style="margin-bottom:0">🌟 Milestones</div>
+    <button class="btn-add" style="font-size:11px;padding:6px 12px" onclick="openMilestoneModal('vrinda')">+ Add</button>
+  </div>
+  <div id="vrinda-milestones"></div>
+
+  <!-- NOTES/OBSERVATIONS -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px">
+    <div class="sec-head" style="margin-bottom:0">📓 Observations</div>
+    <button class="btn-add" style="font-size:11px;padding:6px 12px" onclick="openObsModal('vrinda')">+ Note</button>
+  </div>
+  <div id="vrinda-obs"></div>
+
+  <!-- AI ADVISOR FOR VRINDA -->
+  <div style="margin-top:18px">
+    <div class="sec-head">✨ Ask Claude about Vrinda</div>
+    <div class="ai-bubble">
+      <textarea id="v-ai-input" style="width:100%;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);line-height:1.7;resize:none;min-height:80px" placeholder="Ask anything — e.g. 'She's been throwing tantrums more lately, what should I try?' or 'What activities help with language development at almost 3?'"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-pri" onclick="askKidAI('vrinda','v-ai-input','v-ai-out')">✨ Ask Claude</button>
+      </div>
+      <div id="v-ai-out" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ VEDANT PROFILE ═══════ -->
+<div id="p-vedant" class="page">
+  <div style="background:linear-gradient(135deg,#f0f6ff,#f0fdf4);border:2px solid #93c5fd;border-radius:20px;padding:20px;margin-bottom:18px">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="font-size:56px">⚡</div>
+      <div>
+        <div style="font-family:'Baloo 2',cursive;font-size:26px;font-weight:800;color:var(--blue)">Vedant Saraswat</div>
+        <div style="font-size:13px;color:var(--ink2);margin-top:3px" id="vedant-full-age"></div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px">Born 18 Feb 2024 · 1:42 PM · Gurgaon</div>
+        <div style="font-size:12px;color:var(--purple);margin-top:4px;font-weight:700">♒ Aquarius · Gemini Rising</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="sec-head" style="margin-bottom:0">🌟 Milestones</div>
+    <button class="btn-add" style="font-size:11px;padding:6px 12px" onclick="openMilestoneModal('vedant')">+ Add</button>
+  </div>
+  <div id="vedant-milestones"></div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px">
+    <div class="sec-head" style="margin-bottom:0">📓 Observations</div>
+    <button class="btn-add" style="font-size:11px;padding:6px 12px" onclick="openObsModal('vedant')">+ Note</button>
+  </div>
+  <div id="vedant-obs"></div>
+
+  <div style="margin-top:18px">
+    <div class="sec-head">✨ Ask Claude about Vedant</div>
+    <div class="ai-bubble">
+      <textarea id="vd-ai-input" style="width:100%;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);line-height:1.7;resize:none;min-height:80px" placeholder="Ask anything — e.g. 'He keeps putting everything in his mouth, is that normal at 15 months?' or 'How do I encourage walking?'"></textarea>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-pri" onclick="askKidAI('vedant','vd-ai-input','vd-ai-out')">✨ Ask Claude</button>
+      </div>
+      <div id="vd-ai-out" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ VACCINES ═══════ -->
+<div id="p-vaccines" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div class="pg-title">💉 Vaccine Tracker</div>
+      <div class="pg-sub">Stay on top of every dose. Tap to mark as done.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="focus-chip on" data-vk="vrinda" onclick="setVacKid(this)">🌸 Vrinda</button>
+    <button class="focus-chip" data-vk="vedant" onclick="setVacKid(this)">⚡ Vedant</button>
+  </div>
+
+  <div id="vac-summary" style="margin-bottom:16px"></div>
+  <div id="vac-list"></div>
+</div>
+
+<!-- ═══════ ACTIVITIES ═══════ -->
+<div id="p-activities" class="page">
+  <div class="pg-title">🎨 Activity Generator</div>
+  <div class="pg-sub">Tell Claude what you need — age-appropriate, personalised, creative.</div>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="focus-chip on" data-ak="both" onclick="setActKid(this)">👨‍👧‍👦 Both</button>
+    <button class="focus-chip" data-ak="vrinda" onclick="setActKid(this)">🌸 Vrinda only</button>
+    <button class="focus-chip" data-ak="vedant" onclick="setActKid(this)">⚡ Vedant only</button>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Activity Focus</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="act-focus-row">
+      <span class="focus-chip on" data-af="creative" onclick="setActFocus(this)">🎨 Creative</span>
+      <span class="focus-chip" data-af="physical" onclick="setActFocus(this)">🏃 Physical</span>
+      <span class="focus-chip" data-af="cognitive" onclick="setActFocus(this)">🧠 Cognitive</span>
+      <span class="focus-chip" data-af="language" onclick="setActFocus(this)">💬 Language</span>
+      <span class="focus-chip" data-af="sensory" onclick="setActFocus(this)">✋ Sensory</span>
+      <span class="focus-chip" data-af="outdoor" onclick="setActFocus(this)">🌳 Outdoor</span>
+      <span class="focus-chip" data-af="calm" onclick="setActFocus(this)">😌 Wind Down</span>
+      <span class="focus-chip" data-af="together" onclick="setActFocus(this)">❤️ Sibling Bond</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Setting</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <span class="focus-chip on" data-as="home" onclick="setActSetting(this)">🏠 At Home</span>
+      <span class="focus-chip" data-as="outdoor" onclick="setActSetting(this)">🌿 Outside</span>
+      <span class="focus-chip" data-as="travel" onclick="setActSetting(this)">🚗 Travelling</span>
+      <span class="focus-chip" data-as="rainy" onclick="setActSetting(this)">🌧️ Rainy Day</span>
+    </div>
+  </div>
+
+  <textarea id="act-context" style="width:100%;background:white;border:2px solid var(--ln);border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);outline:none;resize:none;margin-bottom:12px;line-height:1.6" rows="3" placeholder="Add any context — mood, what worked recently, what to avoid, available materials…"></textarea>
+
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-sec" onclick="document.getElementById('act-context').value='';document.getElementById('act-output').innerHTML=''">Clear</button>
+    <button class="btn btn-pri" onclick="generateActivity()">✨ Generate 3 Ideas</button>
+  </div>
+
+  <div id="act-output"></div>
+
+  <!-- SAVED -->
+  <div style="margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div class="sec-head" style="margin-bottom:0">💾 Saved Activities</div>
+      <div style="font-size:11px;color:var(--ink3)" id="saved-act-count"></div>
+    </div>
+    <div id="saved-acts"></div>
+    <div id="saved-acts-empty" class="empty" style="display:none"><span class="empty-icon">📦</span>No saved activities yet</div>
+  </div>
+</div>
+
+<!-- ═══════ GROWTH ═══════ -->
+<div id="p-growth" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div class="pg-title">📈 Growth Tracker</div>
+      <div class="pg-sub">Log height, weight and head circumference over time.</div>
+    </div>
+    <button class="btn-add" onclick="openGrowthModal()">+ Log Measurement</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="focus-chip on" data-gk="vrinda" onclick="setGrowthKid(this)">🌸 Vrinda</button>
+    <button class="focus-chip" data-gk="vedant" onclick="setGrowthKid(this)">⚡ Vedant</button>
+  </div>
+
+  <div id="growth-latest" style="margin-bottom:16px"></div>
+  <div id="growth-chart" style="margin-bottom:16px"></div>
+  <div id="growth-history"></div>
+</div>
+
+<!-- ═══════ MEMORIES ═══════ -->
+<div id="p-memories" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div class="pg-title">📸 Memory Jar</div>
+      <div class="pg-sub">Moments worth keeping — big and small.</div>
+    </div>
+    <button class="btn-add" onclick="openMemoryModal()">+ Add Memory</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="focus-chip on" data-mk="all" onclick="setMemKid(this)">All</button>
+    <button class="focus-chip" data-mk="vrinda" onclick="setMemKid(this)">🌸 Vrinda</button>
+    <button class="focus-chip" data-mk="vedant" onclick="setMemKid(this)">⚡ Vedant</button>
+    <button class="focus-chip" data-mk="both" onclick="setMemKid(this)">👨‍👧‍👦 Together</button>
+  </div>
+
+  <div id="memories-list"></div>
+  <div id="memories-empty" class="empty" style="display:none"><span class="empty-icon">🫙</span>Memory jar is empty — add your first one!</div>
+</div>
+
+<!-- ═══════ HEALTH ═══════ -->
+<div id="p-health" class="page">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div class="pg-title">🩺 Health Log</div>
+      <div class="pg-sub">Illnesses, doctor visits, medications — all tracked.</div>
+    </div>
+    <button class="btn-add" onclick="openHealthModal()">+ Log Entry</button>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="focus-chip on" data-hk="all" onclick="setHealthKid(this)">All</button>
+    <button class="focus-chip" data-hk="vrinda" onclick="setHealthKid(this)">🌸 Vrinda</button>
+    <button class="focus-chip" data-hk="vedant" onclick="setHealthKid(this)">⚡ Vedant</button>
+  </div>
+
+  <div id="health-list"></div>
+  <div id="health-empty" class="empty" style="display:none"><span class="empty-icon">🌟</span>No health entries yet</div>
+
+  <!-- AI HEALTH ADVISOR -->
+  <div style="margin-top:20px">
+    <div class="sec-head">🩺 Ask Claude a Health Question</div>
+    <div class="ai-bubble">
+      <textarea id="health-ai-input" style="width:100%;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);resize:none;min-height:70px;line-height:1.7" placeholder="e.g. 'Vrinda has had a fever for 2 days, at what point should we see a doctor?' — always consult your paediatrician for medical decisions."></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-pri" onclick="askHealthAI()">Ask Claude</button>
+      </div>
+      <div id="health-ai-out" style="margin-top:12px"></div>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-top:8px;font-style:italic">⚠️ Claude provides general information only — always consult your paediatrician for medical decisions.</div>
+  </div>
+</div>
+
+<!-- ═══════ STARS — FULL FAMILY ═══════ -->
+<div id="p-stars" class="page">
+  <div class="pg-title">🔮 Family Stars</div>
+  <div class="pg-sub">Personalised cosmic readings for all four of you — generated fresh each time.</div>
+
+  <!-- PERSON SELECTOR — all 4 -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px">
+    <div class="star-person-card on" data-sp="sarvagya" onclick="selectStarPerson(this)" style="background:linear-gradient(135deg,#f5f0ff,#ede9ff);border:2px solid #c4b5fd">
+      <div style="font-size:28px">♎</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:var(--purple)">Sarvagya</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:2px">Libra · 23 Sep 1993</div>
+    </div>
+    <div class="star-person-card" data-sp="pinki" onclick="selectStarPerson(this)" style="background:linear-gradient(135deg,#fff0f8,#fde8f0);border:2px solid #f9a8d4">
+      <div style="font-size:28px">♍</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:var(--pink)">Pinki</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:2px">Virgo · 21 Sep 1996</div>
+    </div>
+    <div class="star-person-card" data-sp="vrinda" onclick="selectStarPerson(this)" style="background:linear-gradient(135deg,#fdf4ff,#f8f0ff);border:2px solid #e9d5ff">
+      <div style="font-size:28px">♋</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:var(--pink)">Vrinda</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:2px">Cancer · 23 Jun 2022</div>
+    </div>
+    <div class="star-person-card" data-sp="vedant" onclick="selectStarPerson(this)" style="background:linear-gradient(135deg,#f0f6ff,#e8f4ff);border:2px solid #93c5fd">
+      <div style="font-size:28px">♒</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:var(--blue)">Vedant</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:2px">Aquarius · 18 Feb 2024</div>
+    </div>
+  </div>
+
+  <!-- READING TYPE -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="focus-chip on" data-srt="today" onclick="setStarType(this)">☀️ Today</button>
+    <button class="focus-chip" data-srt="week" onclick="setStarType(this)">📅 This Week</button>
+    <button class="focus-chip" data-srt="month" onclick="setStarType(this)">🗓️ This Month</button>
+    <button class="focus-chip" data-srt="parenting" onclick="setStarType(this)">💝 Parenting Insight</button>
+    <button class="focus-chip" data-srt="family" onclick="setStarType(this)">👨‍👩‍👧‍👦 Family Energy</button>
+  </div>
+
+  <button class="btn btn-pri" style="width:100%;margin-bottom:16px;justify-content:center;display:flex;gap:8px" onclick="generateStarReading()">🔮 Generate Reading</button>
+  <div id="star-output"></div>
+
+  <!-- SAVED READINGS -->
+  <div style="margin-top:20px">
+    <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">Past Readings <span style="flex:1;height:1px;background:var(--ln);display:block"></span></div>
+    <div id="star-saved"></div>
+    <div id="star-saved-empty" style="font-size:12px;color:var(--ink3);padding:8px 0">No saved readings yet.</div>
+  </div>
+</div>
+
+<!-- ═══════ PARENTING TRACKER ═══════ -->
+<div id="p-tracker" class="page">
+  <div class="pg-title">📊 Parenting Tracker</div>
+  <div class="pg-sub">Log your daily parenting moments — quality time, activities done, how you felt, wins and struggles. This is your raw material for AI insights.</div>
+
+  <!-- QUICK LOG -->
+  <div style="background:linear-gradient(135deg,#fff8f0,#fff0f8);border:2px solid var(--ln);border-radius:20px;padding:18px;margin-bottom:18px">
+    <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;margin-bottom:12px;color:var(--coral)">📝 Log Today</div>
+
+    <!-- WHO WAS IT WITH -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px">Who was it with?</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="pt-chip on" data-pw="vrinda" onclick="togglePWho(this)">🌸 Vrinda</span>
+        <span class="pt-chip" data-pw="vedant" onclick="togglePWho(this)">⚡ Vedant</span>
+        <span class="pt-chip" data-pw="both" onclick="togglePWho(this)">👨‍👧‍👦 Both</span>
+      </div>
+    </div>
+
+    <!-- WHAT DID YOU DO -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px">What kind of time was it?</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="pt-type-row">
+        <span class="pt-chip" data-pt="play" onclick="togglePType(this)">🎮 Play</span>
+        <span class="pt-chip" data-pt="learning" onclick="togglePType(this)">📚 Learning</span>
+        <span class="pt-chip" data-pt="outdoor" onclick="togglePType(this)">🌳 Outdoor</span>
+        <span class="pt-chip" data-pt="routine" onclick="togglePType(this)">🛁 Routine</span>
+        <span class="pt-chip" data-pt="reading" onclick="togglePType(this)">📖 Reading</span>
+        <span class="pt-chip" data-pt="creative" onclick="togglePType(this)">🎨 Creative</span>
+        <span class="pt-chip" data-pt="cuddle" onclick="togglePType(this)">🤗 Cuddle Time</span>
+        <span class="pt-chip" data-pt="tough" onclick="togglePType(this)">😤 Tough Moment</span>
+      </div>
+    </div>
+
+    <!-- MOOD / ENERGY -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px">How did it feel?</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="pt-mood-row">
+        <span class="pt-mood" data-m="5" onclick="selectMood(this)" title="Wonderful">😊</span>
+        <span class="pt-mood" data-m="4" onclick="selectMood(this)" title="Good">🙂</span>
+        <span class="pt-mood" data-m="3" onclick="selectMood(this)" title="Okay">😐</span>
+        <span class="pt-mood" data-m="2" onclick="selectMood(this)" title="Tired">😔</span>
+        <span class="pt-mood" data-m="1" onclick="selectMood(this)" title="Struggled">😩</span>
+      </div>
+    </div>
+
+    <!-- DURATION -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px">Quality time spent</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="pt-chip" data-pd="15" onclick="selectDuration(this)">15 min</span>
+        <span class="pt-chip" data-pd="30" onclick="selectDuration(this)">30 min</span>
+        <span class="pt-chip" data-pd="60" onclick="selectDuration(this)">1 hour</span>
+        <span class="pt-chip" data-pd="120" onclick="selectDuration(this)">2 hours</span>
+        <span class="pt-chip" data-pd="180" onclick="selectDuration(this)">Half day</span>
+        <span class="pt-chip" data-pd="360" onclick="selectDuration(this)">Full day</span>
+      </div>
+    </div>
+
+    <!-- WIN / STRUGGLE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px">🏆 Win / highlight</div>
+        <textarea id="pt-win" style="width:100%;background:white;border:2px solid var(--ln);border-radius:10px;padding:9px;font-family:'Nunito',sans-serif;font-size:12px;color:var(--ink);outline:none;resize:none;line-height:1.5" rows="3" placeholder="Something that went well, a proud moment…"></textarea>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px">💭 Struggle / reflection</div>
+        <textarea id="pt-struggle" style="width:100%;background:white;border:2px solid var(--ln);border-radius:10px;padding:9px;font-family:'Nunito',sans-serif;font-size:12px;color:var(--ink);outline:none;resize:none;line-height:1.5" rows="3" placeholder="What was hard, what you'd do differently…"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-sec" onclick="clearPTLog()">Clear</button>
+      <button class="btn btn-pri" onclick="savePTLog()">✓ Save Entry</button>
+    </div>
+  </div>
+
+  <!-- WEEKLY HEATMAP -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;margin-bottom:12px">📅 This Week at a Glance</div>
+    <div id="pt-heatmap"></div>
+  </div>
+
+  <!-- STATS STRIP -->
+  <div id="pt-stats" style="margin-bottom:16px"></div>
+
+  <!-- LOG ENTRIES -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+    <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:800">Recent Entries</div>
+    <div style="display:flex;gap:6px">
+      <button class="focus-chip on" data-ptf="all" onclick="setPTFilter(this)">All</button>
+      <button class="focus-chip" data-ptf="vrinda" onclick="setPTFilter(this)">🌸</button>
+      <button class="focus-chip" data-ptf="vedant" onclick="setPTFilter(this)">⚡</button>
+    </div>
+  </div>
+  <div id="pt-entries"></div>
+  <div id="pt-empty" class="empty" style="display:none"><span class="empty-icon">🌱</span>No entries yet — log your first parenting moment above!</div>
+</div>
+
+<!-- ═══════ AI INSIGHTS ═══════ -->
+<div id="p-insights" class="page">
+  <div class="pg-title">✨ AI Insights</div>
+  <div class="pg-sub">Claude analyses everything you've been doing — growth, activities, health, tracker entries — and tells you what it sees, what's working, and how to be even better.</div>
+
+  <!-- INSIGHT TYPE SELECTOR -->
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px" id="insight-type-grid">
+    <div class="insight-type-card on" data-it="overview" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">🌟</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Full Overview</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Everything together — what's working, what to focus on</div>
+    </div>
+    <div class="insight-type-card" data-it="quality_time" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">❤️</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Quality Time</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Are you spending enough? How is it being spent?</div>
+    </div>
+    <div class="insight-type-card" data-it="development" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">🧠</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Development</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Milestones, activities, and developmental gaps</div>
+    </div>
+    <div class="insight-type-card" data-it="balance" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">⚖️</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Balance Check</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Screen time, outdoor, creative, routine balance</div>
+    </div>
+    <div class="insight-type-card" data-it="struggles" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">💪</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Struggles & Solutions</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Patterns in tough moments + practical fixes</div>
+    </div>
+    <div class="insight-type-card" data-it="better_parent" onclick="selectInsightType(this)">
+      <div style="font-size:28px;margin-bottom:6px">🎯</div>
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:800">Be a Better Parent</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4">Personalised, specific, honest suggestions</div>
+    </div>
+  </div>
+
+  <!-- EXTRA CONTEXT -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:10px;font-weight:800;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Anything specific on your mind? (optional)</div>
+    <textarea id="insight-context" style="width:100%;background:white;border:2px solid var(--ln);border-radius:12px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);outline:none;resize:none;line-height:1.6" rows="3" placeholder="e.g. 'Vrinda has been really clingy this week', 'I feel like I'm not reading enough to Vedant', 'We've been too busy lately'…"></textarea>
+  </div>
+
+  <button class="btn btn-pri" style="width:100%;display:flex;justify-content:center;gap:8px;margin-bottom:20px" onclick="generateInsight()">✨ Generate Insight</button>
+
+  <div id="insight-output"></div>
+
+  <!-- AI CHAT FOLLOW UP -->
+  <div id="insight-chat-section" style="display:none;margin-top:16px">
+    <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;margin-bottom:8px">💬 Ask a Follow-up</div>
+    <div class="ai-bubble">
+      <textarea id="insight-followup" style="width:100%;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;color:var(--ink);resize:none;min-height:60px;line-height:1.7" placeholder="Dig deeper — e.g. 'How do I make bedtime less of a battle?' or 'What specific activities would help Vrinda's language?'"></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-pri" style="font-size:11px;padding:7px 14px" onclick="insightFollowup()">Ask Claude</button>
+      </div>
+      <div id="insight-followup-out" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<!-- Milestone -->
+<div class="overlay" id="m-milestone">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌟 Add Milestone</div>
+    <input type="hidden" id="ms-kid">
+    <div class="field"><label>Milestone</label><input id="ms-title" placeholder="e.g. First word, First step, First day of school…"></div>
+    <div class="field"><label>Category</label>
+      <select id="ms-cat">
+        <option>🗣️ Language</option><option>🚶 Motor Skills</option><option>🧠 Cognitive</option>
+        <option>❤️ Social</option><option>🎨 Creative</option><option>🍽️ Self-care</option><option>⭐ Special Moment</option>
+      </select>
+    </div>
+    <div class="field"><label>Date achieved</label><input type="date" id="ms-date"></div>
+    <div class="field"><label>Notes (optional)</label><textarea id="ms-notes" rows="2" placeholder="How did it happen? What was the moment like?"></textarea></div>
+    <div class="modal-acts">
+      <button class="btn btn-sec" onclick="closeModal('m-milestone')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveMilestone()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Observation -->
+<div class="overlay" id="m-obs">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📓 Add Observation</div>
+    <input type="hidden" id="obs-kid">
+    <div class="field"><label>What did you notice?</label><textarea id="obs-text" rows="4" placeholder="Anything — a new behaviour, a funny moment, a concern, a change you noticed…"></textarea></div>
+    <div class="field"><label>Date</label><input type="date" id="obs-date"></div>
+    <div class="modal-acts">
+      <button class="btn btn-sec" onclick="closeModal('m-obs')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveObs()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Growth -->
+<div class="overlay" id="m-growth">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📈 Log Measurement</div>
+    <div class="field"><label>Child</label>
+      <select id="gr-kid"><option value="vrinda">🌸 Vrinda</option><option value="vedant">⚡ Vedant</option></select>
+    </div>
+    <div class="field"><label>Date</label><input type="date" id="gr-date"></div>
+    <div class="field-row">
+      <div class="field"><label>Height (cm)</label><input type="number" id="gr-height" placeholder="e.g. 92"></div>
+      <div class="field"><label>Weight (kg)</label><input type="number" id="gr-weight" step="0.1" placeholder="e.g. 12.5"></div>
+    </div>
+    <div class="field"><label>Head circumference (cm, optional)</label><input type="number" id="gr-head" step="0.1" placeholder="e.g. 48"></div>
+    <div class="field"><label>Notes (optional)</label><input id="gr-notes" placeholder="Doctor's comments, percentile info…"></div>
+    <div class="modal-acts">
+      <button class="btn btn-sec" onclick="closeModal('m-growth')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveGrowth()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Memory -->
+<div class="overlay" id="m-memory">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📸 Add Memory</div>
+    <div class="field"><label>Who is this about?</label>
+      <select id="mem-kid"><option value="vrinda">🌸 Vrinda</option><option value="vedant">⚡ Vedant</option><option value="both">👨‍👧‍👦 Both Together</option></select>
+    </div>
+    <div class="field"><label>Emoji to capture the moment</label><input id="mem-emoji" placeholder="🎉 🌸 😂 🎂 🏊 🎈" maxlength="4"></div>
+    <div class="field"><label>What happened?</label><textarea id="mem-text" rows="4" placeholder="Describe the moment — as much or as little as you want. You'll treasure reading this later."></textarea></div>
+    <div class="field"><label>Date</label><input type="date" id="mem-date"></div>
+    <div class="modal-acts">
+      <button class="btn btn-sec" onclick="closeModal('m-memory')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveMemory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Health -->
+<div class="overlay" id="m-health">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🩺 Health Entry</div>
+    <div class="field"><label>Child</label>
+      <select id="hl-kid"><option value="vrinda">🌸 Vrinda</option><option value="vedant">⚡ Vedant</option></select>
+    </div>
+    <div class="field"><label>Type</label>
+      <select id="hl-type">
+        <option value="illness">🤒 Illness</option>
+        <option value="visit">🏥 Doctor Visit</option>
+        <option value="medication">💊 Medication</option>
+        <option value="allergy">⚠️ Allergy/Reaction</option>
+        <option value="note">📝 General Note</option>
+      </select>
+    </div>
+    <div class="field"><label>Date</label><input type="date" id="hl-date"></div>
+    <div class="field"><label>Details</label><textarea id="hl-text" rows="3" placeholder="Symptoms, diagnosis, medication given, doctor's advice…"></textarea></div>
+    <div class="modal-acts">
+      <button class="btn btn-sec" onclick="closeModal('m-health')">Cancel</button>
+      <button class="btn btn-pri" onclick="saveHealth()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="overlay" id="m-backup">
+  <div class="backup-modal">
+    <div style="font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;color:var(--coral);margin-bottom:4px">☁️ Backup & Restore</div>
+    <div style="font-size:12px;color:var(--ink2);margin-bottom:16px;line-height:1.5">Like WhatsApp — export everything weekly, restore it on any new phone instantly.</div>
+    <div id="backup-last" style="font-size:11px;padding:8px 12px;background:var(--sky);border-radius:8px;border:1px solid var(--ln);margin-bottom:14px">No backup taken yet</div>
+    <div style="background:var(--sky);border:1px solid var(--ln);border-radius:12px;padding:14px;margin-bottom:10px">
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;margin-bottom:4px">📤 Export</div>
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:10px;line-height:1.5">Downloads everything — vaccines, milestones, memories, health, growth — as a .json file. Save to Google Drive.</div>
+      <button class="btn btn-pri" style="width:100%" onclick="exportBackup()">Download Backup File</button>
+    </div>
+    <div style="background:var(--sky);border:1px solid var(--ln);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;margin-bottom:4px">📥 Restore</div>
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:10px;line-height:1.5">Choose your backup file to restore everything. <strong>This will overwrite current data.</strong></div>
+      <label style="display:block;width:100%;padding:10px;text-align:center;background:white;border:2px solid var(--ln);border-radius:99px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--ink2);transition:all .15s">
+        Choose Backup File
+        <input type="file" accept=".json" onchange="importBackup(event)" style="display:none">
+      </label>
+      <div id="backup-status" style="font-size:11px;color:var(--mint);margin-top:8px;display:none;font-weight:700"></div>
+    </div>
+    <div style="background:#fffbf0;border:2px solid #fde68a;border-radius:10px;padding:11px;margin-bottom:14px;font-size:12px;color:#92400e;line-height:1.6">
+      💡 <strong>Weekly habit:</strong> Every Sunday, Backup → Download → Save to Google Drive → overwrite old file.
+    </div>
+    <button class="btn btn-sec" style="width:100%" onclick="closeModal('m-backup')">Close</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CLOUD SYNC — Google Sheets via Apps Script
+// ═══════════════════════════════════════════════
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbwUaUIYJx3XCeuft39ywOIJqxGtEexI94X_VTQidag6dRok0umzkCB0GCgrBdm1b88p/exec';
+const DASHBOARD_ID = 'kids';
+let syncTimer = null;
+let isSyncing = false;
+
+const KS_KEYS = ['ks-milestones', 'ks-obs', 'ks-growth', 'ks-memories', 'ks-health', 'ks-acts', 'ks-vaccines', 'ks-ptlogs', 'ks-star-readings'];
+
+function getAllData() {
+  const data = {};
+  KS_KEYS.forEach(k => { const v = localStorage.getItem(k); if(v !== null) data[k] = v; });
+  return data;
+}
+
+function cloudSave() {
+  if (!SYNC_URL || SYNC_URL.includes('__SCRIPT')) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(doCloudSave, 2000);
+}
+
+async function doCloudSave() {
+  if (isSyncing) return;
+  isSyncing = true;
+  showSyncDot('saving');
+  try {
+    const payload = encodeURIComponent(JSON.stringify(getAllData()));
+    const url = SYNC_URL + '?action=save&dashboard=' + DASHBOARD_ID + '&payload=' + payload;
+    const res = await fetch(url);
+    const json = await res.json();
+    showSyncDot(json.ok ? 'saved' : 'error');
+  } catch(e) { showSyncDot('error'); }
+  isSyncing = false;
+}
+
+async function cloudLoad() {
+  if (!SYNC_URL || SYNC_URL.includes('__SCRIPT')) return;
+  showSyncDot('loading');
+  try {
+    const res = await fetch(SYNC_URL + '?action=load&dashboard=' + DASHBOARD_ID);
+    const json = await res.json();
+    if (json.ok && json.data && Object.keys(json.data).length > 0) {
+      const d = json.data;
+      KS_KEYS.forEach(k => { if(d[k] !== undefined) localStorage.setItem(k, d[k]); });
+      milestones   = load('ks-milestones',{vrinda:[],vedant:[]});
+      observations = load('ks-obs',{vrinda:[],vedant:[]});
+      growthData   = load('ks-growth',{vrinda:[],vedant:[]});
+      memories     = load('ks-memories',[]);
+      healthLog    = load('ks-health',[]);
+      renderHome();
+      showSyncDot('loaded');
+    } else { showSyncDot('idle'); }
+  } catch(e) { showSyncDot('error'); }
+}
+
+function showSyncDot(state) {
+  const el = document.getElementById('sync-status-dot');
+  if (!el) return;
+  const c = {idle:'#888',saving:'#f59e0b',saved:'#22c55e',loading:'#3b82f6',loaded:'#22c55e',error:'#ef4444'};
+  const t = {idle:'Cloud sync ready — click to load',saving:'Saving...',saved:'Saved ✓',loading:'Loading...',loaded:'Loaded ✓',error:'Sync error — tap to retry'};
+  el.style.background = c[state]||'#888';
+  el.title = t[state]||'';
+  if(state==='saved'||state==='loaded') setTimeout(()=>{el.style.background='#22c55e55';el.title='In sync ✓';},3000);
+}
+
+window.addEventListener('load', ()=>{ setTimeout(cloudLoad, 1000); });
+
+
+// ═══════════════════════════════════════════════
+// CLOUD SYNC — Google Sheets via Apps Script
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,4);
+const td=()=>new Date().toISOString().slice(0,10);
+const fdt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+
+function load(k,def){try{return JSON.parse(localStorage.getItem(k))||def;}catch{return def;}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));cloudSave();}
+
+let milestones  = load('ks-milestones',{vrinda:[],vedant:[]});
+let observations= load('ks-obs',{vrinda:[],vedant:[]});
+let growthData  = load('ks-growth',{vrinda:[],vedant:[]});
+let memories    = load('ks-memories',[]);
+let healthLog   = load('ks-health',[]);
+let savedActs   = load('ks-acts',[]);
+let vaccines    = load('ks-vaccines',null);
+
+// ── VACCINES DEFAULT DATA ──
+const VAC_DEFAULTS={
+  vrinda:[
+    {id:'v1',name:'BCG',age:'At birth',dueAge:0,done:true,date:'2022-06-23'},
+    {id:'v2',name:'Hepatitis B (1st dose)',age:'At birth',dueAge:0,done:true,date:'2022-06-23'},
+    {id:'v3',name:'OPV-0',age:'At birth',dueAge:0,done:true,date:'2022-06-23'},
+    {id:'v4',name:'DPT + HiB + Hep B (1st)',age:'6 weeks',dueAge:6,done:true,date:'2022-08-04'},
+    {id:'v5',name:'OPV-1 + IPV',age:'6 weeks',dueAge:6,done:true,date:'2022-08-04'},
+    {id:'v6',name:'Rotavirus (1st)',age:'6 weeks',dueAge:6,done:true,date:'2022-08-04'},
+    {id:'v7',name:'DPT + HiB + Hep B (2nd)',age:'10 weeks',dueAge:10,done:true,date:'2022-09-01'},
+    {id:'v8',name:'OPV-2',age:'10 weeks',dueAge:10,done:true,date:'2022-09-01'},
+    {id:'v9',name:'Rotavirus (2nd)',age:'10 weeks',dueAge:10,done:true,date:'2022-09-01'},
+    {id:'v10',name:'DPT + HiB + Hep B (3rd)',age:'14 weeks',dueAge:14,done:true,date:'2022-09-29'},
+    {id:'v11',name:'OPV-3 + IPV (2nd)',age:'14 weeks',dueAge:14,done:true,date:'2022-09-29'},
+    {id:'v12',name:'Rotavirus (3rd)',age:'14 weeks',dueAge:14,done:true,date:'2022-09-29'},
+    {id:'v13',name:'PCV (Pneumococcal)',age:'6 months',dueAge:26,done:true,date:'2022-12-23'},
+    {id:'v14',name:'Influenza (annual)',age:'6 months+',dueAge:26,done:true,date:'2023-01-15'},
+    {id:'v15',name:'MMR (1st)',age:'9 months',dueAge:39,done:true,date:'2023-03-23'},
+    {id:'v16',name:'Typhoid',age:'9 months',dueAge:39,done:true,date:'2023-03-23'},
+    {id:'v17',name:'Hepatitis A (1st)',age:'12 months',dueAge:52,done:true,date:'2023-06-23'},
+    {id:'v18',name:'Varicella (Chickenpox)',age:'12 months',dueAge:52,done:true,date:'2023-06-23'},
+    {id:'v19',name:'MMR (2nd)',age:'15 months',dueAge:65,done:true,date:'2023-09-23'},
+    {id:'v20',name:'DPT Booster (1st)',age:'16-18 months',dueAge:70,done:true,date:'2023-10-23'},
+    {id:'v21',name:'OPV Booster',age:'16-18 months',dueAge:70,done:true,date:'2023-10-23'},
+    {id:'v22',name:'Hepatitis A (2nd)',age:'18 months',dueAge:78,done:true,date:'2023-12-23'},
+    {id:'v23',name:'Varicella (2nd)',age:'15-18 months',dueAge:70,done:true,date:'2023-10-23'},
+    {id:'v24',name:'PCV Booster',age:'15 months',dueAge:65,done:true,date:'2023-09-23'},
+    {id:'v25',name:'Typhoid Booster',age:'2 years',dueAge:104,done:true,date:'2024-06-23'},
+    {id:'v26',name:'DPT Booster (2nd)',age:'5 years',dueAge:260,done:false,date:''},
+    {id:'v27',name:'MMR Booster',age:'5 years',dueAge:260,done:false,date:''},
+    {id:'v28',name:'OPV Final Booster',age:'5 years',dueAge:260,done:false,date:''},
+  ],
+  vedant:[
+    {id:'u1',name:'BCG',age:'At birth',dueAge:0,done:true,date:'2024-02-18'},
+    {id:'u2',name:'Hepatitis B (1st dose)',age:'At birth',dueAge:0,done:true,date:'2024-02-18'},
+    {id:'u3',name:'OPV-0',age:'At birth',dueAge:0,done:true,date:'2024-02-18'},
+    {id:'u4',name:'DPT + HiB + Hep B (1st)',age:'6 weeks',dueAge:6,done:true,date:'2024-04-01'},
+    {id:'u5',name:'OPV-1 + IPV',age:'6 weeks',dueAge:6,done:true,date:'2024-04-01'},
+    {id:'u6',name:'Rotavirus (1st)',age:'6 weeks',dueAge:6,done:true,date:'2024-04-01'},
+    {id:'u7',name:'DPT + HiB + Hep B (2nd)',age:'10 weeks',dueAge:10,done:true,date:'2024-04-29'},
+    {id:'u8',name:'OPV-2',age:'10 weeks',dueAge:10,done:true,date:'2024-04-29'},
+    {id:'u9',name:'Rotavirus (2nd)',age:'10 weeks',dueAge:10,done:true,date:'2024-04-29'},
+    {id:'u10',name:'DPT + HiB + Hep B (3rd)',age:'14 weeks',dueAge:14,done:true,date:'2024-05-27'},
+    {id:'u11',name:'OPV-3 + IPV (2nd)',age:'14 weeks',dueAge:14,done:true,date:'2024-05-27'},
+    {id:'u12',name:'Rotavirus (3rd)',age:'14 weeks',dueAge:14,done:true,date:'2024-05-27'},
+    {id:'u13',name:'PCV (Pneumococcal)',age:'6 months',dueAge:26,done:true,date:'2024-08-18'},
+    {id:'u14',name:'Influenza (1st dose)',age:'6 months',dueAge:26,done:true,date:'2024-08-18'},
+    {id:'u15',name:'MMR (1st)',age:'9 months',dueAge:39,done:true,date:'2024-11-18'},
+    {id:'u16',name:'Typhoid',age:'9 months',dueAge:39,done:true,date:'2024-11-18'},
+    {id:'u17',name:'Hepatitis A (1st)',age:'12 months',dueAge:52,done:false,date:''},
+    {id:'u18',name:'Varicella (1st)',age:'12 months',dueAge:52,done:false,date:''},
+    {id:'u19',name:'PCV Booster',age:'15 months',dueAge:65,done:false,date:''},
+    {id:'u20',name:'MMR (2nd)',age:'15 months',dueAge:65,done:false,date:''},
+    {id:'u21',name:'DPT Booster (1st)',age:'16-18 months',dueAge:70,done:false,date:''},
+    {id:'u22',name:'Hepatitis A (2nd)',age:'18 months',dueAge:78,done:false,date:''},
+    {id:'u23',name:'Typhoid Booster',age:'2 years',dueAge:104,done:false,date:''},
+    {id:'u24',name:'DPT Booster (2nd)',age:'5 years',dueAge:260,done:false,date:''},
+    {id:'u25',name:'MMR Booster',age:'5 years',dueAge:260,done:false,date:''},
+  ]
+};
+if(!vaccines) vaccines=JSON.parse(JSON.stringify(VAC_DEFAULTS));
+
+// Activity/star state
+let actKid='both',actFocus='creative',actSetting='home';
+let vacKid='vrinda',growthKid='vrinda',memKid='all',healthKid='all';
+let starPerson='vrinda',starType='today';
+
+// ── AGE CALCULATION ──
+function calcAge(dobStr){
+  const dob=new Date(dobStr.split('/').reverse().join('-'));
+  const now=new Date();
+  let y=now.getFullYear()-dob.getFullYear();
+  let m=now.getMonth()-dob.getMonth();
+  let d=now.getDate()-dob.getDate();
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  const totalWeeks=Math.floor((now-dob)/(7*86400000));
+  if(y===0&&m===0) return `${totalWeeks} weeks old`;
+  if(y===0) return `${m} month${m!==1?'s':''} old`;
+  return `${y} year${y!==1?'s':''}, ${m} month${m!==1?'s':''} old`;
+}
+function ageWeeks(dobStr){
+  const dob=new Date(dobStr.split('/').reverse().join('-'));
+  return Math.floor((new Date()-dob)/(7*86400000));
+}
+
+// ── NAV ──
+function go(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+  const fn={home:renderHome,vrinda:renderVrinda,vedant:renderVedant,vaccines:renderVaccines,activities:renderActivities,growth:renderGrowth,memories:renderMemories,health:renderHealth,stars:renderStars};
+  if(fn[id]) fn[id]();
+}
+
+// ── HOME ──
+function renderHome(){
+  const va=calcAge('23/06/2022'), vda=calcAge('18/02/2024');
+  document.getElementById('vrinda-age-home').textContent=va;
+  document.getElementById('vedant-age-home').textContent=vda;
+  document.getElementById('vrinda-full-age').textContent=va;
+  document.getElementById('vedant-full-age').textContent=vda;
+
+  // Next vaccine for each
+  const vNext=vaccines.vrinda.find(v=>!v.done);
+  const vdNext=vaccines.vedant.find(v=>!v.done);
+  document.getElementById('vrinda-next-vac').innerHTML=vNext?`💉 Next: <strong>${esc(vNext.name)}</strong> (${esc(vNext.age)})`:'✅ All vaccines up to date!';
+  document.getElementById('vedant-next-vac').innerHTML=vdNext?`💉 Next: <strong>${esc(vdNext.name)}</strong> (${esc(vdNext.age)})`:'✅ All vaccines up to date!';
+
+  // Stats
+  const vDone=vaccines.vrinda.filter(v=>v.done).length;
+  const vdDone=vaccines.vedant.filter(v=>v.done).length;
+  const mCount=memories.length;
+  const msCount=(milestones.vrinda||[]).length+(milestones.vedant||[]).length;
+  document.getElementById('home-stats').innerHTML=[
+    {n:vDone+'/'+vaccines.vrinda.length,l:"Vrinda's Doses",c:'var(--pink)'},
+    {n:vdDone+'/'+vaccines.vedant.length,l:"Vedant's Doses",c:'var(--blue)'},
+    {n:mCount,l:'Memories',c:'var(--yellow)'},
+    {n:msCount,l:'Milestones',c:'var(--purple)'},
+  ].map(s=>`<div class="stat-box"><div class="stat-n" style="color:${s.c}">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
+
+  // Upcoming vaccines (next 2 pending from each)
+  const upcoming=[
+    ...vaccines.vrinda.filter(v=>!v.done).slice(0,2).map(v=>({...v,kid:'vrinda',emoji:'🌸'})),
+    ...vaccines.vedant.filter(v=>!v.done).slice(0,2).map(v=>({...v,kid:'vedant',emoji:'⚡'}))
+  ];
+  const uvEl=document.getElementById('home-upcoming-vac');
+  uvEl.innerHTML=upcoming.length?upcoming.map(v=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:white;border:2px solid #fde68a;border-radius:11px;margin-bottom:7px">
+      <span style="font-size:18px">${v.emoji}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${esc(v.name)}</div><div style="font-size:11px;color:var(--ink3)">${v.kid==='vrinda'?'Vrinda':'Vedant'} · due at ${esc(v.age)}</div></div>
+      <span style="font-size:10px;font-weight:800;background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:99px">PENDING</span>
+    </div>`).join(''):'<div style="font-size:13px;color:var(--ink3);padding:10px 0">✅ No urgent vaccines pending</div>';
+
+  // Recent memories
+  const rec=memories.slice(0,3);
+  document.getElementById('home-memories').innerHTML=rec.length?rec.map(m=>`
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 13px;background:white;border:2px solid var(--ln);border-radius:11px;margin-bottom:7px">
+      <span style="font-size:22px">${m.emoji||'📸'}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;line-height:1.5">${esc(m.text.slice(0,80))}${m.text.length>80?'…':''}</div><div style="font-size:10px;color:var(--ink3);margin-top:3px">${fdt(m.date)}</div></div>
+    </div>`).join(''):'<div style="font-size:13px;color:var(--ink3);padding:10px 0">No memories yet — add your first one!</div>';
+}
+
+// ── VRINDA / VEDANT ──
+function renderVrinda(){
+  document.getElementById('vrinda-full-age').textContent=calcAge('23/06/2022');
+  renderMilestones('vrinda');
+  renderObs('vrinda');
+}
+function renderVedant(){
+  document.getElementById('vedant-full-age').textContent=calcAge('18/02/2024');
+  renderMilestones('vedant');
+  renderObs('vedant');
+}
+
+function renderMilestones(kid){
+  const list=(milestones[kid]||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const el=document.getElementById(kid+'-milestones');
+  if(!list.length){el.innerHTML='<div class="empty"><span class="empty-icon">🌱</span>No milestones yet — tap + Add to record the first one!</div>';return;}
+  el.innerHTML=list.map(m=>`
+    <div class="milestone-card achieved" onclick="deleteMilestone('${kid}','${m.id}')">
+      <div class="mc-icon">${m.cat.split(' ')[0]||'⭐'}</div>
+      <div style="flex:1">
+        <div class="mc-title">${esc(m.title)}</div>
+        <div class="mc-desc">${esc(m.notes||'')}</div>
+        <div class="mc-date">🗓️ ${fdt(m.date)}</div>
+      </div>
+      <div class="chip" style="background:#ede9fe;color:var(--purple)">${esc(m.cat)}</div>
+    </div>`).join('');
+}
+
+function renderObs(kid){
+  const list=(observations[kid]||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const el=document.getElementById(kid+'-obs');
+  if(!list.length){el.innerHTML='<div class="empty"><span class="empty-icon">📓</span>No observations yet</div>';return;}
+  el.innerHTML=list.map(o=>`
+    <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:5px"></div>
+      <div style="flex:1"><div style="font-size:13px;color:var(--ink);line-height:1.6">${esc(o.text)}</div><div style="font-size:10px;color:var(--ink3);margin-top:3px;font-weight:700">${fdt(o.date)}</div></div>
+      <button onclick="deleteObs('${kid}','${o.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;line-height:1">×</button>
+    </div>`).join('');
+}
+
+// ── VACCINES ──
+function setVacKid(btn){document.querySelectorAll('[data-vk]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');vacKid=btn.dataset.vk;renderVaccines();}
+function renderVaccines(){
+  const list=vaccines[vacKid]||[];
+  const done=list.filter(v=>v.done).length;
+  const pct=Math.round(done/list.length*100);
+  document.getElementById('vac-summary').innerHTML=`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Baloo 2',cursive;font-size:15px;font-weight:700">${vacKid==='vrinda'?'🌸 Vrinda':'⚡ Vedant'} · ${done}/${list.length} doses</div>
+        <div style="font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:${pct===100?'var(--mint)':'var(--coral)'}">${pct}%</div>
+      </div>
+      <div class="pbar"><div class="pfill" style="background:${pct===100?'var(--mint)':'var(--coral)'};width:${pct}%"></div></div>
+    </div>`;
+  document.getElementById('vac-list').innerHTML=list.map(v=>`
+    <div class="vacc-row ${v.done?'done':''}" onclick="toggleVac('${vacKid}','${v.id}')">
+      <div class="vacc-chk">${v.done?'✓':''}</div>
+      <div style="flex:1">
+        <div class="vacc-name">${esc(v.name)}</div>
+        <div class="vacc-age">${esc(v.age)}${v.done&&v.date?' · Given '+fdt(v.date):''}</div>
+      </div>
+      <span class="vacc-badge" style="${v.done?'background:#dcfce7;color:#15803d':'background:#fef3c7;color:#92400e'}">${v.done?'✓ Done':'Pending'}</span>
+    </div>`).join('');
+}
+function toggleVac(kid,id){
+  const v=vaccines[kid].find(x=>x.id===id);
+  if(!v) return;
+  if(!v.done){v.done=true;v.date=td();}
+  else{v.done=false;v.date='';}
+  save('ks-vaccines',vaccines);
+  renderVaccines();renderHome();
+}
+
+// ── ACTIVITIES ──
+function setActKid(btn){document.querySelectorAll('[data-ak]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');actKid=btn.dataset.ak;}
+function setActFocus(el){document.querySelectorAll('[data-af]').forEach(b=>b.classList.remove('on'));el.classList.add('on');actFocus=el.dataset.af;}
+function setActSetting(el){document.querySelectorAll('[data-as]').forEach(b=>b.classList.remove('on'));el.classList.add('on');actSetting=el.dataset.as;}
+function renderActivities(){renderSavedActs();}
+function renderSavedActs(){
+  const el=document.getElementById('saved-acts');
+  const emp=document.getElementById('saved-acts-empty');
+  document.getElementById('saved-act-count').textContent=savedActs.length?savedActs.length+' saved':'';
+  if(!savedActs.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  const typeColors={creative:'#fdf4ff',physical:'#f0fdf4',cognitive:'#eff6ff',language:'#fff7ed',sensory:'#fef3c7',outdoor:'#f0fdf4',calm:'#f5f3ff',together:'#fff0f8'};
+  el.innerHTML=savedActs.map(a=>`
+    <div class="act-card">
+      <div class="act-name">${esc(a.name||'Activity')}</div>
+      <span class="act-type" style="background:${typeColors[a.focus]||'#f9fafb'};color:var(--ink2)">${a.kidLabel} · ${a.focus}</span>
+      <div class="act-body">${esc(a.text.slice(0,200)).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}…</div>
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-sec" style="font-size:10px;padding:4px 10px" onclick="expandAct('${a.id}')">View Full</button>
+        <button class="btn btn-sec" style="font-size:10px;padding:4px 10px" onclick="deleteAct('${a.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+function expandAct(id){
+  const a=savedActs.find(x=>x.id===id); if(!a) return;
+  const fmt=esc(a.text).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>').replace(/---/g,'<hr style="border:none;border-top:1px dashed var(--ln);margin:12px 0">');
+  document.getElementById('act-output').innerHTML=`<div style="background:linear-gradient(135deg,#fff8f0,#fdf4ff);border:2px solid #fde68a;border-radius:16px;padding:16px"><div class="act-body">${fmt}</div></div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteAct(id){savedActs=savedActs.filter(a=>a.id!==id);save('ks-acts',savedActs);renderSavedActs();}
+
+async function generateActivity(){
+  const ctx=document.getElementById('act-context').value.trim();
+  const out=document.getElementById('act-output');
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Designing activities…</div>';
+
+  const kidInfo={
+    vrinda:{name:'Vrinda',age:calcAge('23/06/2022'),dob:'23 June 2022'},
+    vedant:{name:'Vedant',age:calcAge('18/02/2024'),dob:'18 February 2024'},
+    both:{name:'Vrinda ('+calcAge('23/06/2022')+') and Vedant ('+calcAge('18/02/2024')+')',age:'different ages',dob:''}
+  };
+  const kid=kidInfo[actKid];
+  const focusLabels={creative:'Creative & Artistic Play',physical:'Physical Movement & Gross Motor',cognitive:'Thinking, Problem Solving & Cognitive',language:'Language, Communication & Literacy',sensory:'Sensory Exploration',outdoor:'Outdoor & Nature',calm:'Calm Down & Wind Down',together:'Sibling Bonding Activity (for both children)'};
+  const settingLabels={home:'indoors at home',outdoor:'outdoors in the garden or park',travel:'while travelling (car/restaurant/waiting)',rainy:'on a rainy day indoors'};
+
+  const prompt=`You are a child development expert and creative play specialist. Design 3 fresh, age-appropriate activity ideas.
+
+Child/Children: ${kid.name}
+Activity focus: ${focusLabels[actFocus]||actFocus}
+Setting: ${settingLabels[actSetting]||actSetting}
+${ctx?'Parent context: '+ctx:''}
+Today: ${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+
+For EACH of the 3 activities provide:
+**[Activity Name]**
+**Why perfect for this age:** (link to developmental stage)
+**You'll need:** (household items only)
+**How to play:** (4-5 numbered steps)
+**The magic twist:** (one creative variation)
+**What it builds:** (skill/milestone)
+
+Separate activities with ---
+Be creative, specific and fresh — avoid generic suggestions. Make the parent excited to try it!`;
+
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'No response.';
+    const fmt=esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>').replace(/---/g,'<hr style="border:none;border-top:1px dashed var(--ln);margin:14px 0">');
+    const kidLabel=actKid==='both'?'Both kids':actKid==='vrinda'?'🌸 Vrinda':'⚡ Vedant';
+    out.innerHTML=`
+      <div style="background:linear-gradient(135deg,#fff8f0,#fdf4ff);border:2px solid #fde68a;border-radius:16px;padding:16px;margin-bottom:12px">
+        <div class="act-body">${fmt}</div>
+        <div style="display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--ln);flex-wrap:wrap">
+          <button class="btn btn-mint" style="font-size:11px;padding:6px 12px" onclick="saveAct('${btoa(unescape(encodeURIComponent(reply)))}','${actFocus}','${kidLabel}')">💾 Save</button>
+          <button class="btn btn-sec" style="font-size:11px;padding:6px 12px" onclick="generateActivity()">New Ideas</button>
+        </div>
+      </div>`;
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px;padding:12px">⚠️ Could not reach Claude. Check connection.</div>';}
+}
+function saveAct(b64,focus,kidLabel){
+  const text=decodeURIComponent(escape(atob(b64)));
+  const nameMatch=text.match(/\*\*\[?([^\]*\n]+)\]?\*\*/);
+  savedActs.unshift({id:uid(),name:nameMatch?nameMatch[1].trim().slice(0,60):'Activity Idea',text,focus,kidLabel,date:td()});
+  save('ks-acts',savedActs);renderSavedActs();
+}
+
+// ── GROWTH ──
+function setGrowthKid(btn){document.querySelectorAll('[data-gk]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');growthKid=btn.dataset.gk;renderGrowth();}
+function renderGrowth(){
+  const list=(growthData[growthKid]||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const latest=list[0];
+  const el=document.getElementById('growth-latest');
+  if(latest){
+    el.innerHTML=`
+      <div class="card" style="margin-bottom:12px;background:${growthKid==='vrinda'?'linear-gradient(135deg,#fff0f8,#fdf4ff)':'linear-gradient(135deg,#f0f6ff,#f0fdf4)'};border-color:${growthKid==='vrinda'?'#f9a8d4':'#93c5fd'}">
+        <div style="font-family:'Baloo 2',cursive;font-size:14px;font-weight:700;margin-bottom:12px">Latest Measurements · ${fdt(latest.date)}</div>
+        ${latest.height?`<div class="growth-row"><div class="growth-label">Height</div><div class="growth-bar-wrap"><div class="growth-bar" style="background:${growthKid==='vrinda'?'var(--pink)':'var(--blue)'};width:${Math.min(latest.height/150*100,100)}%"></div></div><div class="growth-val" style="color:${growthKid==='vrinda'?'var(--pink)':'var(--blue)'}">${latest.height}cm</div></div>`:''}
+        ${latest.weight?`<div class="growth-row"><div class="growth-label">Weight</div><div class="growth-bar-wrap"><div class="growth-bar" style="background:var(--purple);width:${Math.min(latest.weight/30*100,100)}%"></div></div><div class="growth-val" style="color:var(--purple)">${latest.weight}kg</div></div>`:''}
+        ${latest.head?`<div class="growth-row"><div class="growth-label">Head</div><div class="growth-bar-wrap"><div class="growth-bar" style="background:var(--mint);width:${Math.min(latest.head/55*100,100)}%"></div></div><div class="growth-val" style="color:var(--mint)">${latest.head}cm</div></div>`:''}
+        ${latest.notes?`<div style="font-size:12px;color:var(--ink2);margin-top:8px;font-style:italic">${esc(latest.notes)}</div>`:''}
+      </div>`;
+  } else {
+    el.innerHTML='<div class="empty"><span class="empty-icon">📏</span>No measurements yet — tap + Log Measurement</div>';
+  }
+
+  // History timeline
+  const histEl=document.getElementById('growth-history');
+  if(list.length>1){
+    histEl.innerHTML='<div class="sec-head" style="margin-bottom:10px">📅 History</div>'+list.slice(1).map(g=>`
+      <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln);font-size:13px;color:var(--ink2)">
+        <div style="font-weight:700;color:var(--ink3);font-size:11px;width:80px;flex-shrink:0;padding-top:2px">${fdt(g.date)}</div>
+        <div>${[g.height?g.height+'cm':'',g.weight?g.weight+'kg':'',g.head?'HC:'+g.head+'cm':''].filter(Boolean).join(' · ')}${g.notes?' · '+esc(g.notes):''}</div>
+        <button onclick="deleteGrowth('${growthKid}','${g.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;margin-left:auto">×</button>
+      </div>`).join('');
+  } else histEl.innerHTML='';
+}
+
+// ── MEMORIES ──
+function setMemKid(btn){document.querySelectorAll('[data-mk]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');memKid=btn.dataset.mk;renderMemories();}
+function renderMemories(){
+  let list=[...memories].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(memKid!=='all') list=list.filter(m=>m.kid===memKid);
+  const el=document.getElementById('memories-list');
+  const emp=document.getElementById('memories-empty');
+  if(!list.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  const kidColors={vrinda:'#fff0f8',vedant:'#f0f6ff',both:'#fff8f0'};
+  const kidBorders={vrinda:'#f9a8d4',vedant:'#93c5fd',both:'#fde68a'};
+  el.innerHTML=list.map(m=>`
+    <div class="memory-card" style="background:${kidColors[m.kid]||'white'};border-color:${kidBorders[m.kid]||'var(--ln)'}">
+      <div style="font-size:36px;margin-bottom:8px">${m.emoji||'📸'}</div>
+      <div class="memory-text">${esc(m.text)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <div class="memory-date">${fdt(m.date)} · ${m.kid==='both'?'👨‍👧‍👦 Both':m.kid==='vrinda'?'🌸 Vrinda':'⚡ Vedant'}</div>
+        <button onclick="deleteMemory('${m.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px">×</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── HEALTH ──
+function setHealthKid(btn){document.querySelectorAll('[data-hk]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');healthKid=btn.dataset.hk;renderHealth();}
+function renderHealth(){
+  let list=[...healthLog].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(healthKid!=='all') list=list.filter(h=>h.kid===healthKid);
+  const el=document.getElementById('health-list');
+  const emp=document.getElementById('health-empty');
+  if(!list.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  const typeIcons={illness:'🤒',visit:'🏥',medication:'💊',allergy:'⚠️',note:'📝'};
+  const typeCols={illness:'#fecaca',visit:'#bfdbfe',medication:'#ddd6fe',allergy:'#fde68a',note:'#d1fae5'};
+  el.innerHTML=list.map(h=>`
+    <div class="health-entry">
+      <div class="h-dot" style="background:${typeCols[h.type]||'var(--ln)'}"></div>
+      <div style="flex:1">
+        <div style="font-size:10px;font-weight:800;color:var(--ink3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em">${typeIcons[h.type]||'📝'} ${h.type} · ${h.kid==='vrinda'?'🌸 Vrinda':'⚡ Vedant'} · ${fdt(h.date)}</div>
+        <div>${esc(h.text)}</div>
+      </div>
+      <button onclick="deleteHealth('${h.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px">×</button>
+    </div>`).join('');
+}
+
+async function askHealthAI(){
+  const q=document.getElementById('health-ai-input').value.trim(); if(!q) return;
+  const out=document.getElementById('health-ai-out');
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Thinking…</div>';
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:2000,system:`You are a helpful parenting resource assistant (NOT a doctor). The parent has two children: Vrinda (born 23 June 2022, now ${calcAge('23/06/2022')}) and Vedant (born 18 Feb 2024, now ${calcAge('18/02/2024')}). Provide general parenting guidance and flag when to seek medical attention. Always recommend consulting their paediatrician for medical decisions.`,
+        messages:[{role:'user',content:q}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    out.innerHTML=`<div style="background:white;border:1px solid var(--ln);border-radius:12px;padding:14px;font-size:13px;color:var(--ink);line-height:1.8">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>`;
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px">⚠️ Could not reach Claude.</div>';}
+}
+
+// ── STARS ──
+function setStarPerson(btn){document.querySelectorAll('[data-sp]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');starPerson=btn.dataset.sp;renderStarCard();}
+function setStarType(btn){document.querySelectorAll('[data-srt]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');starType=btn.dataset.srt;}
+function renderStarCard(){
+  const cards={
+    vrinda:{emoji:'🌸',name:'Vrinda Saraswat',dob:'23 June 2022',time:'10:33 AM',place:'Gurgaon',sign:'♋ Cancer',bg:'linear-gradient(135deg,#fff0f8,#fdf4ff)',border:'#f9a8d4'},
+    vedant:{emoji:'⚡',name:'Vedant Saraswat',dob:'18 Feb 2024',time:'1:42 PM',place:'Gurgaon',sign:'♒ Aquarius',bg:'linear-gradient(135deg,#f0f6ff,#f0fdf4)',border:'#93c5fd'}
+  };
+  const p=cards[starPerson];
+  document.getElementById('star-person-card').innerHTML=`
+    <div style="background:${p.bg};border:2px solid ${p.border};border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:40px">${p.emoji}</div>
+      <div>
+        <div style="font-family:'Baloo 2',cursive;font-size:16px;font-weight:800">${p.name}</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:2px">${p.sign} · Born ${p.dob}, ${p.time}, ${p.place}</div>
+      </div>
+    </div>`;
+}
+function renderStars(){renderStarCard();}
+
+
+// ── AI PROFILE ADVISORS ──
+async function askKidAI(kid,inputId,outputId){
+  const q=document.getElementById(inputId).value.trim(); if(!q) return;
+  const out=document.getElementById(outputId);
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Thinking…</div>';
+  const kidInfo={
+    vrinda:{name:'Vrinda',age:calcAge('23/06/2022'),dob:'23 June 2022',sign:'Cancer'},
+    vedant:{name:'Vedant',age:calcAge('18/02/2024'),dob:'18 Feb 2024',sign:'Aquarius'}
+  };
+  const k=kidInfo[kid];
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:10000,
+        system:`You are a warm child development specialist and parenting advisor. The parent is asking about their child ${k.name}, who is ${k.age} (born ${k.dob}). Provide practical, age-specific, empathetic guidance. Keep responses concise (4-6 sentences max) and actionable. Always remind parents to consult their paediatrician for medical concerns.`,
+        messages:[{role:'user',content:q}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    out.innerHTML=`<div style="background:white;border:1px solid var(--ln);border-radius:12px;padding:14px;font-size:13px;color:var(--ink);line-height:1.8;margin-top:8px">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>`;
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px">⚠️ Could not reach Claude.</div>';}
+}
+
+async function quickActivity(){
+  const out=document.getElementById('home-activity');
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Getting an idea…</div>';
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:1200,messages:[{role:'user',content:`Give ONE quick activity idea suitable for either Vrinda (${calcAge('23/06/2022')}) or Vedant (${calcAge('18/02/2024')}) or both together. Today is ${new Date().toLocaleDateString('en-GB',{weekday:'long'})}. Format: **Activity Name** then 3-4 sentences max — what to do, what you need, what it builds. Keep it fresh and creative.`}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    out.innerHTML=`<div style="font-size:13px;color:var(--ink);line-height:1.7">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--coral)">$1</b>').replace(/\n/g,'<br>')}</div>`;
+  }catch(e){out.innerHTML='<div style="font-size:13px;color:var(--ink3)">Tap to try again when you have connection.</div>';}
+}
+
+// ── MODALS ──
+function openMilestoneModal(kid){
+  document.getElementById('ms-kid').value=kid;
+  document.getElementById('ms-title').value='';
+  document.getElementById('ms-notes').value='';
+  document.getElementById('ms-date').value=td();
+  document.getElementById('m-milestone').classList.add('on');
+}
+function saveMilestone(){
+  const kid=document.getElementById('ms-kid').value;
+  const title=document.getElementById('ms-title').value.trim(); if(!title) return;
+  if(!milestones[kid]) milestones[kid]=[];
+  milestones[kid].push({id:uid(),title,cat:document.getElementById('ms-cat').value,date:document.getElementById('ms-date').value,notes:document.getElementById('ms-notes').value.trim()});
+  save('ks-milestones',milestones);closeModal('m-milestone');
+  if(kid==='vrinda')renderMilestones('vrinda');else renderMilestones('vedant');
+}
+function deleteMilestone(kid,id){
+  if(!confirm('Remove this milestone?')) return;
+  milestones[kid]=milestones[kid].filter(m=>m.id!==id);
+  save('ks-milestones',milestones);renderMilestones(kid);
+}
+
+function openObsModal(kid){
+  document.getElementById('obs-kid').value=kid;
+  document.getElementById('obs-text').value='';
+  document.getElementById('obs-date').value=td();
+  document.getElementById('m-obs').classList.add('on');
+}
+function saveObs(){
+  const kid=document.getElementById('obs-kid').value;
+  const text=document.getElementById('obs-text').value.trim(); if(!text) return;
+  if(!observations[kid]) observations[kid]=[];
+  observations[kid].push({id:uid(),text,date:document.getElementById('obs-date').value});
+  save('ks-obs',observations);closeModal('m-obs');
+  if(kid==='vrinda')renderObs('vrinda');else renderObs('vedant');
+}
+function deleteObs(kid,id){observations[kid]=observations[kid].filter(o=>o.id!==id);save('ks-obs',observations);renderObs(kid);}
+
+function openGrowthModal(){
+  document.getElementById('gr-date').value=td();
+  ['gr-height','gr-weight','gr-head','gr-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m-growth').classList.add('on');
+}
+function saveGrowth(){
+  const kid=document.getElementById('gr-kid').value;
+  const entry={id:uid(),date:document.getElementById('gr-date').value,height:document.getElementById('gr-height').value,weight:document.getElementById('gr-weight').value,head:document.getElementById('gr-head').value,notes:document.getElementById('gr-notes').value.trim()};
+  if(!growthData[kid]) growthData[kid]=[];
+  growthData[kid].unshift(entry);save('ks-growth',growthData);closeModal('m-growth');renderGrowth();
+}
+function deleteGrowth(kid,id){growthData[kid]=growthData[kid].filter(g=>g.id!==id);save('ks-growth',growthData);renderGrowth();}
+
+function openMemoryModal(){
+  ['mem-emoji','mem-text'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mem-date').value=td();
+  document.getElementById('m-memory').classList.add('on');
+}
+function saveMemory(){
+  const text=document.getElementById('mem-text').value.trim(); if(!text) return;
+  memories.unshift({id:uid(),kid:document.getElementById('mem-kid').value,emoji:document.getElementById('mem-emoji').value||'📸',text,date:document.getElementById('mem-date').value});
+  save('ks-memories',memories);closeModal('m-memory');renderMemories();renderHome();
+}
+function deleteMemory(id){memories=memories.filter(m=>m.id!==id);save('ks-memories',memories);renderMemories();}
+
+function openHealthModal(){
+  document.getElementById('hl-text').value='';
+  document.getElementById('hl-date').value=td();
+  document.getElementById('m-health').classList.add('on');
+}
+function saveHealth(){
+  const text=document.getElementById('hl-text').value.trim(); if(!text) return;
+  healthLog.unshift({id:uid(),kid:document.getElementById('hl-kid').value,type:document.getElementById('hl-type').value,date:document.getElementById('hl-date').value,text});
+  save('ks-health',healthLog);closeModal('m-health');renderHealth();
+}
+function deleteHealth(id){healthLog=healthLog.filter(h=>h.id!==id);save('ks-health',healthLog);renderHealth();}
+
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.on').forEach(o=>o.classList.remove('on'));});
+
+// ── BACKUP ──
+function showBackup(){
+  const last=localStorage.getItem('ks-last-backup');
+  const el=document.getElementById('backup-last');
+  el.textContent=last?'Last backup: '+last:'No backup taken yet — do one now!';
+  el.style.color=last?'var(--mint)':'var(--coral)';
+  document.getElementById('m-backup').classList.add('on');
+}
+function exportBackup(){
+  const data={version:'kids-dashboard-v1',exportedAt:new Date().toISOString(),data:{
+    milestones:localStorage.getItem('ks-milestones'),
+    observations:localStorage.getItem('ks-obs'),
+    growth:localStorage.getItem('ks-growth'),
+    memories:localStorage.getItem('ks-memories'),
+    health:localStorage.getItem('ks-health'),
+    acts:localStorage.getItem('ks-acts'),
+    vaccines:localStorage.getItem('ks-vaccines'),
+    ptlogs:localStorage.getItem('ks-ptlogs'),
+    starreadings:localStorage.getItem('ks-star-readings'),
+  }};
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download=`little-stars-backup-${td()}.json`;a.click();
+  const ts=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  localStorage.setItem('ks-last-backup',ts);
+  document.getElementById('backup-last').textContent='Last backup: '+ts;
+  document.getElementById('backup-last').style.color='var(--mint)';
+}
+function importBackup(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const parsed=JSON.parse(ev.target.result);
+      if(!parsed.version?.startsWith('kids')){showBackupStatus('⚠️ Not a Little Stars backup file.',false);return;}
+      const d=parsed.data||{};
+      ['milestones','observations','growth','memories','health','acts','vaccines','ptlogs'].forEach(k=>{if(d[k])localStorage.setItem('ks-'+k,d[k]);});
+      if(d.starreadings) localStorage.setItem('ks-star-readings',d.starreadings);
+      milestones=load('ks-milestones',{vrinda:[],vedant:[]});
+      observations=load('ks-obs',{vrinda:[],vedant:[]});
+      growthData=load('ks-growth',{vrinda:[],vedant:[]});
+      memories=load('ks-memories',[]);healthLog=load('ks-health',[]);
+      savedActs=load('ks-acts',[]);ptLogs=load('ks-ptlogs',[]);
+      savedStarReadings=load('ks-star-readings',[]);
+      vaccines=load('ks-vaccines',null)||JSON.parse(JSON.stringify(VAC_DEFAULTS));
+      renderHome();showBackupStatus('✓ Restored! Everything is back.',true);
+    }catch{showBackupStatus('⚠️ Could not read file.',false);}
+  };
+  reader.readAsText(file);
+}
+function showBackupStatus(msg,ok){
+  const el=document.getElementById('backup-status');
+  el.textContent=msg;el.style.color=ok?'var(--mint)':'var(--coral)';el.style.display='block';
+  if(ok) setTimeout(()=>closeModal('m-backup'),2000);
+}
+
+// ══════════════════════════════════
+// STARS — FULL FAMILY
+// ══════════════════════════════════
+const STAR_PEOPLE={
+  sarvagya:{name:'Sarvagya Sharma',dob:'23 Sep 1993',time:'12:10 AM',place:'Delhi',sign:'Libra ♎',isKid:false,role:'Father'},
+  pinki:   {name:'Pinki Sharma',   dob:'21 Sep 1996',time:'01:08 PM',place:'Mumbai',sign:'Virgo ♍',isKid:false,role:'Mother'},
+  vrinda:  {name:'Vrinda Saraswat',dob:'23 Jun 2022',time:'10:33 AM',place:'Gurgaon',sign:'Cancer ♋',isKid:true,role:'Daughter'},
+  vedant:  {name:'Vedant Saraswat',dob:'18 Feb 2024',time:'01:42 PM',place:'Gurgaon',sign:'Aquarius ♒',isKid:true,role:'Son'},
+};
+let savedStarReadings=load('ks-star-readings',[]);
+
+function selectStarPerson(card){
+  document.querySelectorAll('.star-person-card').forEach(c=>c.classList.remove('on'));
+  card.classList.add('on'); starPerson=card.dataset.sp;
+}
+function setStarType(btn){document.querySelectorAll('[data-srt]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');starType=btn.dataset.srt;}
+function renderStars(){
+  if(!document.querySelector('.star-person-card.on')){
+    const f=document.querySelector('.star-person-card'); if(f)f.classList.add('on');
+  }
+  renderStarSaved();
+}
+function renderStarSaved(){
+  const el=document.getElementById('star-saved');
+  const emp=document.getElementById('star-saved-empty');
+  const mine=savedStarReadings.filter(r=>r.person===starPerson||r.person==='family').slice(0,5);
+  if(!mine.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  el.innerHTML=mine.map(r=>`
+    <div class="star-saved-item" onclick="expandStarReading('${r.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <span style="font-size:11px;font-weight:800;color:var(--purple)">${r.typeLabel}</span>
+        <span style="font-size:9px;color:var(--ink3);font-weight:700">${r.date}</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(r.text.slice(0,120))}…</div>
+    </div>`).join('');
+}
+function expandStarReading(id){
+  const r=savedStarReadings.find(x=>x.id===id); if(!r) return;
+  const fmt=esc(r.text).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+  document.getElementById('star-output').innerHTML=`<div class="horo-card"><div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">🔮 ${r.typeLabel} · ${r.date}</div><div style="font-size:13px;color:var(--ink);line-height:1.85">${fmt}</div></div>`;
+}
+async function generateStarReading(){
+  const p=STAR_PEOPLE[starPerson];
+  const typeLabels={today:"Today's Reading",week:"This Week",month:"This Month",parenting:"Parenting Insight",family:"Family Energy"};
+  const typeLabel=typeLabels[starType]||"Reading";
+  const out=document.getElementById('star-output');
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Reading the stars…</div>';
+  const isFamily=starType==='family';
+  const kidAge=starPerson==='vrinda'?calcAge('23/06/2022'):calcAge('18/02/2024');
+  const bodyText=isFamily
+    ?`Write a FAMILY reading for the Saraswat-Sharma family: Sarvagya (Libra, father), Pinki (Virgo, mother), Vrinda (Cancer, daughter ${calcAge('23/06/2022')}), Vedant (Aquarius, son ${calcAge('18/02/2024')}). How is the family energy right now? What's working, what needs attention, what beautiful thing should they lean into together?`
+    :p.isKid
+      ?`Child: ${p.name} (${kidAge}), ${p.sign}, born ${p.dob} at ${p.time} in ${p.place}.\nWrite a reading to the parents — focus on the child's energy, mood, development opportunities, and how to support them.`
+      :`Person: ${p.name} (${p.role}), ${p.sign}, born ${p.dob} at ${p.time} in ${p.place}.\n${starType==='parenting'?`Focus on their role as ${p.role} — how their energy affects their parenting right now.`:'Write a direct personal reading.'}`;
+
+  const prompt=`You are a warm, insightful astrologer. Today: ${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}.
+
+${bodyText}
+
+Generate a ${typeLabel.toLowerCase()}.
+
+Structure with **bold** headers:
+**Overall Energy** · **Key Focus** · **Relationships** · **Watch For** · ${p&&p.isKid?`**For ${p.name}'s Parents** — one specific action`:`**Affirmation** — one powerful personal sentence`}
+
+Be warm, specific, grounded. Never generic.`;
+
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:10000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    const fmt=esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+    out.innerHTML=`
+      <div class="horo-card">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">🔮 ${typeLabel}${!isFamily&&p?' · '+p.name:''}</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.85">${fmt}</div>
+        <div style="display:flex;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid #e9d5ff;flex-wrap:wrap">
+          <button class="btn btn-sec" style="font-size:10px;padding:5px 12px" onclick="saveStarReading('${btoa(unescape(encodeURIComponent(reply)))}','${typeLabel}')">💾 Save</button>
+          <button class="btn btn-sec" style="font-size:10px;padding:5px 12px" onclick="navigator.clipboard.writeText(decodeURIComponent(escape(atob('${btoa(unescape(encodeURIComponent(reply)))}')))).then(()=>{})">Copy</button>
+        </div>
+      </div>`;
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px;padding:12px">⚠️ Could not reach Claude. Check connection.</div>';}
+}
+function saveStarReading(b64,typeLabel){
+  const text=decodeURIComponent(escape(atob(b64)));
+  const person=starType==='family'?'family':starPerson;
+  savedStarReadings.unshift({id:uid(),person,typeLabel,text,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
+  save('ks-star-readings',savedStarReadings);renderStarSaved();
+}
+
+// ══════════════════════════════════
+// PARENTING TRACKER
+// ══════════════════════════════════
+let ptLogs=load('ks-ptlogs',[]);
+let ptWho=['vrinda'],ptTypes=[],ptMood=5,ptDuration=30,ptFilter='all';
+
+function togglePWho(el){const v=el.dataset.pw;if(ptWho.includes(v))ptWho=ptWho.filter(x=>x!==v);else ptWho=[...ptWho,v];document.querySelectorAll('[data-pw]').forEach(b=>b.classList.toggle('on',ptWho.includes(b.dataset.pw)));}
+function togglePType(el){const v=el.dataset.pt;if(ptTypes.includes(v))ptTypes=ptTypes.filter(x=>x!==v);else ptTypes=[...ptTypes,v];document.querySelectorAll('[data-pt]').forEach(b=>b.classList.toggle('on',ptTypes.includes(b.dataset.pt)));}
+function selectMood(el){document.querySelectorAll('.pt-mood').forEach(m=>m.classList.remove('on'));el.classList.add('on');ptMood=parseInt(el.dataset.m);}
+function selectDuration(el){document.querySelectorAll('[data-pd]').forEach(b=>b.classList.remove('on'));el.classList.add('on');ptDuration=parseInt(el.dataset.pd);}
+function setPTFilter(btn){document.querySelectorAll('[data-ptf]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');ptFilter=btn.dataset.ptf;renderPTEntries();}
+function clearPTLog(){ptWho=['vrinda'];ptTypes=[];ptMood=5;ptDuration=30;document.getElementById('pt-win').value='';document.getElementById('pt-struggle').value='';document.querySelectorAll('[data-pw]').forEach(b=>b.classList.toggle('on',b.dataset.pw==='vrinda'));document.querySelectorAll('[data-pt],[data-pd]').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.pt-mood').forEach(m=>m.classList.remove('on'));}
+function savePTLog(){
+  if(!ptWho.length){return;}
+  ptLogs.unshift({id:uid(),date:td(),who:ptWho,types:ptTypes,mood:ptMood,duration:ptDuration,win:document.getElementById('pt-win').value.trim(),struggle:document.getElementById('pt-struggle').value.trim(),createdAt:new Date().toISOString()});
+  save('ks-ptlogs',ptLogs);clearPTLog();renderPTEntries();renderPTStats();renderPTHeatmap();
+}
+function renderPTEntries(){
+  let list=[...ptLogs];
+  if(ptFilter!=='all')list=list.filter(e=>e.who.includes(ptFilter)||e.who.includes('both'));
+  const el=document.getElementById('pt-entries'),emp=document.getElementById('pt-empty');
+  if(!list.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  const mE=['','😩','😔','😐','🙂','😊'],whoL={vrinda:'🌸',vedant:'⚡',both:'👨‍👧‍👦'};
+  const durL=d=>d<60?d+'min':d===60?'1hr':d===120?'2hrs':d===180?'½ day':'Full day';
+  el.innerHTML=list.slice(0,20).map(e=>`
+    <div class="pt-entry">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:20px">${mE[e.mood]||'😊'}</span>
+        <span style="font-family:'Baloo 2',cursive;font-size:12px;font-weight:800;color:var(--ink2)">${(e.who||[]).map(w=>whoL[w]||w).join(' ')}</span>
+        <span style="font-size:10px;font-weight:700;background:var(--ln);color:var(--ink2);padding:2px 8px;border-radius:99px">⏱ ${durL(e.duration)}</span>
+        <span style="font-size:10px;color:var(--ink3);margin-left:auto">${fdt(e.date)}</span>
+      </div>
+      ${(e.types||[]).length?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">${e.types.map(t=>`<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--sky);color:var(--ink2);border:1px solid var(--ln)">${t}</span>`).join('')}</div>`:''}
+      ${e.win?`<div style="font-size:12px;color:var(--ink);line-height:1.5;margin-bottom:5px">🏆 ${esc(e.win)}</div>`:''}
+      ${e.struggle?`<div style="font-size:12px;color:var(--ink2);line-height:1.5">💭 ${esc(e.struggle)}</div>`:''}
+      <button onclick="deletePTLog('${e.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:11px;margin-top:6px;font-weight:700">× Remove</button>
+    </div>`).join('');
+}
+function deletePTLog(id){ptLogs=ptLogs.filter(e=>e.id!==id);save('ks-ptlogs',ptLogs);renderPTEntries();renderPTStats();renderPTHeatmap();}
+function renderPTStats(){
+  const last30=ptLogs.filter(e=>(new Date()-new Date(e.date))<30*86400000);
+  const totalMin=last30.reduce((s,e)=>s+e.duration,0);
+  const avgMood=last30.length?Math.round(last30.reduce((s,e)=>s+e.mood,0)/last30.length*10)/10:0;
+  const wins=last30.filter(e=>e.win).length;
+  const mE=['','😩','😔','😐','🙂','😊'];
+  document.getElementById('pt-stats').innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+    <div class="stat-box"><div class="stat-n" style="color:var(--coral)">${Math.round(totalMin/60)}h</div><div class="stat-l">Quality Time<br>Last 30 days</div></div>
+    <div class="stat-box"><div class="stat-n" style="color:var(--purple)">${mE[Math.round(avgMood)]||'😊'}</div><div class="stat-l">Avg Mood<br>Together</div></div>
+    <div class="stat-box"><div class="stat-n" style="color:var(--mint)">${wins}</div><div class="stat-l">Wins Logged<br>This Month</div></div>
+  </div>`;
+}
+function renderPTHeatmap(){
+  const cells=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    const entries=ptLogs.filter(e=>e.date===ds);
+    const totalMin=entries.reduce((s,e)=>s+e.duration,0);
+    const intensity=totalMin===0?0:totalMin<60?1:totalMin<120?2:totalMin<240?3:4;
+    const colors=['#f5f0e8','#fde68a','#fb923c','#ef4444','#22c55e'];
+    cells.push({ds,dayName:d.toLocaleDateString('en-GB',{weekday:'short'}),totalMin,intensity,color:colors[intensity]});
+  }
+  document.getElementById('pt-heatmap').innerHTML=`<div style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap">
+    ${cells.map(c=>`<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="font-size:9px;color:var(--ink3);font-weight:700">${c.dayName}</div><div class="heatmap-cell" style="background:${c.color};color:${c.intensity>0?'var(--ink)':'var(--ink3)'}">${c.totalMin?Math.round(c.totalMin/60)+'h':'—'}</div></div>`).join('')}
+    <div style="margin-left:12px;font-size:11px;color:var(--ink3);line-height:1.9"><div>🟡 &lt;1h</div><div>🟠 1-2h</div><div>🔴 2-4h</div><div>🟢 4h+</div></div>
+  </div>`;
+}
+function renderTracker(){
+  renderPTEntries();renderPTStats();renderPTHeatmap();
+  document.querySelectorAll('[data-pw]').forEach(b=>b.classList.toggle('on',ptWho.includes(b.dataset.pw)));
+}
+
+// ══════════════════════════════════
+// AI INSIGHTS
+// ══════════════════════════════════
+let insightType='overview',insightHistory=[];
+
+function selectInsightType(card){document.querySelectorAll('.insight-type-card').forEach(c=>c.classList.remove('on'));card.classList.add('on');insightType=card.dataset.it;}
+
+function buildDataContext(){
+  const last30=ptLogs.filter(e=>(new Date()-new Date(e.date))<30*86400000);
+  const totalMin=last30.reduce((s,e)=>s+e.duration,0);
+  const avgMood=last30.length?(last30.reduce((s,e)=>s+e.mood,0)/last30.length).toFixed(1):null;
+  const typeFreq={};last30.forEach(e=>(e.types||[]).forEach(t=>{typeFreq[t]=(typeFreq[t]||0)+1;}));
+  const topTypes=Object.entries(typeFreq).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([t])=>t);
+  return `
+CHILDREN: Vrinda (${calcAge('23/06/2022')}, Cancer) · Vedant (${calcAge('18/02/2024')}, Aquarius)
+PARENTING TRACKER (last 30 days, ${last30.length} entries):
+- Quality time: ${Math.round(totalMin/60)}h total
+- Avg mood when together: ${avgMood||'not logged'}/5
+- Top activities: ${topTypes.join(', ')||'none logged'}
+- Wins: ${last30.filter(e=>e.win).map(e=>e.win).slice(0,4).join(' | ')||'none'}
+- Struggles: ${last30.filter(e=>e.struggle).map(e=>e.struggle).slice(0,4).join(' | ')||'none'}
+VRINDA: Milestones: ${(milestones.vrinda||[]).map(m=>m.title).join(', ')||'none'} · Observations: ${(observations.vrinda||[]).slice(0,3).map(o=>o.text).join(' | ')||'none'}
+VEDANT: Milestones: ${(milestones.vedant||[]).map(m=>m.title).join(', ')||'none'} · Observations: ${(observations.vedant||[]).slice(0,3).map(o=>o.text).join(' | ')||'none'}
+HEALTH: ${healthLog.length} entries · MEMORIES: ${memories.length} saved`.trim();
+}
+const INSIGHT_PROMPTS={
+  overview:`Give a warm, honest overview. **What You're Doing Well** · **What the Data Tells You** (2-3 patterns) · **One Thing to Focus On** · **This Week's Challenge**`,
+  quality_time:`Analyse quality time. **How Much Time Is Being Spent** · **Quality vs Quantity** · **What the Kids Need Right Now** at these exact ages · **3 Ways to Maximise Time**`,
+  development:`**Vrinda's Development** — what's strong, what to nurture · **Vedant's Development** — what's strong, what to nurture · **Gaps to Fill** · **3 Targeted Activities**`,
+  balance:`**What's Getting Attention** · **What's Missing** · **Balance Check** across physical/creative/reading/outdoor · **A Balanced Week Plan**`,
+  struggles:`**Patterns in Struggles** · **Root Cause Analysis** · **What's Working** (wins as counter-evidence) · **5 Practical Strategies** for the most common struggles`,
+  better_parent:`**Your Biggest Strength** · **The One Honest Gap** (said kindly) · **For Vrinda specifically** · **For Vedant specifically** · **30-Day Challenge** · **A Note for the Hard Days**`
+};
+async function generateInsight(){
+  const ctx=document.getElementById('insight-context').value.trim();
+  const out=document.getElementById('insight-output');
+  insightHistory=[];
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Claude is reading through everything…</div>';
+  document.getElementById('insight-chat-section').style.display='none';
+  const msg=`Here is the family data:\n\n${buildDataContext()}${ctx?'\n\nParent context: '+ctx:''}\n\n${INSIGHT_PROMPTS[insightType]||INSIGHT_PROMPTS.overview}\n\nBe specific, warm, and grounded. Use **bold** for all section headers.`;
+  insightHistory=[{role:'user',content:msg}];
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:1000,
+        system:`You are a compassionate family coach and child development specialist. You have access to a family's parenting data. Give warm, specific, data-driven insights. The family: Sarvagya (father, Libra), Pinki (mother, Virgo), Vrinda (daughter ${calcAge('23/06/2022')}, Cancer), Vedant (son ${calcAge('18/02/2024')}, Aquarius). They live in the UK.`,
+        messages:insightHistory})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    insightHistory.push({role:'assistant',content:reply});
+    const fmt=esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+    out.innerHTML=`<div class="insight-panel"><div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px">✨ Your Insight</div><div class="insight-text">${fmt}</div><div style="display:flex;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid #e9d5ff;flex-wrap:wrap"><button class="btn btn-sec" style="font-size:10px;padding:5px 12px" onclick="navigator.clipboard.writeText(decodeURIComponent(escape(atob('${btoa(unescape(encodeURIComponent(reply)))}')))).then(()=>{})">Copy</button><button class="btn btn-sec" style="font-size:10px;padding:5px 12px" onclick="generateInsight()">Regenerate</button></div></div>`;
+    document.getElementById('insight-chat-section').style.display='block';
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px;padding:12px">⚠️ Could not reach Claude. Check connection.</div>';}
+}
+async function insightFollowup(){
+  const q=document.getElementById('insight-followup').value.trim(); if(!q) return;
+  const out=document.getElementById('insight-followup-out');
+  insightHistory.push({role:'user',content:q});
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Thinking…</div>';
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:10000,
+        system:`You are a compassionate family coach. Continue the parenting conversation. Be warm, specific, practical.`,
+        messages:insightHistory})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    insightHistory.push({role:'assistant',content:reply});
+    out.innerHTML=`<div style="background:white;border:1px solid var(--ln);border-radius:12px;padding:14px;font-size:13px;color:var(--ink);line-height:1.8">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>`;
+    document.getElementById('insight-followup').value='';
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px">⚠️ Could not reach Claude.</div>';}
+}
+function renderInsights(){if(!document.querySelector('.insight-type-card.on')){const f=document.querySelector('.insight-type-card');if(f)f.classList.add('on');}}
+
+// ── AI PROFILE + QUICK ACTIVITY (unchanged) ──
+async function askKidAI(kid,inputId,outputId){
+  const q=document.getElementById(inputId).value.trim(); if(!q) return;
+  const out=document.getElementById(outputId);
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Thinking…</div>';
+  const k=kid==='vrinda'?{name:'Vrinda',age:calcAge('23/06/2022'),dob:'23 June 2022'}:{name:'Vedant',age:calcAge('18/02/2024'),dob:'18 Feb 2024'};
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:2000,system:`You are a warm child development specialist. The parent asks about ${k.name}, who is ${k.age} (born ${k.dob}). Be practical, age-specific, empathetic. 4-6 sentences max. Always recommend paediatrician for medical concerns.`,messages:[{role:'user',content:q}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    out.innerHTML=`<div style="background:white;border:1px solid var(--ln);border-radius:12px;padding:14px;font-size:13px;color:var(--ink);line-height:1.8;margin-top:8px">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>`;
+  }catch(e){out.innerHTML='<div style="color:var(--coral);font-size:13px">⚠️ Could not reach Claude.</div>';}
+}
+async function quickActivity(){
+  const out=document.getElementById('home-activity');
+  out.innerHTML='<div class="loading"><div class="loading-dots"><span></span><span></span><span></span></div> Getting an idea…</div>';
+  try{
+    const res=await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({max_tokens:1000,messages:[{role:'user',content:`ONE quick activity for Vrinda (${calcAge('23/06/2022')}) or Vedant (${calcAge('18/02/2024')}) or both. Today: ${new Date().toLocaleDateString('en-GB',{weekday:'long'})}. Format: **Name** then 3 sentences max. Fresh and creative.`}]})});
+    const data=await res.json();
+    const reply=data.content?.map(c=>c.text||'').join('')||'';
+    out.innerHTML=`<div style="font-size:13px;color:var(--ink);line-height:1.7">${esc(reply).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--coral)">$1</b>').replace(/\n/g,'<br>')}</div>`;
+  }catch(e){out.innerHTML='<div style="font-size:13px;color:var(--ink3)">Tap New Idea when you have connection.</div>';}
+}
+
+// ── INIT ──
+function go(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+  const fn={home:renderHome,vrinda:renderVrinda,vedant:renderVedant,vaccines:renderVaccines,activities:renderActivities,growth:renderGrowth,memories:renderMemories,health:renderHealth,stars:renderStars,tracker:renderTracker,insights:renderInsights};
+  if(fn[id]) fn[id]();
+}
+renderHome();renderStars();renderVaccines();renderActivities();renderGrowth();renderMemories();renderHealth();renderTracker();renderInsights();
+document.title='Little Stars · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+
+// ── AI CALL HELPER with retry + rate limit handling ──
+async function aiCall(payload, retries=2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = data?.error?.message || data?.content?.[0]?.text || 'API error';
+        // Rate limit — wait and retry
+        if ((res.status === 429 || msg.includes('quota') || msg.includes('rate')) && attempt < retries) {
+          await new Promise(r => setTimeout(r, (attempt + 1) * 3000));
+          continue;
+        }
+        throw new Error(msg);
+      }
+      return data.content?.map(c => c.text || '').join('') || '';
+    } catch (e) {
+      if (attempt === retries) throw e;
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}
+
+</script>
+</body>
+</html>
