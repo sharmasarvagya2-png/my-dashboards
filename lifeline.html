@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lifeline · Your Sacred Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a;
+  --bg2:#0f1525;
+  --bg3:#141b2e;
+  --surface:#1a2236;
+  --surface2:#1f2a40;
+  --border:#2a3550;
+  --border2:#3a4a6a;
+  --gold:#e8b86d;
+  --gold2:#f5d48a;
+  --gold3:#c49a4a;
+  --ink:#e8e2d4;
+  --ink2:#a09880;
+  --ink3:#6a6050;
+  --saffron:#e87d3e;
+  --lotus:#c47db5;
+  --teal:#4ab8c4;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+/* Stars background */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 20% 20%, rgba(232,184,109,.04) 0%, transparent 50%),
+             radial-gradient(ellipse at 80% 80%, rgba(196,125,181,.04) 0%, transparent 50%),
+             radial-gradient(ellipse at 50% 0%, rgba(74,184,196,.03) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,14,26,.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:16px;padding:0 20px;height:58px;
+}
+.logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--gold);letter-spacing:.05em;
+  white-space:nowrap;flex-shrink:0;
+  font-style:italic;
+}
+.logo span{color:var(--ink2);font-size:12px;font-style:normal;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:.15em;text-transform:uppercase;display:block;line-height:1}
+.tabs{display:flex;gap:2px;overflow-x:auto;flex:1}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--ink3);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap;letter-spacing:.03em}
+.tab-btn:hover{color:var(--gold);background:rgba(232,184,109,.07)}
+.tab-btn.on{color:var(--gold);background:rgba(232,184,109,.12);border:1px solid rgba(232,184,109,.2)}
+.page{display:none;max-width:780px;margin:0 auto;padding:32px 18px 80px;position:relative;z-index:1}
+.page.on{display:block}
+
+/* Header */
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,6vw,42px);font-weight:300;color:var(--gold);letter-spacing:-.02em;line-height:1.1;margin-bottom:4px;font-style:italic}
+.pg-sub{font-size:12px;color:var(--ink3);margin-bottom:24px;letter-spacing:.08em;text-transform:uppercase}
+.deco{height:1px;background:linear-gradient(90deg,transparent,var(--gold3),var(--lotus),var(--teal),transparent);margin-bottom:28px;opacity:.5}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+
+/* Buttons */
+.btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:9px 18px;border-radius:10px;cursor:pointer;border:none;transition:all .18s;letter-spacing:.02em}
+.btn-gold{background:linear-gradient(135deg,var(--gold3),var(--gold));color:#0a0e1a;font-weight:600}
+.btn-gold:hover{opacity:.88}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink2)}
+.btn-ghost:hover{border-color:var(--gold3);color:var(--gold)}
+.btn-sm{font-size:11px;padding:5px 12px;border-radius:7px}
+
+/* Inputs */
+textarea,input,select{
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:9px;padding:10px 14px;outline:none;transition:border .18s;width:100%;
+}
+textarea:focus,input:focus,select:focus{border-color:var(--gold3)}
+textarea{resize:vertical;line-height:1.7}
+select option{background:var(--bg3)}
+
+.form-label{font-size:10px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;display:block}
+.form-row{margin-bottom:14px}
+
+/* Verse card */
+.verse-card{
+  background:linear-gradient(135deg,rgba(232,184,109,.06),rgba(196,125,181,.06));
+  border:1px solid rgba(232,184,109,.2);
+  border-radius:var(--r);padding:24px;margin-bottom:24px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.verse-card::before{
+  content:'॥';position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  font-family:'Cormorant Garamond',serif;font-size:80px;color:rgba(232,184,109,.05);
+  line-height:1;pointer-events:none;
+}
+.verse-sanskrit{
+  font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;
+  color:var(--gold);line-height:1.8;margin-bottom:12px;font-style:italic;
+}
+.verse-translation{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:8px}
+.verse-ref{font-size:11px;color:var(--gold3);letter-spacing:.1em;text-transform:uppercase}
+.verse-refresh{position:absolute;top:12px;right:12px;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:14px;transition:color .2s;padding:4px}
+.verse-refresh:hover{color:var(--gold)}
+
+/* Journal entries */
+.entry-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+  transition:border-color .2s;
+}
+.entry-card:hover{border-color:var(--border2)}
+.entry-date{font-size:10px;color:var(--gold3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.entry-mood{display:inline-block;font-size:14px;margin-right:6px}
+.entry-body{font-size:13px;color:var(--ink2);line-height:1.7;margin-top:6px;white-space:pre-wrap}
+.entry-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(232,184,109,.1);color:var(--gold3);letter-spacing:.05em}
+
+/* Moods */
+.mood-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.mood-btn{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:6px 14px;cursor:pointer;font-size:18px;transition:all .18s}
+.mood-btn:hover,.mood-btn.on{border-color:var(--gold3);background:rgba(232,184,109,.1)}
+
+/* Wisdom guide */
+.guide-card{
+  background:linear-gradient(135deg,rgba(10,14,26,.8),rgba(15,21,37,.8));
+  border:1px solid var(--border);border-radius:var(--r);padding:20px;
+  margin-top:12px;
+}
+.guide-mode-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.guide-mode-btn{
+  flex:1;min-width:120px;padding:10px 8px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--border);background:var(--bg3);
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;
+  color:var(--ink2);text-align:center;transition:all .2s;
+}
+.guide-mode-btn:hover,.guide-mode-btn.on{border-color:var(--gold3);color:var(--gold);background:rgba(232,184,109,.08)}
+.guide-response{
+  font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;
+  color:var(--ink);line-height:1.9;white-space:pre-wrap;
+  border-left:2px solid var(--gold3);padding-left:16px;margin-top:14px;
+}
+.ai-loading{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink3);padding:12px 0;letter-spacing:.05em}
+.ai-dots span{width:5px;height:5px;border-radius:50%;background:var(--gold3);display:inline-block;animation:pulse .9s infinite}
+.ai-dots span:nth-child(2){animation-delay:.2s}
+.ai-dots span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* Gratitude */
+.grat-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.grat-item:last-child{border-bottom:none}
+.grat-num{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold3);min-width:20px;line-height:1.4}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;transition:all .18s;position:relative}
+.cal-day.has-entry{background:rgba(232,184,109,.15);color:var(--gold)}
+.cal-day.today{border:1px solid var(--gold3);color:var(--gold)}
+.cal-day.empty{opacity:.2}
+.cal-day:hover{background:rgba(232,184,109,.1)}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.cal-dh{text-align:center;font-size:9px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase}
+
+/* Streaks */
+.streak-row{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.streak-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1;min-width:100px;text-align:center}
+.streak-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold);line-height:1}
+.streak-label{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+
+/* Sync dot */
+#sync-status-dot{width:8px;height:8px;border-radius:50%;background:#444;flex-shrink:0;margin-left:4px;cursor:pointer;transition:background .5s;align-self:center}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:min(520px,94vw);max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--gold);margin-bottom:16px;font-style:italic}
+
+@media(max-width:500px){.streak-row{gap:8px}.streak-box{padding:10px 12px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">
+    Lifeline
+    <span>Your Sacred Space</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn on"  onclick="go('today',this)">🕯️ Today</button>
+    <button class="tab-btn"     onclick="go('journal',this)">📖 Journal</button>
+    <button class="tab-btn"     onclick="go('gita',this)">🪷 Gita</button>
+    <button class="tab-btn"     onclick="go('guide',this)">🙏 Guide</button>
+    <button class="tab-btn"     onclick="go('calendar',this)">🌙 Journey</button>
+  </div>
+  <button onclick="showBackup()" style="flex-shrink:0;background:none;border:1px solid rgba(232,184,109,.2);border-radius:8px;color:var(--ink3);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:5px 10px;cursor:pointer;white-space:nowrap;transition:all .18s;margin-left:4px" onmouseover="this.style.borderColor='var(--gold3)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(232,184,109,.2)';this.style.color='var(--ink3)'">☁️ Backup</button>
+  <div id="sync-status-dot" title="Sync ready" onclick="cloudLoad()"></div>
+</nav>
+
+<!-- ════════ TODAY ════════ -->
+<div id="p-today" class="page on">
+  <div class="pg-title">How are you today?</div>
+  <div class="pg-sub">This moment is yours alone</div>
+  <div class="deco"></div>
+
+  <div class="streak-row">
+    <div class="streak-box">
+      <div class="streak-num" id="streak-count">0</div>
+      <div class="streak-label">Day Streak</div>
+    </div>
+    <div class="streak-box">
+      <div class="streak-num" id="total-entries">0</div>
+      <div class="streak-label">Total Entries</div>
+    </div>
+    <div class="streak-box">
+      <div class="streak-num" id="days-since">—</div>
+      <div class="streak-label">Days on Journey</div>
+    </div>
+  </div>
+
+  <!-- Daily verse -->
+  <div class="verse-card" id="daily-verse-card">
+    <button class="verse-refresh" onclick="loadDailyVerse(true)" title="New verse">↻</button>
+    <div id="daily-verse-content">
+      <div class="ai-loading" style="justify-content:center">✦ Calling today's verse… <div class="ai-dots"><span></span><span></span><span></span></div></div>
+    </div>
+  </div>
+
+  <!-- Today's entry -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-style:italic" id="today-date-display"></div>
+      <div id="today-saved-badge" style="display:none;font-size:10px;color:var(--gold3);letter-spacing:.1em;text-transform:uppercase">✓ Saved</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">How are you feeling?</div>
+      <div class="mood-row" id="mood-row">
+        <button class="mood-btn" data-mood="🌅" onclick="selectMood(this)">🌅</button>
+        <button class="mood-btn" data-mood="😌" onclick="selectMood(this)">😌</button>
+        <button class="mood-btn" data-mood="🙏" onclick="selectMood(this)">🙏</button>
+        <button class="mood-btn" data-mood="💭" onclick="selectMood(this)">💭</button>
+        <button class="mood-btn" data-mood="😔" onclick="selectMood(this)">😔</button>
+        <button class="mood-btn" data-mood="🔥" onclick="selectMood(this)">🔥</button>
+        <button class="mood-btn" data-mood="🌊" onclick="selectMood(this)">🌊</button>
+        <button class="mood-btn" data-mood="✨" onclick="selectMood(this)">✨</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">What's on your mind?</div>
+      <textarea id="entry-body" rows="6" placeholder="Write freely. This is your sanctuary. No judgment, no audience — just you and the page."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">Three things I'm grateful for today</div>
+      <input id="grat-1" type="text" placeholder="1. " style="margin-bottom:6px">
+      <input id="grat-2" type="text" placeholder="2. " style="margin-bottom:6px">
+      <input id="grat-3" type="text" placeholder="3. ">
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">One intention for today</div>
+      <input id="entry-intention" type="text" placeholder="What do you want to carry through today?">
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-gold" onclick="saveEntry()" style="flex:1">Save Entry</button>
+      <button class="btn btn-ghost" onclick="askGuide()" style="flex:1">🙏 Ask for Guidance</button>
+    </div>
+    <div id="today-guide-out"></div>
+  </div>
+</div>
+
+<!-- ════════ JOURNAL ════════ -->
+<div id="p-journal" class="page">
+  <div class="pg-title">Your Journal</div>
+  <div class="pg-sub">Every word a prayer, every page a step</div>
+  <div class="deco"></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+    <input id="journal-search" type="text" placeholder="Search entries…" style="flex:1;min-width:160px" oninput="renderJournal()">
+    <select id="journal-mood-filter" onchange="renderJournal()" style="width:auto;flex-shrink:0">
+      <option value="">All moods</option>
+      <option>🌅</option><option>😌</option><option>🙏</option>
+      <option>💭</option><option>😔</option><option>🔥</option>
+      <option>🌊</option><option>✨</option>
+    </select>
+  </div>
+
+  <div id="journal-list"></div>
+  <div id="journal-empty" class="empty" style="text-align:center;padding:40px;color:var(--ink3);font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic">
+    Your story begins when you write the first word.
+  </div>
+</div>
+
+<!-- ════════ GITA ════════ -->
+<div id="p-gita" class="page">
+  <div class="pg-title">Bhagavad Gita</div>
+  <div class="pg-sub">Eternal wisdom for the present moment</div>
+  <div class="deco"></div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="form-label" style="margin-bottom:10px">Seek a verse by theme or feeling</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('duty and dharma')">Dharma</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('detachment from results')">Nishkama Karma</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('fear and courage')">Fear</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('grief and loss')">Grief</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('the eternal soul atman')">Soul</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('surrender to God')">Surrender</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('mind and self-control')">Mind</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('love and devotion bhakti')">Bhakti</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('equanimity in joy and sorrow')">Equanimity</button>
+      <button class="btn btn-ghost btn-sm" onclick="seekVerse('action without ego')">Ego</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="gita-custom" type="text" placeholder="Or type your own theme / question…">
+      <button class="btn btn-gold btn-sm" onclick="seekVerse(document.getElementById('gita-custom').value)" style="white-space:nowrap">Seek →</button>
+    </div>
+  </div>
+
+  <div id="gita-verse-out"></div>
+
+  <div style="margin-top:24px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink3);margin-bottom:12px;letter-spacing:.05em">SAVED VERSES</div>
+    <div id="saved-verses-list"></div>
+    <div id="saved-verses-empty" style="text-align:center;padding:24px;color:var(--ink3);font-size:13px">No saved verses yet. Seek and save what speaks to you.</div>
+  </div>
+</div>
+
+<!-- ════════ GUIDE ════════ -->
+<div id="p-guide" class="page">
+  <div class="pg-title">Seek Guidance</div>
+  <div class="pg-sub">Speak freely. Be heard. Receive wisdom.</div>
+  <div class="deco"></div>
+
+  <div class="card">
+    <div class="form-row">
+      <div class="form-label">Choose your guide</div>
+      <div class="guide-mode-row">
+        <div class="guide-mode-btn on" data-mode="premanand" onclick="setGuideMode(this)">
+          🪷 Premanand Ji<br>
+          <span style="font-size:10px;opacity:.7">Warm satsang wisdom</span>
+        </div>
+        <div class="guide-mode-btn" data-mode="gita" onclick="setGuideMode(this)">
+          📖 Bhagavad Gita<br>
+          <span style="font-size:10px;opacity:.7">Verse + meaning</span>
+        </div>
+        <div class="guide-mode-btn" data-mode="therapist" onclick="setGuideMode(this)">
+          💙 Therapist<br>
+          <span style="font-size:10px;opacity:.7">Emotional + wisdom</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">What's weighing on you?</div>
+      <textarea id="guide-question" rows="5" placeholder="Share what's on your heart. There is no wrong thing to say here."></textarea>
+    </div>
+
+    <button class="btn btn-gold" onclick="getGuidance()" style="width:100%">🙏 Receive Guidance</button>
+    <div id="guide-output"></div>
+  </div>
+
+  <div style="margin-top:24px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink3);margin-bottom:12px;letter-spacing:.05em">PAST WISDOM</div>
+    <div id="guidance-history"></div>
+    <div id="guidance-empty" style="text-align:center;padding:24px;color:var(--ink3);font-size:13px">Your guidance conversations will appear here.</div>
+  </div>
+</div>
+
+<!-- ════════ JOURNEY / CALENDAR ════════ -->
+<div id="p-calendar" class="page">
+  <div class="pg-title">Your Journey</div>
+  <div class="pg-sub">Every day written is a day fully lived</div>
+  <div class="deco"></div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <button class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">← Prev</button>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-style:italic" id="cal-month-label"></div>
+      <button class="btn btn-ghost btn-sm" onclick="changeMonth(1)">Next →</button>
+    </div>
+    <div class="cal-header">
+      <div class="cal-dh">Su</div><div class="cal-dh">Mo</div><div class="cal-dh">Tu</div>
+      <div class="cal-dh">We</div><div class="cal-dh">Th</div><div class="cal-dh">Fr</div><div class="cal-dh">Sa</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <div id="cal-entry-preview" style="display:none"></div>
+
+  <div style="margin-top:8px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink3);margin-bottom:12px;letter-spacing:.05em">RECENT REFLECTIONS</div>
+    <div id="recent-entries"></div>
+  </div>
+</div>
+
+<!-- ════════ BACKUP MODAL ════════ -->
+<div id="backup-overlay" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center" onclick="if(event.target===this)hideBackup()">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:min(420px,92vw);max-height:86vh;overflow-y:auto">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--gold);margin-bottom:4px;font-style:italic">☁️ Backup & Restore</div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:18px">Your journal is sacred. Keep it safe.</div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);margin-bottom:3px">🔄 Google Drive Sync</div>
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:10px;line-height:1.5">Save to Drive — load on any device.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="saveToGDrive()" style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:10px 6px;border-radius:10px;cursor:pointer;background:linear-gradient(135deg,var(--gold3),var(--gold));border:none;color:#0a0e1a">💾 Save to Drive</button>
+        <button onclick="loadFromGDrive()" style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:10px 6px;border-radius:10px;cursor:pointer;background:var(--surface);border:1px solid var(--border2);color:var(--ink2)">📂 Load from Drive</button>
+      </div>
+      <div id="ll-gdrive-status" style="font-size:11px;margin-top:6px;display:none;font-weight:500"></div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:14px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);margin-bottom:8px">📱 Manual Backup</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="exportBackup()" style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;padding:10px 6px;border-radius:10px;cursor:pointer;background:var(--surface);border:1px solid var(--border2);color:var(--ink2)">📤 Download</button>
+        <label style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;padding:10px 6px;border-radius:10px;cursor:pointer;background:var(--surface);border:1px solid var(--border2);color:var(--ink2);text-align:center;box-sizing:border-box">
+          📥 Restore <input type="file" accept=".json" onchange="importBackup(event)" style="display:none">
+        </label>
+      </div>
+    </div>
+    <button onclick="hideBackup()" style="width:100%;font-family:'DM Sans',sans-serif;font-size:13px;padding:11px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--border2);color:var(--ink3)">Close</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CLOUD SYNC
+// ═══════════════════════════════════════════════
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbziMKPhbZVP2Z45uCQCXT-5qHChxCMZOZX0Xi3rnkeV_WPlgv9caOdo_yZAyJe8iFA/exec';
+const DASHBOARD_ID = 'lifeline';
+let syncTimer = null;
+let isSyncing = false;
+const LT_KEYS = ['ll-entries','ll-saved-verses','ll-guidance','ll-verse-cache'];
+
+function getAllData(){
+  const data={};
+  LT_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!==null)data[k]=v;});
+  return data;
+}
+function cloudSave(){
+  if(!SYNC_URL||SYNC_URL.includes('__SCRIPT'))return;
+  clearTimeout(syncTimer);syncTimer=setTimeout(doCloudSave,2000);
+}
+async function doCloudSave(){
+  if(isSyncing)return;isSyncing=true;showSyncDot('saving');
+  try{
+    const payload=encodeURIComponent(JSON.stringify(getAllData()));
+    const res=await fetch(SYNC_URL+'?action=save&dashboard='+DASHBOARD_ID+'&payload='+payload);
+    const json=await res.json();showSyncDot(json.ok?'saved':'error');
+  }catch(e){showSyncDot('error');}
+  isSyncing=false;
+}
+async function cloudLoad(){
+  if(!SYNC_URL||SYNC_URL.includes('__SCRIPT'))return;
+  showSyncDot('loading');
+  try{
+    const res=await fetch(SYNC_URL+'?action=load&dashboard='+DASHBOARD_ID);
+    const json=await res.json();
+    if(json.ok&&json.data&&Object.keys(json.data).length>0){
+      const d=json.data;
+      LT_KEYS.forEach(k=>{if(d[k]!==undefined)localStorage.setItem(k,d[k]);});
+      loadAll();showSyncDot('loaded');
+    }else showSyncDot('idle');
+  }catch(e){showSyncDot('error');}
+}
+function showSyncDot(state){
+  const el=document.getElementById('sync-status-dot');if(!el)return;
+  const c={idle:'#444',saving:'#e8b86d',saved:'#4ab8c4',loading:'#c47db5',loaded:'#4ab8c4',error:'#e87d3e'};
+  el.style.background=c[state]||'#444';
+  if(state==='saved'||state==='loaded')setTimeout(()=>{el.style.background='#44445566';},3000);
+}
+window.addEventListener('load',()=>{setTimeout(cloudLoad,1000);});
+
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));cloudSave();}
+
+let entries     = load('ll-entries',[]);
+let savedVerses = load('ll-saved-verses',[]);
+let guidanceLog = load('ll-guidance',[]);
+let verseCache  = load('ll-verse-cache',{});
+
+let selectedMood = '';
+let guideMode = 'premanand';
+let calYear, calMonth;
+
+const now = new Date();
+calYear = now.getFullYear();
+calMonth = now.getMonth();
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function fmtDate(d){return new Date(d).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+function fmtShort(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
+function todayKey(){return new Date().toISOString().slice(0,10);}
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+function go(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  const renders={journal:renderJournal,gita:renderSavedVerses,guide:renderGuidanceHistory,calendar:renderCalendar};
+  if(renders[id])renders[id]();
+}
+
+// ═══════════════════════════════════════════════
+// TODAY
+// ═══════════════════════════════════════════════
+function initToday(){
+  document.getElementById('today-date-display').textContent = fmtDate(new Date());
+  updateStreaks();
+  loadTodayEntry();
+  loadDailyVerse(false);
+}
+
+function updateStreaks(){
+  document.getElementById('total-entries').textContent = entries.length;
+  // Streak calc
+  let streak=0;
+  const d=new Date();
+  while(true){
+    const key=d.toISOString().slice(0,10);
+    if(entries.find(e=>e.date===key)){streak++;d.setDate(d.getDate()-1);}
+    else break;
+  }
+  document.getElementById('streak-count').textContent=streak;
+  // Days since first entry
+  if(entries.length>0){
+    const first=new Date(entries[entries.length-1].date);
+    const diff=Math.floor((new Date()-first)/(1000*60*60*24));
+    document.getElementById('days-since').textContent=diff;
+  }
+}
+
+function loadTodayEntry(){
+  const key=todayKey();
+  const existing=entries.find(e=>e.date===key);
+  if(existing){
+    document.getElementById('entry-body').value=existing.body||'';
+    document.getElementById('grat-1').value=existing.gratitude?.[0]||'';
+    document.getElementById('grat-2').value=existing.gratitude?.[1]||'';
+    document.getElementById('grat-3').value=existing.gratitude?.[2]||'';
+    document.getElementById('entry-intention').value=existing.intention||'';
+    if(existing.mood){
+      selectedMood=existing.mood;
+      document.querySelectorAll('.mood-btn').forEach(b=>{
+        b.classList.toggle('on',b.dataset.mood===existing.mood);
+      });
+    }
+    document.getElementById('today-saved-badge').style.display='block';
+  }
+}
+
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  selectedMood=btn.dataset.mood;
+}
+
+function saveEntry(){
+  const key=todayKey();
+  const body=document.getElementById('entry-body').value.trim();
+  if(!body&&!selectedMood)return;
+  const entry={
+    id:uid(),date:key,
+    mood:selectedMood,
+    body,
+    gratitude:[
+      document.getElementById('grat-1').value.trim(),
+      document.getElementById('grat-2').value.trim(),
+      document.getElementById('grat-3').value.trim(),
+    ].filter(Boolean),
+    intention:document.getElementById('entry-intention').value.trim(),
+    ts:Date.now()
+  };
+  const idx=entries.findIndex(e=>e.date===key);
+  if(idx>-1)entries[idx]=entry;else entries.unshift(entry);
+  save('ll-entries',entries);
+  updateStreaks();
+  document.getElementById('today-saved-badge').style.display='block';
+  // Flash saved
+  const badge=document.getElementById('today-saved-badge');
+  badge.style.color='var(--gold)';
+  setTimeout(()=>{badge.style.color='var(--gold3)';},1000);
+}
+
+async function askGuide(){
+  const body=document.getElementById('entry-body').value.trim();
+  if(!body)return alert('Write something first, then ask for guidance.');
+  const out=document.getElementById('today-guide-out');
+  out.innerHTML='<div class="ai-loading">🙏 Seeking wisdom… <div class="ai-dots"><span></span><span></span><span></span></div></div>';
+  try{
+    const text=await aiCall({
+      model:'claude-sonnet-4-20250514',max_tokens:500,
+      system:getSystemPrompt('premanand'),
+      messages:[{role:'user',content:`I just wrote this in my journal today:\n\n"${body}"\n\nPlease offer me gentle guidance.`}]
+    });
+    out.innerHTML=`<div class="guide-response" style="margin-top:16px">${text}</div>`;
+  }catch(e){out.innerHTML=`<div style="color:var(--saffron);font-size:12px;margin-top:10px">${e.message}</div>`;}
+}
+
+// ═══════════════════════════════════════════════
+// DAILY VERSE
+// ═══════════════════════════════════════════════
+async function loadDailyVerse(force=false){
+  const key='verse-'+todayKey();
+  if(!force&&verseCache[key]){
+    renderVerse(verseCache[key],document.getElementById('daily-verse-content'));return;
+  }
+  document.getElementById('daily-verse-content').innerHTML='<div class="ai-loading" style="justify-content:center">✦ Calling today\'s verse… <div class="ai-dots"><span></span><span></span><span></span></div></div>';
+  try{
+    const text=await aiCall({
+      model:'claude-sonnet-4-20250514',max_tokens:400,
+      messages:[{role:'user',content:`Share one Bhagavad Gita verse relevant for today. Format exactly as:
+SANSKRIT: [Sanskrit verse]
+TRANSLATION: [English translation]
+CHAPTER: [Chapter X, Verse Y]
+REFLECTION: [2-3 sentences on how to apply this today]
+
+Choose a verse that feels timely and meaningful.`}]
+    });
+    verseCache[key]=text;save('ll-verse-cache',verseCache);
+    renderVerse(text,document.getElementById('daily-verse-content'));
+  }catch(e){
+    document.getElementById('daily-verse-content').innerHTML=`<div style="color:var(--saffron);font-size:12px">${e.message}</div>`;
+  }
+}
+
+function renderVerse(text,container){
+  const sm=text.match(/SANSKRIT:\s*([^\n]+)/i);
+  const tm=text.match(/TRANSLATION:\s*([^\n]+)/i);
+  const cm=text.match(/CHAPTER:\s*([^\n]+)/i);
+  const rm=text.match(/REFLECTION:\s*([\s\S]+?)(?=\n[A-Z]+:|$)/i);
+  container.innerHTML=`
+    <div class="verse-sanskrit">${sm?sm[1].trim():''}</div>
+    <div class="verse-translation">${tm?'"'+tm[1].trim()+'"':''}</div>
+    <div class="verse-ref">${cm?cm[1].trim():''}</div>
+    ${rm?`<div style="font-size:12px;color:var(--ink3);margin-top:12px;line-height:1.7;font-style:italic">${rm[1].trim()}</div>`:''}`;
+}
+
+// ═══════════════════════════════════════════════
+// JOURNAL
+// ═══════════════════════════════════════════════
+function renderJournal(){
+  const search=document.getElementById('journal-search').value.toLowerCase();
+  const moodF=document.getElementById('journal-mood-filter').value;
+  let filtered=entries;
+  if(search)filtered=filtered.filter(e=>(e.body||'').toLowerCase().includes(search)||(e.intention||'').toLowerCase().includes(search));
+  if(moodF)filtered=filtered.filter(e=>e.mood===moodF);
+  const el=document.getElementById('journal-list');
+  const emp=document.getElementById('journal-empty');
+  if(!filtered.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  el.innerHTML=filtered.map(e=>`
+    <div class="entry-card">
+      <div class="entry-date">${fmtDate(e.date+' 12:00')}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        ${e.mood?`<span class="entry-mood">${e.mood}</span>`:''}
+        ${e.intention?`<span style="font-size:12px;color:var(--gold3);font-style:italic">"${e.intention}"</span>`:''}
+      </div>
+      ${e.body?`<div class="entry-body">${e.body.slice(0,300)}${e.body.length>300?'…':''}</div>`:''}
+      ${e.gratitude&&e.gratitude.length?`
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Grateful for</div>
+          ${e.gratitude.map(g=>`<div style="font-size:12px;color:var(--ink2);line-height:1.6">✦ ${g}</div>`).join('')}
+        </div>`:''}
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-ghost btn-sm" onclick="viewFullEntry('${e.id}')">Read</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteEntry('${e.id}')">Delete</button>
+      </div>
+      <div id="full-${e.id}" style="display:none;margin-top:10px">
+        <div class="entry-body" style="color:var(--ink)">${e.body||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function viewFullEntry(id){
+  const el=document.getElementById('full-'+id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+function deleteEntry(id){
+  if(!confirm('Delete this entry?'))return;
+  entries=entries.filter(e=>e.id!==id);
+  save('ll-entries',entries);renderJournal();updateStreaks();
+}
+
+// ═══════════════════════════════════════════════
+// GITA
+// ═══════════════════════════════════════════════
+async function seekVerse(theme){
+  if(!theme.trim())return;
+  const out=document.getElementById('gita-verse-out');
+  out.innerHTML='<div class="ai-loading">🪷 Seeking… <div class="ai-dots"><span></span><span></span><span></span></div></div>';
+  try{
+    const text=await aiCall({
+      model:'claude-sonnet-4-20250514',max_tokens:600,
+      messages:[{role:'user',content:`Find the most relevant Bhagavad Gita verse for: "${theme}"
+
+Format exactly as:
+SANSKRIT: [Sanskrit verse]
+TRANSLATION: [English translation]
+CHAPTER: [Chapter X, Verse Y]
+MEANING: [Deep meaning of this verse — 3-4 sentences]
+APPLICATION: [How Arjuna's situation mirrors this feeling, and how to apply it today — 2-3 sentences]`}]
+    });
+    const vid=uid();
+    out.innerHTML=`
+      <div class="verse-card" style="text-align:left;margin-bottom:0">
+        <div id="verse-render-${vid}"></div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="saveVerse('${btoa(encodeURIComponent(text))}','${theme}')">🔖 Save Verse</button>
+        </div>
+      </div>`;
+    renderVerseDetailed(text,document.getElementById('verse-render-'+vid));
+  }catch(e){out.innerHTML=`<div style="color:var(--saffron);font-size:12px">${e.message}</div>`;}
+}
+
+function renderVerseDetailed(text,container){
+  const sm=text.match(/SANSKRIT:\s*([^\n]+)/i);
+  const tm=text.match(/TRANSLATION:\s*([^\n]+)/i);
+  const cm=text.match(/CHAPTER:\s*([^\n]+)/i);
+  const mm=text.match(/MEANING:\s*([\s\S]+?)(?=\nAPPLICATION:|$)/i);
+  const am=text.match(/APPLICATION:\s*([\s\S]+?)$/i);
+  container.innerHTML=`
+    <div class="verse-sanskrit" style="text-align:center">${sm?sm[1].trim():''}</div>
+    <div class="verse-translation" style="text-align:center">${tm?'"'+tm[1].trim()+'"':''}</div>
+    <div class="verse-ref" style="text-align:center;margin-bottom:16px">${cm?cm[1].trim():''}</div>
+    ${mm?`<div style="font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:10px">${mm[1].trim()}</div>`:''}
+    ${am?`<div style="font-size:13px;color:var(--gold3);line-height:1.8;font-style:italic;border-left:2px solid var(--gold3);padding-left:12px">${am[1].trim()}</div>`:''}`;
+}
+
+function saveVerse(b64,theme){
+  try{
+    const text=decodeURIComponent(escape(atob(b64)));
+    savedVerses.unshift({id:uid(),theme,text,date:todayKey()});
+    if(savedVerses.length>30)savedVerses=savedVerses.slice(0,30);
+    save('ll-saved-verses',savedVerses);
+    renderSavedVerses();
+    alert('Verse saved 🪷');
+  }catch(e){}
+}
+
+function renderSavedVerses(){
+  const el=document.getElementById('saved-verses-list');
+  const emp=document.getElementById('saved-verses-empty');
+  if(!savedVerses.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  el.innerHTML=savedVerses.map(v=>`
+    <div class="entry-card">
+      <div class="entry-date">${fmtShort(v.date+' 12:00')} · ${v.theme}</div>
+      <div id="sv-${v.id}"></div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-ghost btn-sm" onclick="toggleSavedVerse('${v.id}','${btoa(encodeURIComponent(v.text))}')">Read</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteSavedVerse('${v.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSavedVerse(id,b64){
+  const el=document.getElementById('sv-'+id);
+  if(el.innerHTML){el.innerHTML='';return;}
+  try{renderVerseDetailed(decodeURIComponent(escape(atob(b64))),el);}catch(e){}
+}
+function deleteSavedVerse(id){savedVerses=savedVerses.filter(v=>v.id!==id);save('ll-saved-verses',savedVerses);renderSavedVerses();}
+
+// ═══════════════════════════════════════════════
+// GUIDE
+// ═══════════════════════════════════════════════
+function setGuideMode(btn){
+  document.querySelectorAll('.guide-mode-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');guideMode=btn.dataset.mode;
+}
+
+function getSystemPrompt(mode){
+  if(mode==='premanand') return `You are a spiritual guide in the warm, loving tradition of Premanand Ji Maharaj. You speak with deep compassion, using simple Hindi phrases mixed with English when natural (like "beta", "prabhu", "jai shri krishna"). You draw from the Bhagavad Gita, Ramayana, and satsang wisdom. You never judge. You first acknowledge the person's feelings with warmth, then offer spiritual insight that feels like a loving elder speaking to a beloved child. End with an encouraging blessing.`;
+  if(mode==='gita') return `You are a Bhagavad Gita scholar and spiritual teacher. When someone shares their struggle, you find the most relevant verse from the Gita, share the Sanskrit, translation, and chapter reference, then deeply explain how Krishna's words to Arjuna mirror their exact situation. You are precise, profound, and grounded in the text. Always end with a practical way to apply the verse today.`;
+  return `You are a compassionate therapist who integrates Vedantic wisdom and Bhagavad Gita teachings into modern emotional support. You first listen deeply — reflecting back what you heard with empathy. Then you gently bridge to a spiritual perspective that doesn't dismiss the emotion but elevates it. You combine emotional validation with timeless wisdom. You are warm, non-judgmental, and practically helpful.`;
+}
+
+async function getGuidance(){
+  const q=document.getElementById('guide-question').value.trim();
+  if(!q)return;
+  const out=document.getElementById('guide-output');
+  out.innerHTML='<div class="ai-loading">🙏 Listening… <div class="ai-dots"><span></span><span></span><span></span></div></div>';
+  try{
+    const text=await aiCall({
+      model:'claude-sonnet-4-20250514',max_tokens:700,
+      system:getSystemPrompt(guideMode),
+      messages:[{role:'user',content:q}]
+    });
+    out.innerHTML=`<div class="guide-response">${text}</div>`;
+    // Save to history
+    guidanceLog.unshift({id:uid(),mode:guideMode,question:q,response:text,date:todayKey()});
+    if(guidanceLog.length>20)guidanceLog=guidanceLog.slice(0,20);
+    save('ll-guidance',guidanceLog);
+    renderGuidanceHistory();
+  }catch(e){out.innerHTML=`<div style="color:var(--saffron);font-size:12px;margin-top:10px">${e.message}</div>`;}
+}
+
+function renderGuidanceHistory(){
+  const el=document.getElementById('guidance-history');
+  const emp=document.getElementById('guidance-empty');
+  if(!guidanceLog.length){el.innerHTML='';emp.style.display='block';return;}
+  emp.style.display='none';
+  const modeLabels={premanand:'🪷 Premanand Ji',gita:'📖 Gita',therapist:'💙 Therapist'};
+  el.innerHTML=guidanceLog.map(g=>`
+    <div class="entry-card">
+      <div class="entry-date">${fmtShort(g.date+' 12:00')} · ${modeLabels[g.mode]||g.mode}</div>
+      <div style="font-size:13px;color:var(--ink2);font-style:italic;margin-bottom:8px">"${g.question.slice(0,100)}${g.question.length>100?'…':''}"</div>
+      <div id="gh-${g.id}" style="display:none">
+        <div class="guide-response" style="font-size:13px">${g.response}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="toggleGuidance('${g.id}')">Read response</button>
+    </div>`).join('');
+}
+function toggleGuidance(id){
+  const el=document.getElementById('gh-'+id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+
+// ═══════════════════════════════════════════════
+// CALENDAR
+// ═══════════════════════════════════════════════
+function renderCalendar(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=months[calMonth]+' '+calYear;
+  const first=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const todayStr=new Date().toISOString().slice(0,10);
+  const grid=document.getElementById('cal-grid');
+  let html='';
+  for(let i=0;i<first;i++) html+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasEntry=entries.some(e=>e.date===key);
+    const isToday=key===todayStr;
+    const entry=entries.find(e=>e.date===key);
+    const mood=entry?.mood||'';
+    html+=`<div class="cal-day ${hasEntry?'has-entry':''} ${isToday?'today':''}"
+      onclick="showCalEntry('${key}')" title="${hasEntry?'Entry exists':'No entry'}">
+      ${mood||d}
+    </div>`;
+  }
+  grid.innerHTML=html;
+
+  // Recent entries
+  const recent=entries.slice(0,5);
+  const rel=document.getElementById('recent-entries');
+  rel.innerHTML=recent.map(e=>`
+    <div class="entry-card" style="margin-bottom:10px">
+      <div class="entry-date">${fmtDate(e.date+' 12:00')}</div>
+      ${e.mood?`<div style="font-size:20px;margin-bottom:4px">${e.mood}</div>`:''}
+      ${e.body?`<div style="font-size:13px;color:var(--ink2);line-height:1.6">${e.body.slice(0,150)}…</div>`:''}
+    </div>`).join('');
+}
+
+function changeMonth(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}
+  if(calMonth>11){calMonth=0;calYear++;}
+  renderCalendar();
+}
+
+function showCalEntry(key){
+  const entry=entries.find(e=>e.date===key);
+  const prev=document.getElementById('cal-entry-preview');
+  if(!entry){prev.style.display='none';return;}
+  prev.style.display='block';
+  prev.innerHTML=`
+    <div class="card" style="border-color:var(--gold3)">
+      <div class="entry-date">${fmtDate(key+' 12:00')}</div>
+      ${entry.mood?`<div style="font-size:24px;margin-bottom:8px">${entry.mood}</div>`:''}
+      ${entry.intention?`<div style="font-size:13px;color:var(--gold3);font-style:italic;margin-bottom:8px">"${entry.intention}"</div>`:''}
+      ${entry.body?`<div style="font-size:13px;color:var(--ink2);line-height:1.7;white-space:pre-wrap">${entry.body}</div>`:''}
+      ${entry.gratitude&&entry.gratitude.length?`
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Grateful for</div>
+          ${entry.gratitude.map(g=>`<div style="font-size:12px;color:var(--ink2)">✦ ${g}</div>`).join('')}
+        </div>`:''}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// BACKUP
+// ═══════════════════════════════════════════════
+let gDriveHandle=null;
+function showBackup(){document.getElementById('backup-overlay').style.display='flex';}
+function hideBackup(){document.getElementById('backup-overlay').style.display='none';}
+
+async function saveToGDrive(){
+  const st=document.getElementById('ll-gdrive-status');
+  try{
+    if(!gDriveHandle)gDriveHandle=await window.showSaveFilePicker({suggestedName:'lifeline-journal.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+    const w=await gDriveHandle.createWritable();
+    await w.write(JSON.stringify(getAllData(),null,2));await w.close();
+    st.textContent='✓ Saved to Drive';st.style.color='var(--gold)';st.style.display='block';
+    setTimeout(()=>{st.style.display='none';},3000);
+  }catch(e){if(e.name!=='AbortError'){st.textContent='⚠️ Could not save';st.style.color='var(--saffron)';st.style.display='block';}}
+}
+async function loadFromGDrive(){
+  const st=document.getElementById('ll-gdrive-status');
+  try{
+    const[fh]=await window.showOpenFilePicker({types:[{description:'JSON',accept:{'application/json':['.json']}}]});
+    gDriveHandle=fh;const file=await fh.getFile();const text=await file.text();
+    const d=JSON.parse(text);
+    LT_KEYS.forEach(k=>{if(d[k]!==undefined)localStorage.setItem(k,d[k]);});
+    loadAll();st.textContent='✓ Restored';st.style.color='var(--gold)';st.style.display='block';
+    setTimeout(()=>{st.style.display='none';},3000);
+  }catch(e){if(e.name!=='AbortError'){st.textContent='⚠️ Could not load';st.style.color='var(--saffron)';st.style.display='block';}}
+}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(getAllData(),null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`lifeline-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+function importBackup(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      LT_KEYS.forEach(k=>{if(d[k]!==undefined)localStorage.setItem(k,d[k]);});
+      loadAll();alert('Journal restored 🙏');hideBackup();
+    }catch{alert('Invalid file.');}
+  };r.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════
+// LOAD ALL
+// ═══════════════════════════════════════════════
+function loadAll(){
+  entries     = load('ll-entries',[]);
+  savedVerses = load('ll-saved-verses',[]);
+  guidanceLog = load('ll-guidance',[]);
+  verseCache  = load('ll-verse-cache',{});
+  initToday();
+}
+
+// ── AI CALL HELPER ──
+async function aiCall(payload, retries=2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch('https://nameless-forest-6970.sharmasarvagya2.workers.dev', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const msg = data?.error?.message || data?.content?.[0]?.text || 'API error';
+        if ((res.status === 429 || msg.includes('quota') || msg.includes('rate')) && attempt < retries) {
+          await new Promise(r => setTimeout(r, (attempt + 1) * 3000));
+          continue;
+        }
+        throw new Error(msg);
+      }
+      return data.content?.map(c => c.text || '').join('') || '';
+    } catch (e) {
+      if (attempt === retries) throw e;
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}
+
+// Init
+loadAll();
+</script>
+</body>
+</html>
