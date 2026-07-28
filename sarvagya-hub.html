@@ -830,6 +830,59 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     </div>
 
   </div>
+
+  <!-- ─── NEETA UPDATES (Teacher Updates from Vrinda's school) ─── -->
+  <div class="g2">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--fg)">📚 Vrinda's School — Teacher Updates</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">From Neeta Upadhyay · neetau.pv@dpsgs.org</div>
+      </div>
+      <button class="btn-s" onclick="showAddNeetaUpdate()">+ Add</button>
+    </div>
+    <div id="neeta-updates-list" class="sc"></div>
+  </div>
+
+  <!-- ─── VRINDA ACTIVITY PLANS ─── -->
+  <div class="g2" style="margin-top:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--fg)">🎯 Activity Planner — Extend School Learning</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">Ideas to reinforce what Vrinda covered at school</div>
+      </div>
+      <button class="btn-s" onclick="showAddActivity()">+ Add</button>
+    </div>
+    <div id="vrinda-activities-list" class="sc"></div>
+  </div>
+
+  <!-- Neeta Update Modal -->
+  <div id="neeta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:var(--card);border-radius:14px;padding:24px;width:min(480px,90vw);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+      <div style="font-weight:700;font-size:16px;color:var(--fg)">Add Teacher Update</div>
+      <input id="nu-subject" placeholder="Subject / Topic covered" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;width:100%;box-sizing:border-box">
+      <input id="nu-date" type="date" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;width:100%;box-sizing:border-box">
+      <textarea id="nu-content" placeholder="What did Neeta share? Paste email content or key points…" rows="5" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;resize:vertical;width:100%;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="closeNeetaModal()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--fg);cursor:pointer">Cancel</button>
+        <button onclick="saveNeetaUpdate()" style="padding:8px 20px;border-radius:8px;border:none;background:var(--accent,#7c6ef5);color:#fff;cursor:pointer;font-weight:600">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Modal -->
+  <div id="activity-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:var(--card);border-radius:14px;padding:24px;width:min(480px,90vw);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+      <div style="font-weight:700;font-size:16px;color:var(--fg)">Add Activity Plan</div>
+      <input id="acp-title" placeholder="Activity name" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;width:100%;box-sizing:border-box">
+      <input id="acp-topic" placeholder="School topic it relates to (e.g. Shapes, Colours, Letters)" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;width:100%;box-sizing:border-box">
+      <textarea id="acp-desc" placeholder="How to do it at home — steps, materials needed, tips…" rows="4" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--fg);font-size:14px;outline:none;resize:vertical;width:100%;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="closeActivityModal()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--fg);cursor:pointer">Cancel</button>
+        <button onclick="saveActivityPlan()" style="padding:8px 20px;border-radius:8px;border:none;background:var(--accent,#7c6ef5);color:#fff;cursor:pointer;font-weight:600">Save</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Hidden for JS compat -->
   <div style="display:none">
     <select id="act-who"><option>Both</option></select>
@@ -2248,7 +2301,7 @@ function init(){
   if(!localStorage.getItem('ll-context'))  sv('ll-context',LL_CONTEXT_DEFAULT);
 
   // Render all tabs
-  renderPulse();renderCoworkNotes();renderTodos();renderInitiatives();renderNotes();renderPlaybook();renderPeople();
+  renderPulse();renderCoworkNotes();renderTodos();renderInitiatives();renderNotes();renderPlaybook();renderPeople();renderNeetaUpdates();renderVrindaActivities();
   renderTasks();renderProjects();renderJournals();renderLogs();
   renderChildren();renderVaccines();renderMilestones();renderMemories();renderGrowth();renderPtLogs();
   loadVerse();renderMoodLog();renderGrats();renderCalendar();renderSavedVerses();renderLLJournals();
@@ -2807,6 +2860,95 @@ document.addEventListener('keydown',function gateKey(e){
 
 init();
 
+
+
+// ══════════════════════════════════════════════════════════════════
+// NEETA UPDATES — Teacher comms from Vrinda's school (DPS GS)
+// ══════════════════════════════════════════════════════════════════
+function _xesc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderNeetaUpdates(){
+  const el=document.getElementById('neeta-updates-list');if(!el)return;
+  const data=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]');
+  if(!data.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0">No updates yet — sync emails or tap + Add.</div>';return;}
+  el.innerHTML=data.map(u=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="flex:1"><div style="font-weight:600;font-size:14px;color:var(--fg)">${_xesc(u.subject)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">${_xesc(u.emailDate||u.date||'')} · Neeta Upadhyay</div></div>
+      <button onclick="deleteNeetaUpdate('${u.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--fg);margin-top:10px;white-space:pre-wrap;line-height:1.5">${_xesc(u.content)}</div>
+  </div>`).join('');
+}
+function showAddNeetaUpdate(){
+  document.getElementById('nu-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('neeta-modal').style.display='flex';
+}
+function closeNeetaModal(){document.getElementById('neeta-modal').style.display='none';}
+function saveNeetaUpdate(){
+  const subj=document.getElementById('nu-subject').value.trim();
+  const content=document.getElementById('nu-content').value.trim();
+  const date=document.getElementById('nu-date').value;
+  if(!subj||!content)return;
+  const arr=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]');
+  arr.unshift({id:Date.now().toString(),subject:subj,content,emailDate:date,createdAt:new Date().toISOString()});
+  localStorage.setItem('sv-neeta-updates',JSON.stringify(arr));
+  closeNeetaModal();
+  document.getElementById('nu-subject').value='';
+  document.getElementById('nu-content').value='';
+  renderNeetaUpdates();
+}
+function deleteNeetaUpdate(id){
+  const arr=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]').filter(u=>u.id!==id);
+  localStorage.setItem('sv-neeta-updates',JSON.stringify(arr));renderNeetaUpdates();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VRINDA ACTIVITY PLANS — Extend school learning at home
+// ══════════════════════════════════════════════════════════════════
+const _ACT_STATUS={planned:'🟡 Planned','in-progress':'🔵 In Progress',done:'✅ Done',skipped:'⬜ Skipped'};
+function renderVrindaActivities(){
+  const el=document.getElementById('vrinda-activities-list');if(!el)return;
+  const data=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]');
+  if(!data.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0">No activities yet — added automatically after email sync or tap + Add.</div>';return;}
+  el.innerHTML=data.map(a=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px;color:var(--fg)">${_xesc(a.title)}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">📚 ${_xesc(a.schoolTopic||'—')}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <select onchange="updateActivityStatus('${a.id}',this.value)" style="font-size:12px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--fg);cursor:pointer">
+          ${Object.entries(_ACT_STATUS).map(([k,v])=>`<option value="${k}"${a.status===k?' selected':''}>${v}</option>`).join('')}
+        </select>
+        <button onclick="deleteActivity('${a.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0;line-height:1">✕</button>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--fg);margin-top:10px;white-space:pre-wrap;line-height:1.5">${_xesc(a.description)}</div>
+  </div>`).join('');
+}
+function showAddActivity(){document.getElementById('activity-modal').style.display='flex';}
+function closeActivityModal(){document.getElementById('activity-modal').style.display='none';}
+function saveActivityPlan(){
+  const title=document.getElementById('acp-title').value.trim();
+  const topic=document.getElementById('acp-topic').value.trim();
+  const desc=document.getElementById('acp-desc').value.trim();
+  if(!title)return;
+  const arr=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]');
+  arr.unshift({id:Date.now().toString(),title,schoolTopic:topic,description:desc,status:'planned',createdAt:new Date().toISOString()});
+  localStorage.setItem('sv-vrinda-activities',JSON.stringify(arr));
+  closeActivityModal();
+  ['acp-title','acp-topic','acp-desc'].forEach(id=>document.getElementById(id).value='');
+  renderVrindaActivities();
+}
+function deleteActivity(id){
+  const arr=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]').filter(a=>a.id!==id);
+  localStorage.setItem('sv-vrinda-activities',JSON.stringify(arr));renderVrindaActivities();
+}
+function updateActivityStatus(id,status){
+  const arr=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]');
+  const a=arr.find(x=>x.id===id);
+  if(a){a.status=status;localStorage.setItem('sv-vrinda-activities',JSON.stringify(arr));renderVrindaActivities();}
+}
 </script>
 
 
