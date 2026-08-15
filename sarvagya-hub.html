@@ -521,12 +521,20 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
       <div class="ntab-chips"><span class="chip" id="c-tsk">Log</span><span class="chip" id="c-pj">Projects</span><span class="chip" id="c-mtg">Income</span></div>
     </button>
     <button class="ntab" data-tab="kids" data-mode="personal" onclick="goTab('kids',this)">
-      <div class="ntab-top"><div class="ntab-ic">&#11088;</div><span class="ntab-lbl">Little Stars</span></div>
+      <div class="ntab-top"><div class="ntab-ic">&#11088;</div><span class="ntab-lbl">Future Stars</span></div>
       <div class="ntab-chips"><span class="chip" id="c-vac">Vaccines</span><span class="chip" id="c-ms">Milestones</span><span class="chip" id="c-act">Activity</span></div>
     </button>
-    <button class="ntab" data-tab="life" data-mode="personal" onclick="goTab('life',this)">
+    <button class="ntab" style="display:none" data-tab="life" data-mode="personal" onclick="goTab('life',this)">
       <div class="ntab-top"><div class="ntab-ic">&#129684;</div><span class="ntab-lbl">Lifeline</span></div>
       <div class="ntab-chips"><span class="chip" id="c-mood">Mood</span><span class="chip" id="c-gita">Gita</span><span class="chip" id="c-grat">Gratitude</span></div>
+    </button>
+    <button class="ntab" data-tab="wealth" data-mode="personal" onclick="goTab('wealth',this)">
+      <div class="ntab-top"><div class="ntab-ic">&#128176;</div><span class="ntab-lbl">Wealth</span></div>
+      <div class="ntab-chips"><span class="chip" id="wch-net">&mdash;</span><span class="chip" id="wch-funds">0 funds</span><span class="chip" id="wch-due">0 due</span></div>
+    </button>
+    <button class="ntab" data-tab="panchang" data-mode="personal" onclick="goTab('panchang',this)">
+      <div class="ntab-top"><div class="ntab-ic">&#128303;</div><span class="ntab-lbl">Panchang</span></div>
+      <div class="ntab-chips"><span class="chip" id="pch-tithi">&mdash;</span><span class="chip" id="pch-fest">&mdash;</span></div>
     </button>
   </div>
   <div class="nav-right">
@@ -725,13 +733,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
 <!-- LITTLE STARS -->
 <div id="tab-kids" class="panel">
   <div class="phdr">
-    <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Little <em>Stars</em></div>
-      <div class="psub">Vrinda &amp; Vedant &mdash; vaccines, milestones, parenting &amp; memories</div></div>
+    <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Future <em>Stars</em></div>
+      <div class="psub">Vrinda &amp; Vedant &mdash; school updates, activities, vaccines &amp; milestones</div></div>
     <div class="pstats">
       <div class="ps"><div class="ps-n" id="st-vac">0</div><div class="ps-l">Doses Given</div></div>
       <div class="ps"><div class="ps-n" id="st-mscount">0</div><div class="ps-l">Milestones</div></div>
       <div class="ps"><div class="ps-n" id="st-memcount">0</div><div class="ps-l">Memories</div></div>
       <div class="ps"><div class="ps-n" id="st-ptlog">0</div><div class="ps-l">Days Logged</div></div>
+      <div class="ps"><div class="ps-n" id="st-teacher">0</div><div class="ps-l">Teacher Updates</div></div>
+      <div class="ps"><div class="ps-n" id="st-acts">0</div><div class="ps-l">Home Activities</div></div>
     </div>
   </div>
   <div class="g5" id="ks-profiles" style="margin-bottom:18px"></div>
@@ -894,6 +904,44 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
 </div>
 
 <!-- LIFELINE -->
+<div id="tab-wealth" class="panel">
+  <div class="phdr">
+    <div><div class="ptitle">Wealth</div><div class="psub">Balances, mutual funds &amp; policies</div></div>
+    <div class="pstats">
+      <div class="ps"><div class="ps-n" id="w-net">&mdash;</div><div class="ps-l">Net Worth</div></div>
+      <div class="ps"><div class="ps-n" id="w-bank">&mdash;</div><div class="ps-l">In Bank</div></div>
+      <div class="ps"><div class="ps-n" id="w-mf">&mdash;</div><div class="ps-l">Mutual Funds</div></div>
+      <div class="ps"><div class="ps-n" id="w-pol">0</div><div class="ps-l">Policies</div></div>
+    </div>
+  </div>
+  <div style="font-size:12px;opacity:.6;margin:0 0 14px 2px" id="w-updated">Never synced</div>
+  <div class="g2">
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127974;</div><div class="ctit">Bank Accounts</div></div></div><div id="wealth-accounts-list"></div></div>
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div><div class="ctit">Mutual Funds</div></div></div><div id="wealth-funds-list"></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128737;</div><div class="ctit">Policies</div></div></div><div id="wealth-policies-list"></div></div>
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#129534;</div><div class="ctit">Recent Spend</div></div></div><div id="wealth-spend-list"></div></div>
+  </div>
+</div>
+<div id="tab-panchang" class="panel">
+  <div class="phdr">
+    <div><div class="ptitle">Panchang</div><div class="psub">Daily, weekly, monthly &amp; yearly</div></div>
+    <div class="pstats">
+      <div class="ps"><div class="ps-n" id="p-tithi">&mdash;</div><div class="ps-l">Tithi</div></div>
+      <div class="ps"><div class="ps-n" id="p-nak">&mdash;</div><div class="ps-l">Nakshatra</div></div>
+      <div class="ps"><div class="ps-n" id="p-rahu">&mdash;</div><div class="ps-l">Rahu Kaal</div></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin:0 0 14px 2px">
+    <button class="cbtn p" id="pv-daily" onclick="setPanchangView('daily')">Daily</button>
+    <button class="cbtn" id="pv-weekly" onclick="setPanchangView('weekly')">Weekly</button>
+    <button class="cbtn" id="pv-monthly" onclick="setPanchangView('monthly')">Monthly</button>
+    <button class="cbtn" id="pv-yearly" onclick="setPanchangView('yearly')">Yearly</button>
+  </div>
+  <div style="font-size:12px;opacity:.6;margin:0 0 14px 2px" id="p-updated">Never synced</div>
+  <div id="panchang-body"></div>
+</div>
 <div id="tab-life" class="panel">
   <div class="phdr">
     <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Life<em>line</em></div>
@@ -2858,7 +2906,58 @@ document.addEventListener('keydown',function gateKey(e){
 });
 
 
-setTimeout(init, 0);
+function _wEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function _wInr(n){if(n==null||isNaN(n))return '\u2014';var v=Number(n);if(v>=10000000)return '\u20B9'+(v/10000000).toFixed(2)+' Cr';if(v>=100000)return '\u20B9'+(v/100000).toFixed(2)+' L';return '\u20B9'+v.toLocaleString('en-IN');}
+function _wSet(id,h){var e=document.getElementById(id);if(e)e.innerHTML=h;}
+function _wTxt(id,s){var e=document.getElementById(id);if(e)e.textContent=s;}
+function _wEmpty(t){return '<div style="color:#888;font-size:13px;padding:10px 2px">'+t+'</div>';}
+function _wGet(k){try{return JSON.parse(localStorage.getItem(k)||'{}');}catch(e){return {};}}
+function renderWealth(){
+ var d=_wGet('sv-wealth');var A=d.accounts||[],F=d.funds||[],P=d.policies||[],S=d.spend||[];
+ var tb=A.reduce(function(s,a){return s+(Number(a.balance)||0);},0);
+ var tf=F.reduce(function(s,f){return s+(Number(f.value)||0);},0);
+ var due=P.filter(function(p){return p.status==='due';}).length;var any=A.length||F.length;
+ _wTxt('w-net',any?_wInr(tb+tf):'\u2014');_wTxt('w-bank',A.length?_wInr(tb):'\u2014');
+ _wTxt('w-mf',F.length?_wInr(tf):'\u2014');_wTxt('w-pol',String(P.length));
+ _wTxt('wch-net',any?_wInr(tb+tf):'\u2014');_wTxt('wch-funds',F.length+' funds');_wTxt('wch-due',due+' due');
+ _wTxt('w-updated',d.updatedAt?('Last synced '+d.updatedAt):'Never synced');
+ _wSet('wealth-accounts-list',!A.length?_wEmpty('No accounts yet \u2014 filled by the morning email review.'):A.map(function(a){return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(a.bank)+' <span style="opacity:.5;font-weight:400">'+_wEsc(a.masked||'')+'</span></div><div style="font-size:12px;opacity:.6">'+_wEsc(a.type||'')+(a.asOf?' \u00b7 '+_wEsc(a.asOf):'')+'</div></div><div style="font-weight:700">'+_wInr(a.balance)+'</div></div>';}).join(''));
+ _wSet('wealth-funds-list',!F.length?_wEmpty('No mutual funds yet.'):F.map(function(f){var ch=Number(f.changePct);var x=isNaN(ch)?'':'<span style="font-size:12px;color:'+(ch>=0?'#4ade80':'#f87171')+'"> '+(ch>=0?'\u25B2':'\u25BC')+' '+Math.abs(ch).toFixed(2)+'%</span>';return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(f.scheme)+'</div><div style="font-size:12px;opacity:.6">'+_wEsc(f.house||'')+(f.folio?' \u00b7 Folio '+_wEsc(f.folio):'')+'</div></div><div style="text-align:right"><div style="font-weight:700">'+_wInr(f.value)+'</div>'+x+'</div></div>';}).join(''));
+ _wSet('wealth-policies-list',!P.length?_wEmpty('No policies yet.'):P.map(function(p){var col=p.status==='due'?'#fbbf24':(p.status==='lapsed'?'#f87171':'#4ade80');return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(p.insurer)+' <span style="opacity:.5;font-weight:400">'+_wEsc(p.type||'')+'</span></div><div style="font-size:12px;opacity:.6">'+(p.policyNumber?'Policy '+_wEsc(p.policyNumber):'')+(p.renewalDate?' \u00b7 renews '+_wEsc(p.renewalDate):'')+'</div></div><div style="text-align:right"><div style="font-weight:700">'+_wInr(p.premium)+'</div><div style="font-size:11px;color:'+col+'">'+_wEsc(p.status||'')+'</div></div></div>';}).join(''));
+ _wSet('wealth-spend-list',!S.length?_wEmpty('No spend items in the last sync.'):S.map(function(s){var col=s.verdict==='Avoidable'?'#fbbf24':'#4ade80';return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(s.merchant)+'</div><div style="font-size:12px;opacity:.6">'+_wEsc(s.what||'')+(s.date?' \u00b7 '+_wEsc(s.date):'')+'</div></div><div style="text-align:right"><div style="font-weight:700">'+_wInr(s.amount)+'</div><div style="font-size:11px;color:'+col+'">'+_wEsc(s.verdict||'')+'</div></div></div>';}).join(''));
+}
+var _pView='daily';
+function setPanchangView(v){_pView=v;['daily','weekly','monthly','yearly'].forEach(function(k){var b=document.getElementById('pv-'+k);if(b)b.className=(k===v)?'cbtn p':'cbtn';});renderPanchang();}
+function renderPanchang(){
+ var d=_wGet('sv-panchang');var day=d.daily||{};
+ _wTxt('p-tithi',day.tithi||'\u2014');_wTxt('p-nak',day.nakshatra||'\u2014');_wTxt('p-rahu',day.rahuKaal||'\u2014');
+ _wTxt('pch-tithi',day.tithi||'\u2014');_wTxt('pch-fest',(day.festivals&&day.festivals.length)?day.festivals[0]:'No festival');
+ _wTxt('p-updated',d.updatedAt?('Last synced '+d.updatedAt):'Never synced');
+ var host=document.getElementById('panchang-body');if(!host)return;
+ var card=function(ic,t,inner){return '<div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">'+ic+'</div><div class="ctit">'+_wEsc(t)+'</div></div></div>'+inner+'</div>';};
+ var rows=function(ps){return ps.filter(function(p){return p[1];}).map(function(p){return '<div class="irow"><div style="opacity:.7">'+_wEsc(p[0])+'</div><div style="font-weight:600">'+_wEsc(p[1])+'</div></div>';}).join('')||_wEmpty('\u2014');};
+ var bl=function(a){return (a&&a.length)?'<div style="padding:4px 2px">'+a.map(function(x){return '<div style="font-size:13px;line-height:1.7">\u2022 '+_wEsc(x)+'</div>';}).join('')+'</div>':_wEmpty('\u2014');};
+ var h='';
+ if(_pView==='daily'){ if(!day.tithi){host.innerHTML=card('\u{1F4C5}','Daily',_wEmpty('No panchang yet \u2014 filled by the 6 AM sync.'));return;}
+  h+='<div class="g2">'+card('\u{1F4C5}','Panchang Essentials',rows([['Tithi',(day.tithi||'')+(day.paksha?' ('+day.paksha+')':'')],['Var',(day.vaar||'')+(day.varDeity?' \u2014 '+day.varDeity:'')],['Nakshatra',day.nakshatra],['Yoga',day.yoga],['Karana',day.karana]]))+card('\u{1F305}','Key Times',rows([['Brahma Muhurta',day.brahmaMuhurta],['Sunrise',day.sunrise],['Sunset',day.sunset],['Rahu Kaal',day.rahuKaal],['Abhijit',day.abhijit]]))+'</div>';
+  h+='<div class="g2">'+card('\u{1F389}','Observances',bl(day.festivals&&day.festivals.length?day.festivals:['No major festival today.']))+card('\u{1F4D6}','Significance','<div style="font-size:13px;line-height:1.7;padding:8px 2px">'+_wEsc(day.significance||'\u2014')+'</div>')+'</div>';
+  h+='<div class="g2">'+card('\u2705','What To Do',bl(day.whatToDo))+card('\u{1F6AB}','What To Avoid',bl(day.whatToAvoid))+'</div>';
+  var v=day.video||{};
+  h+='<div class="g2">'+card('\u{1F64F}','Family Tip','<div style="font-size:13px;line-height:1.7;padding:8px 2px">'+_wEsc(day.familyTip||'\u2014')+'</div>')+card('\u{1F4FA}','For the Kids',v.url?'<div style="padding:8px 2px"><a href="'+_wEsc(v.url)+'" target="_blank" rel="noopener" style="font-weight:600">'+_wEsc(v.title||'Watch')+'</a><div style="font-size:12px;opacity:.7;margin-top:4px">'+_wEsc(v.note||'')+'</div></div>':_wEmpty('No video this run.'))+'</div>';
+ }
+ if(_pView==='weekly'){var w=d.weekly||{};h+=(!w.days||!w.days.length)?card('\u{1F5D3}','Weekly',_wEmpty('No weekly panchang yet \u2014 built on Mondays.')):card('\u{1F5D3}','Week \u2014 '+_wEsc(w.rangeLabel||''),w.days.map(function(x){return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(x.weekday)+' <span style="opacity:.5;font-weight:400">'+_wEsc(x.date)+'</span></div><div style="font-size:12px;opacity:.65">'+_wEsc(x.tithi||'')+(x.nakshatra?' \u00b7 '+_wEsc(x.nakshatra):'')+'</div></div><div style="text-align:right;font-size:12px">'+(x.festival?'<div style="color:#fbbf24;font-weight:600">'+_wEsc(x.festival)+'</div>':'')+(x.note?'<div style="opacity:.65">'+_wEsc(x.note)+'</div>':'')+'</div></div>';}).join(''))+((w.highlights&&w.highlights.length)?card('\u2B50','Highlights',bl(w.highlights)):'');}
+ if(_pView==='monthly'){var m=d.monthly||{};h+=(!m.festivals||!m.festivals.length)?card('\u{1F38A}','Monthly',_wEmpty('No monthly overview yet \u2014 built on the 25th.')):card('\u{1F38A}','Festivals \u2014 '+_wEsc(m.monthLabel||''),m.festivals.map(function(f){return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(f.name)+'</div><div style="font-size:12px;opacity:.65">'+_wEsc(f.note||'')+'</div></div><div style="text-align:right"><div style="font-weight:600">'+_wEsc(f.date)+'</div><div style="font-size:11px;opacity:.6">'+_wEsc(f.type||'')+'</div></div></div>';}).join(''))+'<div class="g2">'+card('\u{1F311}','Moon Dates',rows([['Purnima',m.purnima],['Amavasya',m.amavasya],['Ekadashi',(m.ekadashi||[]).join(', ')]]))+card('\u{1F4DD}','Prep List',bl(m.prepList))+'</div>';}
+ if(_pView==='yearly'){var y=d.yearly||{};h+=(!y.majorFestivals||!y.majorFestivals.length)?card('\u{1F3F5}','Yearly',_wEmpty('No yearly overview yet \u2014 built each January.')):card('\u{1F3F5}','Major Festivals \u2014 '+_wEsc(y.yearLabel||''),y.majorFestivals.map(function(f){return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(f.name)+'</div><div style="font-size:12px;opacity:.65">'+_wEsc(f.note||'')+'</div></div><div style="font-weight:600">'+_wEsc(f.date)+'</div></div>';}).join(''))+'<div class="g2">'+card('\u{1F312}','Eclipses',bl(y.eclipses))+card('\u{1F531}','Navratri &amp; Notes',bl((y.navratri||[]).concat(y.notes||[])))+'</div>';}
+ host.innerHTML=h;
+}
+function updateStarStats(){
+ var n=[],a=[];
+ try{n=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]');}catch(e){}
+ try{a=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]');}catch(e){}
+ _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(a.length));
+ var c=document.getElementById('c-act');if(c)c.textContent=a.length+' activities';
+}
+setTimeout(function(){ init(); try{renderWealth();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{updateStarStats();}catch(e){console.error(e);} }, 0);
 
 
 
