@@ -829,6 +829,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     </div>
   </div>
   <div style="font-size:12px;opacity:.6;margin:0 0 14px 2px" id="w-updated">Never synced</div>
+  <div id="wealth-hero"></div>
   <div class="g2">
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127974;</div><div class="ctit">Bank Accounts</div></div></div><div id="wealth-accounts-list"></div></div>
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div><div class="ctit">Mutual Funds</div></div></div><div id="wealth-funds-list"></div></div>
@@ -855,6 +856,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     <button class="cbtn" id="pv-yearly" onclick="setPanchangView('yearly')">Yearly</button>
   </div>
   <div style="font-size:12px;opacity:.6;margin:0 0 14px 2px" id="p-updated">Never synced</div>
+  <div id="panchang-hero"></div>
   <div id="panchang-body"></div>
 </div>
 <div id="tab-life" class="panel">
@@ -3012,7 +3014,104 @@ function llInit(){
  var pin=document.getElementById('ll-pin');
  if(pin&&!pin.__b){ pin.__b=true; pin.addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();llUnlock();} }); }
 }
-setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} }, 0);
+var _MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function _daysTo(s){
+ if(!s)return null; var m=String(s).match(/(\d{1,2})\s*([A-Za-z]{3})[a-z]*\s*(\d{4})?/);
+ if(!m)return null; var mo=_MON[m[2].toLowerCase()]; if(mo===undefined)return null;
+ var now=new Date(), y=m[3]?parseInt(m[3],10):now.getFullYear();
+ var d=new Date(y,mo,parseInt(m[1],10));
+ var t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ if(!m[3]&&d<t0) d=new Date(y+1,mo,parseInt(m[1],10));
+ return Math.round((d-t0)/86400000);
+}
+function _mins(s){var m=String(s||'').match(/(\d{1,2}):(\d{2})/g);if(!m||!m.length)return null;
+ return m.map(function(x){var p=x.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);});}
+function _inWindow(range){var w=_mins(range); if(!w||w.length<2)return false;
+ var n=new Date(), cur=n.getHours()*60+n.getMinutes(); return cur>=w[0]&&cur<=w[1];}
+function _pill(txt,col){return '<span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:'+col+'22;color:'+col+';border:1px solid '+col+'55">'+_wEsc(txt)+'</span>';}
+function renderPanchangExtras(){
+ var host=document.getElementById('panchang-hero'); if(!host)return;
+ var d=_wGet('sv-panchang'), day=d.daily||{};
+ if(!day.tithi){ host.innerHTML=''; return; }
+ var rahuNow=_inWindow(day.rahuKaal), abhiNow=_inWindow(day.abhijit);
+ var fest=(day.festivals&&day.festivals.length)?day.festivals[0]:null;
+ var h='<div class="card" style="margin-bottom:14px"><div style="padding:14px 4px">';
+ h+='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">';
+ h+=_pill(day.tithi,'#a78bfa');
+ if(day.nakshatra)h+=_pill(day.nakshatra,'#60a5fa');
+ if(fest)h+=_pill('\u{1F389} '+fest,'#fbbf24');
+ h+='</div>';
+ h+='<div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px">';
+ if(day.rahuKaal)h+='<div><div style="opacity:.6;font-size:11px">RAHU KAAL</div><div style="font-weight:600;color:'+(rahuNow?'#f87171':'inherit')+'">'+_wEsc(day.rahuKaal)+(rahuNow?' \u00b7 now':'')+'</div></div>';
+ if(day.abhijit)h+='<div><div style="opacity:.6;font-size:11px">ABHIJIT</div><div style="font-weight:600;color:'+(abhiNow?'#4ade80':'inherit')+'">'+_wEsc(day.abhijit)+(abhiNow?' \u00b7 now':'')+'</div></div>';
+ if(day.sunrise)h+='<div><div style="opacity:.6;font-size:11px">SUNRISE</div><div style="font-weight:600">'+_wEsc(day.sunrise)+'</div></div>';
+ if(day.sunset)h+='<div><div style="opacity:.6;font-size:11px">SUNSET</div><div style="font-weight:600">'+_wEsc(day.sunset)+'</div></div>';
+ h+='</div>';
+ var up=[];
+ ((d.monthly&&d.monthly.festivals)||[]).forEach(function(f){var n=_daysTo(f.date); if(n!==null&&n>=0)up.push({n:n,name:f.name,date:f.date});});
+ ((d.yearly&&d.yearly.majorFestivals)||[]).forEach(function(f){var n=_daysTo(f.date); if(n!==null&&n>=0)up.push({n:n,name:f.name,date:f.date});});
+ var seen={}; up=up.filter(function(x){if(seen[x.name])return false;seen[x.name]=1;return true;}).sort(function(a,b){return a.n-b.n;}).slice(0,4);
+ if(up.length){
+  h+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)"><div style="opacity:.6;font-size:11px;margin-bottom:6px">COMING UP</div>';
+  h+=up.map(function(x){var lbl=x.n===0?'today':(x.n===1?'tomorrow':'in '+x.n+' days');
+   return '<div style="display:flex;justify-content:space-between;font-size:13px;line-height:1.9"><div>'+_wEsc(x.name)+'</div><div style="opacity:.7">'+_wEsc(lbl)+'</div></div>';}).join('');
+  h+='</div>';
+ }
+ h+='</div></div>'; host.innerHTML=h;
+}
+function _spark(vals){
+ if(!vals||vals.length<2)return '';
+ var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals), rng=(mx-mn)||1;
+ var pts=vals.map(function(v,i){return (i/(vals.length-1)*100).toFixed(1)+','+(28-((v-mn)/rng)*26).toFixed(1);}).join(' ');
+ var up=vals[vals.length-1]>=vals[0];
+ return '<svg viewBox="0 0 100 30" preserveAspectRatio="none" style="width:100%;height:34px"><polyline points="'+pts+'" fill="none" stroke="'+(up?'#4ade80':'#f87171')+'" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>';
+}
+function renderWealthExtras(){
+ var host=document.getElementById('wealth-hero'); if(!host)return;
+ var d=_wGet('sv-wealth');
+ var A=d.accounts||[],F=d.funds||[],P=d.policies||[],S=d.spend||[];
+ if(!A.length&&!F.length&&!P.length&&!S.length){ host.innerHTML=''; return; }
+ var tb=A.reduce(function(s,a){return s+(Number(a.balance)||0);},0);
+ var tf=F.reduce(function(s,f){return s+(Number(f.value)||0);},0);
+ var net=tb+tf;
+ var hist=d.history||[];
+ if(net>0&&d.updatedAt&&(!hist.length||hist[hist.length-1].d!==d.updatedAt)){
+  hist.push({d:d.updatedAt,v:net}); if(hist.length>24)hist=hist.slice(-24);
+  d.history=hist; try{localStorage.setItem('sv-wealth',JSON.stringify(d));}catch(e){}
+ }
+ var h='<div class="g2" style="margin-bottom:14px">';
+ h+='<div class="card"><div style="padding:12px 4px"><div style="opacity:.6;font-size:11px">NET WORTH TREND</div>';
+ if(hist.length>1){
+  var first=hist[0].v, last=hist[hist.length-1].v, pct=first?((last-first)/first*100):0;
+  h+='<div style="display:flex;align-items:baseline;gap:8px;margin:4px 0"><div style="font-size:20px;font-weight:700">'+_wInr(last)+'</div>';
+  h+='<div style="font-size:12px;color:'+(pct>=0?'#4ade80':'#f87171')+'">'+(pct>=0?'\u25B2':'\u25BC')+' '+Math.abs(pct).toFixed(1)+'% over '+hist.length+' syncs</div></div>';
+  h+=_spark(hist.map(function(x){return x.v;}));
+ } else { h+='<div style="font-size:20px;font-weight:700;margin:4px 0">'+_wInr(net)+'</div><div style="font-size:12px;opacity:.55">Trend appears after a few daily syncs.</div>'; }
+ h+='</div></div>';
+ var need=S.filter(function(x){return x.verdict!=='Avoidable';}).reduce(function(s,x){return s+(Number(x.amount)||0);},0);
+ var avoid=S.filter(function(x){return x.verdict==='Avoidable';}).reduce(function(s,x){return s+(Number(x.amount)||0);},0);
+ var tot=need+avoid;
+ h+='<div class="card"><div style="padding:12px 4px"><div style="opacity:.6;font-size:11px">SPEND SPLIT</div>';
+ if(tot>0){
+  var ap=Math.round(avoid/tot*100);
+  h+='<div style="display:flex;align-items:baseline;gap:8px;margin:4px 0"><div style="font-size:20px;font-weight:700">'+_wInr(tot)+'</div><div style="font-size:12px;opacity:.7">'+ap+'% avoidable</div></div>';
+  h+='<div style="display:flex;height:8px;border-radius:999px;overflow:hidden;margin-top:8px"><div style="width:'+(100-ap)+'%;background:#4ade80"></div><div style="width:'+ap+'%;background:#fbbf24"></div></div>';
+  h+='<div style="display:flex;justify-content:space-between;font-size:11px;opacity:.65;margin-top:6px"><div>Needed '+_wInr(need)+'</div><div>Avoidable '+_wInr(avoid)+'</div></div>';
+ } else { h+='<div style="font-size:13px;opacity:.55;margin-top:6px">No spend recorded in the last sync.</div>'; }
+ h+='</div></div></div>';
+ var ren=P.map(function(p){return {n:_daysTo(p.renewalDate),p:p};}).filter(function(x){return x.n!==null&&x.n<=90&&x.n>=-30;}).sort(function(a,b){return a.n-b.n;});
+ if(ren.length){
+  h+='<div class="card" style="margin-bottom:14px"><div class="chdr"><div class="chdr-l"><div class="cic">\u23F0</div><div class="ctit">Renewals Ahead</div></div></div>';
+  h+=ren.map(function(x){
+   var col=x.n<0?'#f87171':(x.n<=14?'#f87171':(x.n<=30?'#fbbf24':'#4ade80'));
+   var lbl=x.n<0?Math.abs(x.n)+' days overdue':(x.n===0?'due today':'in '+x.n+' days');
+   return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(x.p.insurer)+' <span style="opacity:.5;font-weight:400">'+_wEsc(x.p.type||'')+'</span></div><div style="font-size:12px;opacity:.6">'+_wEsc(x.p.renewalDate||'')+'</div></div><div style="text-align:right"><div style="font-weight:700">'+_wInr(x.p.premium)+'</div><div style="font-size:11px;color:'+col+'">'+_wEsc(lbl)+'</div></div></div>';
+  }).join('');
+  h+='</div>';
+ }
+ host.innerHTML=h;
+}
+setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} }, 0);
 
 
 
