@@ -858,6 +858,16 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   <div id="panchang-body"></div>
 </div>
 <div id="tab-life" class="panel">
+  <style>#tab-life.ll-locked > *:not(#ll-lock){display:none !important}</style>
+  <div id="ll-lock" style="display:none;max-width:340px;margin:60px auto;text-align:center">
+    <div style="font-size:34px;margin-bottom:10px">&#128274;</div>
+    <div style="font-weight:600;font-size:16px;margin-bottom:4px">Lifeline is locked</div>
+    <div style="font-size:12px;opacity:.6;margin-bottom:16px">Enter your PIN to decrypt</div>
+    <input id="ll-pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN" style="width:170px;text-align:center;letter-spacing:6px;font-size:18px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--fg)">
+    <div style="margin-top:12px"><button class="btn btn-p" onclick="llUnlock()">Unlock</button></div>
+    <div id="ll-err" style="font-size:12px;color:#f87171;margin-top:10px;min-height:16px"></div>
+    <div style="font-size:11px;opacity:.45;margin-top:14px;line-height:1.6">Encrypted with AES-GCM. There is no reset &mdash; if the PIN is lost this data cannot be recovered.</div>
+  </div>
   <div class="phdr">
     <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Life<em>line</em></div>
       <div class="psub">Your sacred space &mdash; Gita wisdom, mood, gratitude &amp; inner guide</div></div>
@@ -2949,7 +2959,60 @@ function bindLifelineSecret(){
  el.addEventListener('mouseleave',stop); el.addEventListener('touchstart',start,{passive:true});
  el.addEventListener('touchend',stop); el.addEventListener('touchcancel',stop);
 }
-setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} }, 0);
+var _llG=Storage.prototype.getItem, _llS=Storage.prototype.setItem, _llR=Storage.prototype.removeItem;
+Storage.prototype.getItem=function(k){ if(window.__llOpen&&/^ll-/.test(k)&&k!=='ll-vault'){ return (window.__llData&&k in window.__llData)?window.__llData[k]:null; } return _llG.call(this,k); };
+Storage.prototype.setItem=function(k,v){ if(window.__llOpen&&/^ll-/.test(k)&&k!=='ll-vault'){ window.__llData[k]=v; _llSave(); return; } return _llS.call(this,k,v); };
+Storage.prototype.removeItem=function(k){ if(window.__llOpen&&/^ll-/.test(k)&&k!=='ll-vault'){ delete window.__llData[k]; _llSave(); return; } return _llR.call(this,k); };
+function _llB64(b){var u=new Uint8Array(b),s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s);}
+function _llUB64(s){return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);});}
+async function _llDerive(pin,salt){
+ var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),{name:'PBKDF2'},false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:250000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function _llSave(){
+ if(!window.__llKey)return;
+ var iv=crypto.getRandomValues(new Uint8Array(12));
+ var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},window.__llKey,new TextEncoder().encode(JSON.stringify(window.__llData)));
+ _llS.call(localStorage,'ll-vault',JSON.stringify({v:1,salt:window.__llSalt,iv:_llB64(iv),data:_llB64(ct)}));
+}
+async function llUnlock(){
+ var el=document.getElementById('ll-pin'), err=document.getElementById('ll-err');
+ var pin=el?el.value:''; if(err)err.textContent='';
+ if(!pin||pin.length<4){ if(err)err.textContent='Enter your PIN'; return; }
+ try{
+  var raw=_llG.call(localStorage,'ll-vault');
+  if(raw){
+   var v=JSON.parse(raw);
+   var key=await _llDerive(pin,_llUB64(v.salt));
+   var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:_llUB64(v.iv)},key,_llUB64(v.data));
+   window.__llData=JSON.parse(new TextDecoder().decode(pt));
+   window.__llKey=key; window.__llSalt=v.salt;
+  } else {
+   var salt=crypto.getRandomValues(new Uint8Array(16));
+   var key2=await _llDerive(pin,salt);
+   var obj={},ks=[];
+   for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(/^ll-/.test(k)&&k!=='ll-vault'){obj[k]=_llG.call(localStorage,k);ks.push(k);} }
+   window.__llData=obj; window.__llKey=key2; window.__llSalt=_llB64(salt);
+   await _llSave();
+   var back=JSON.parse(_llG.call(localStorage,'ll-vault'));
+   var chk=await crypto.subtle.decrypt({name:'AES-GCM',iv:_llUB64(back.iv)},key2,_llUB64(back.data));
+   if(JSON.parse(new TextDecoder().decode(chk))&&ks.length>=0){ ks.forEach(function(k){_llR.call(localStorage,k);}); }
+  }
+  window.__llOpen=true;
+  var p=document.getElementById('tab-life'); if(p)p.classList.remove('ll-locked');
+  var lk=document.getElementById('ll-lock'); if(lk)lk.style.display='none';
+  if(el)el.value='';
+  ['renderMoodLog','renderGrats','renderLLJournals','renderFamily','renderContextPreview','renderSavedVerses','loadVerse'].forEach(function(f){try{if(typeof window[f]==='function')window[f]();}catch(e){}});
+ }catch(e){ if(err)err.textContent='Wrong PIN'; }
+}
+function llLock(){ window.__llOpen=false; window.__llKey=null; window.__llData=null; llInit(); }
+function llInit(){
+ var p=document.getElementById('tab-life'); if(!p)return;
+ if(!window.__llOpen){ p.classList.add('ll-locked'); var lk=document.getElementById('ll-lock'); if(lk)lk.style.display=''; }
+ var pin=document.getElementById('ll-pin');
+ if(pin&&!pin.__b){ pin.__b=true; pin.addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();llUnlock();} }); }
+}
+setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} }, 0);
 
 
 
