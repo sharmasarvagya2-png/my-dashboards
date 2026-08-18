@@ -548,7 +548,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   <div class="phdr">
     <div>
       <div class="ptitle">Visibility <em>OS</em></div>
-      <div class="psub">Training Manager &middot; Customer Experience &middot; Onecom UK</div>
+      <div class="psub" id="vis-sub" style="user-select:none;-webkit-user-select:none">Training Manager &middot; Customer Experience &middot; Onecom UK</div>
     </div>
     <div class="pstats">
       <div class="ps"><div class="ps-n" id="st-hd">0</div><div class="ps-l">Pulse Entries</div></div>
@@ -736,111 +736,25 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Future <em>Stars</em></div>
       <div class="psub">Vrinda &amp; Vedant &mdash; school updates, activities, vaccines &amp; milestones</div></div>
     <div class="pstats">
-      <div class="ps"><div class="ps-n" id="st-vac">0</div><div class="ps-l">Doses Given</div></div>
-      <div class="ps"><div class="ps-n" id="st-mscount">0</div><div class="ps-l">Milestones</div></div>
-      <div class="ps"><div class="ps-n" id="st-memcount">0</div><div class="ps-l">Memories</div></div>
-      <div class="ps"><div class="ps-n" id="st-ptlog">0</div><div class="ps-l">Days Logged</div></div>
+      <div class="ps"><div class="ps-n" id="st-week">&mdash;</div><div class="ps-l">Week Of</div></div>
+      <div class="ps"><div class="ps-n" id="st-done">0</div><div class="ps-l">Done This Week</div></div>
       <div class="ps"><div class="ps-n" id="st-teacher">0</div><div class="ps-l">Teacher Updates</div></div>
       <div class="ps"><div class="ps-n" id="st-acts">0</div><div class="ps-l">Home Activities</div></div>
     </div>
   </div>
   <div class="g5" id="ks-profiles" style="margin-bottom:18px"></div>
-  <div class="g2">
-
-    <!-- Parenting Log — quick template -->
-    <div class="card">
-      <div class="chdr">
-        <div class="chdr-l"><div class="cic">❤️</div>
-          <div><div class="ctit">Parenting Log</div><div class="cmeta" id="ptlog-lbl">Quick daily log — builds patterns over time</div></div>
-        </div>
-        <div class="cbtns">
-          <button class="cbtn" onclick="analyzeParenting()">🔍 Patterns</button>
-          <button class="cbtn p" onclick="addPtLog()">+ Log Day</button>
-        </div>
-      </div>
-      <!-- Quick inline template -->
-      <div style="background:var(--tg);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px">
-        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
-          <div style="flex:1">
-            <div class="flbl">Who</div>
-            <select id="ptq-who" style="width:100%">
-              <option value="both">Vrinda &amp; Vedant</option>
-              <option value="vrinda">Vrinda only</option>
-              <option value="vedant">Vedant only</option>
-            </select>
-          </div>
-          <div style="flex:1">
-            <div class="flbl">Overall vibe</div>
-            <div style="display:flex;gap:5px;margin-top:4px">
-              <button class="ptq-mood" onclick="setPtMood(this,'😊')" style="font-size:18px;background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 7px;cursor:pointer;transition:all .2s">😊</button>
-              <button class="ptq-mood" onclick="setPtMood(this,'😐')" style="font-size:18px;background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 7px;cursor:pointer;transition:all .2s">😐</button>
-              <button class="ptq-mood" onclick="setPtMood(this,'😔')" style="font-size:18px;background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 7px;cursor:pointer;transition:all .2s">😔</button>
-              <button class="ptq-mood" onclick="setPtMood(this,'🔥')" style="font-size:18px;background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 7px;cursor:pointer;transition:all .2s">🔥</button>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom:8px">
-          <div class="flbl">⚡ Win of the day</div>
-          <input id="ptq-win" placeholder="Something they did, said, or felt that made you smile..." onkeydown="if(event.key==='Tab'&&!event.shiftKey){event.preventDefault();document.getElementById('ptq-struggle').focus()}">
-        </div>
-        <div style="margin-bottom:8px">
-          <div class="flbl">⚠ Challenge or struggle</div>
-          <input id="ptq-struggle" placeholder="What was hard? Behaviour, sleep, eating, connection...">
-        </div>
-        <div style="margin-bottom:10px">
-          <div class="flbl">📝 One note (optional)</div>
-          <input id="ptq-note" placeholder="Anything else — a funny moment, something to try tomorrow...">
-        </div>
-        <button onclick="savePtQuick()" style="width:100%;padding:9px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:all .2s">Save Today's Log</button>
-      </div>
-      <div id="pt-ai-out" style="display:none;margin-bottom:10px"></div>
-      <div class="slbl">Recent Logs</div>
-      <div id="ks-ptlogs" class="sc"></div>
-    </div>
-
-    <div class="card">
-      <div class="chdr"><div class="chdr-l"><div class="cic">&#128137;</div><div><div class="ctit">Vaccine Tracker</div><div class="cmeta">Stay on top of every dose</div></div></div>
-        <div class="cbtns">
-          <select id="vac-who" style="width:auto;font-size:11px;padding:3px 6px"><option>Vrinda</option><option>Vedant</option></select>
-          <button class="cbtn p" onclick="addVaccine()">+ Add</button></div></div>
-      <div class="irow">
-        <input id="vac-name" placeholder="Vaccine name (e.g. DPT Booster 2nd)">
-        <input id="vac-due" placeholder="Due age/date" style="max-width:120px">
-      </div>
-      <div class="slbl">Vrinda <span id="vr-doses" style="color:var(--ac);font-weight:700"></span></div>
-      <div id="ks-vac-vrinda" class="sc"></div>
-      <div class="slbl">Vedant <span id="vd-doses" style="color:var(--ac);font-weight:700"></span></div>
-      <div id="ks-vac-vedant" class="sc"></div>
-    </div>
-
-    <div class="card">
-      <div class="chdr"><div class="chdr-l"><div class="cic">&#127775;</div><div><div class="ctit">Milestones</div><div class="cmeta">Moments of growth &amp; firsts</div></div></div>
-        <div class="cbtns"><button class="cbtn p" onclick="addMilestone()">+ Record</button></div></div>
-      <div class="irow">
-        <select id="ms-who"><option>Vrinda</option><option>Vedant</option><option>Both</option></select>
-        <input id="ms-text" placeholder="The milestone..." onkeydown="if(event.key==='Enter')addMilestone()">
-      </div>
-      <div id="ks-milestones" class="sc"></div>
-    </div>
-
-    <div class="card">
-      <div class="chdr"><div class="chdr-l"><div class="cic">&#10024;</div><div><div class="ctit">Memory Jar</div><div class="cmeta">Beautiful moments, forever</div></div></div>
-        <div class="cbtns"><button class="cbtn p" onclick="addMemory()">+ Add</button></div></div>
-      <input id="ks-mem-in" placeholder="A beautiful moment to remember..." style="margin-bottom:9px" onkeydown="if(event.key==='Enter')addMemory()">
-      <div id="ks-memories" class="sc"></div>
-      <div class="div"></div>
-      <div class="chdr" style="margin-bottom:8px;margin-top:4px">
-        <div class="chdr-l"><div class="cic">&#128200;</div><div><div class="ctit">Growth Tracker</div><div class="cmeta">Height &middot; Weight</div></div></div>
-        <button class="cbtn p" onclick="addGrowth()">+ Log</button></div>
-      <div class="irow">
-        <select id="grw-who"><option>Vrinda</option><option>Vedant</option></select>
-        <input id="grw-val" placeholder="e.g. 102cm / 15.2kg" onkeydown="if(event.key==='Enter')addGrowth()">
-      </div>
-      <div id="ks-growth" class="sc"></div>
-    </div>
-
+  <div class="card" style="margin-bottom:14px">
+    <div class="chdr"><div class="chdr-l"><div class="cic">&#127919;</div><div class="ctit">This Week&#39;s Focus</div></div><div class="cmeta" id="kw-week">&mdash;</div></div>
+    <div id="kids-week-body"></div>
   </div>
-
+  <div class="g2">
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127800;</div><div class="ctit">Vrinda</div></div><div class="cmeta" id="kw-v-prog">0/0</div></div><div id="kw-vrinda"></div></div>
+    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#11088;</div><div class="ctit">Vedant</div></div><div class="cmeta" id="kw-d-prog">0/0</div></div><div id="kw-vedant"></div></div>
+  </div>
+  <div class="card" style="margin:14px 0">
+    <div class="chdr"><div class="chdr-l"><div class="cic">&#129517;</div><div class="ctit">Parent Guidance</div></div></div>
+    <div id="kw-guidance"></div>
+  </div>
   <!-- ─── NEETA UPDATES (Teacher Updates from Vrinda's school) ─── -->
   <div class="g2">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -923,6 +837,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128737;</div><div class="ctit">Policies</div></div></div><div id="wealth-policies-list"></div></div>
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#129534;</div><div class="ctit">Recent Spend</div></div></div><div id="wealth-spend-list"></div></div>
   </div>
+  <div class="card" style="margin-top:14px"><div class="chdr"><div class="chdr-l"><div class="cic">&#128236;</div><div class="ctit">Daily Mail Review</div></div><div class="cmeta" id="mr-date">&mdash;</div></div><div id="mail-review-body"></div></div>
 </div>
 <div id="tab-panchang" class="panel">
   <div class="phdr">
@@ -2957,7 +2872,84 @@ function updateStarStats(){
  _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(a.length));
  var c=document.getElementById('c-act');if(c)c.textContent=a.length+' activities';
 }
-setTimeout(function(){ init(); try{renderWealth();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{updateStarStats();}catch(e){console.error(e);} }, 0);
+renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};
+function _kGet(){try{return JSON.parse(localStorage.getItem('sv-kids-week')||'{}');}catch(e){return {};}}
+function toggleKidActivity(child,idx){
+ var d=_kGet(); if(!d[child]||!d[child].activities||!d[child].activities[idx])return;
+ var a=d[child].activities[idx]; a.status=(a.status==='done')?'planned':'done';
+ localStorage.setItem('sv-kids-week',JSON.stringify(d)); renderKidsWeek(); updateStarStats();
+}
+function _kActs(child,list){
+ if(!list||!list.length)return _wEmpty('No activities yet \u2014 built each Sunday evening.');
+ return list.map(function(a,i){
+  var done=a.status==='done';
+  return '<div class="irow" style="cursor:pointer;opacity:'+(done?'.55':'1')+'" onclick="toggleKidActivity(\''+child+'\','+i+')">'+
+   '<div style="display:flex;gap:10px;align-items:flex-start">'+
+   '<div style="font-size:16px;line-height:1.2">'+(done?'\u2705':'\u2b1c')+'</div>'+
+   '<div><div style="font-weight:600'+(done?';text-decoration:line-through':'')+'">'+_wEsc(a.title)+'</div>'+
+   '<div style="font-size:12px;opacity:.7;line-height:1.6;margin-top:2px">'+_wEsc(a.how||'')+'</div>'+
+   (a.skill?'<div style="font-size:11px;opacity:.55;margin-top:3px">'+_wEsc(a.skill)+'</div>':'')+'</div></div>'+
+   (a.minutes?'<div style="font-size:11px;opacity:.5;white-space:nowrap">'+_wEsc(a.minutes)+' min</div>':'')+
+   '</div>';
+ }).join('');
+}
+function renderKidsWeek(){
+ var d=_kGet();
+ _wTxt('kw-week',d.weekOf||'\u2014');
+ var body=document.getElementById('kids-week-body');
+ if(body){
+  if(!d.theme){ body.innerHTML=_wEmpty('No weekly plan yet. The Sunday task builds one from Ms. Neeta\u2019s updates.'); }
+  else{
+   var h='<div style="padding:10px 2px"><div style="font-weight:600;font-size:15px">'+_wEsc(d.theme)+'</div>';
+   if(d.source)h+='<div style="font-size:12px;opacity:.6;margin-top:3px">Source: '+_wEsc(d.source)+'</div>';
+   if(d.shared&&d.shared.title)h+='<div style="margin-top:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,.05)"><div style="font-size:12px;opacity:.6">DO IT TOGETHER</div><div style="font-weight:600;margin-top:2px">'+_wEsc(d.shared.title)+'</div><div style="font-size:12px;opacity:.75;margin-top:3px;line-height:1.6">'+_wEsc(d.shared.how||'')+'</div></div>';
+   h+='</div>'; body.innerHTML=h;
+  }
+ }
+ var V=(d.vrinda&&d.vrinda.activities)||[], D=(d.vedant&&d.vedant.activities)||[];
+ _wSet('kw-vrinda',(d.vrinda&&d.vrinda.focus?'<div style="font-size:12px;opacity:.65;padding:4px 2px 8px">'+_wEsc(d.vrinda.focus)+'</div>':'')+_kActs('vrinda',V));
+ _wSet('kw-vedant',(d.vedant&&d.vedant.focus?'<div style="font-size:12px;opacity:.65;padding:4px 2px 8px">'+_wEsc(d.vedant.focus)+'</div>':'')+_kActs('vedant',D));
+ var dv=V.filter(function(a){return a.status==='done';}).length, dd=D.filter(function(a){return a.status==='done';}).length;
+ _wTxt('kw-v-prog',dv+'/'+V.length); _wTxt('kw-d-prog',dd+'/'+D.length);
+ var g=document.getElementById('kw-guidance');
+ if(g){ g.innerHTML=(d.guidance&&d.guidance.length)?'<div style="padding:8px 2px">'+d.guidance.map(function(x){return '<div style="font-size:13px;line-height:1.75">\u2022 '+_wEsc(x)+'</div>';}).join('')+'</div>':_wEmpty('Guidance appears with each weekly plan.'); }
+}
+function renderMailReview(){
+ var d=_wGet('sv-mailreview');
+ _wTxt('mr-date',d.date||'\u2014');
+ var host=document.getElementById('mail-review-body'); if(!host)return;
+ if(!d.date){ host.innerHTML=_wEmpty('No mail review yet \u2014 runs daily at 7:30 AM.'); return; }
+ var h='<div style="padding:8px 2px">';
+ if(d.spendTotal!=null)h+='<div style="font-size:13px;margin-bottom:8px">Spend today: <strong>'+_wInr(d.spendTotal)+'</strong></div>';
+ if(d.items&&d.items.length)h+=d.items.map(function(s){var c=s.verdict==='Avoidable'?'#fbbf24':'#4ade80';return '<div class="irow"><div><div style="font-weight:600">'+_wEsc(s.merchant)+'</div><div style="font-size:12px;opacity:.6">'+_wEsc(s.what||'')+'</div></div><div style="text-align:right"><div style="font-weight:700">'+_wInr(s.amount)+'</div><div style="font-size:11px;color:'+c+'">'+_wEsc(s.verdict||'')+'</div></div></div>';}).join('');
+ if(d.attention&&d.attention.length)h+='<div style="margin-top:10px;font-size:12px;opacity:.6">NEEDS ATTENTION</div>'+d.attention.map(function(x){return '<div style="font-size:13px;line-height:1.7">\u2022 '+_wEsc(x)+'</div>';}).join('');
+ if(d.actions&&d.actions.length)h+='<div style="margin-top:10px;font-size:12px;opacity:.6">ACTIONS</div>'+d.actions.map(function(a){var dot=a.pri==='urgent'?'\u{1F534}':(a.pri==='week'?'\u{1F7E1}':'\u{1F7E2}');return '<div style="font-size:13px;line-height:1.7">'+dot+' '+_wEsc(a.text)+'</div>';}).join('');
+ h+='</div>'; host.innerHTML=h;
+}
+function updateStarStats(){
+ var n=[],a=_kGet();
+ try{n=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]');}catch(e){}
+ var V=(a.vrinda&&a.vrinda.activities)||[], D=(a.vedant&&a.vedant.activities)||[];
+ var done=V.concat(D).filter(function(x){return x.status==='done';}).length;
+ _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(V.length+D.length));
+ _wTxt('st-done',String(done));_wTxt('st-week',a.weekOf||'\u2014');
+ var c=document.getElementById('c-act'); if(c)c.textContent=(V.length+D.length)+' activities';
+}
+function unlockLifeline(){
+ var b=document.querySelector('[data-tab="life"]'); if(!b)return;
+ b.style.display='';
+ if(typeof goTab==='function') goTab('life',b);
+}
+function bindLifelineSecret(){
+ var el=document.getElementById('vis-sub'); if(!el||el.__bound)return; el.__bound=true;
+ var t=null;
+ var start=function(){ t=setTimeout(unlockLifeline,700); };
+ var stop=function(){ if(t){clearTimeout(t);t=null;} };
+ el.addEventListener('mousedown',start); el.addEventListener('mouseup',stop);
+ el.addEventListener('mouseleave',stop); el.addEventListener('touchstart',start,{passive:true});
+ el.addEventListener('touchend',stop); el.addEventListener('touchcancel',stop);
+}
+setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} }, 0);
 
 
 
