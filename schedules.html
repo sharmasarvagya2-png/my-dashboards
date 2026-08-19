@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Automation Control</title>
+<style>
+:root{--bg:#0f1115;--card:#171a21;--bd:#252a34;--fg:#e8eaed;--mut:#8b93a1;--acc:#7c9cff;
+--ok:#4ade80;--warn:#fbbf24;--err:#f87171;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:20px}
+h1{font-size:20px;margin:0}
+.sub{color:var(--mut);font-size:12px;margin:2px 0 16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:9px;margin-bottom:16px}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:11px 13px}
+.st .n{font-size:22px;font-weight:700}.st .l{font-size:10px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase;margin-top:2px}
+.bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.chip{padding:5px 11px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--mut);font-size:12px;cursor:pointer;user-select:none}
+.chip.on{background:var(--acc);color:#0f1115;border-color:var(--acc);font-weight:600}
+input.search{flex:1;min-width:150px;background:var(--card);border:1px solid var(--bd);color:var(--fg);border-radius:8px;padding:7px 11px;font-size:13px}
+.grp{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:18px 0 8px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.card.off{opacity:.5}
+.card.bad{border-color:#7f1d1d;background:#1a1416}
+.row{display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.nm{font-weight:650;word-break:break-word}
+.ds{font-size:12px;color:var(--mut);margin-top:3px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.tag{font-size:10px;padding:2px 7px;border-radius:999px;background:#20242d;color:var(--mut);border:1px solid var(--bd)}
+.tag.b{color:var(--acc);border-color:#2f3d63}
+.rt{text-align:right;white-space:nowrap;flex-shrink:0}
+.cron{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--mut)}
+.when{font-size:12px;font-weight:600}
+.pill{display:inline-block;margin-top:5px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600}
+.p-ok{background:#052e16;color:var(--ok)}.p-off{background:#1e2129;color:var(--mut)}
+.p-bad{background:#3f1414;color:var(--err)}.p-new{background:#3a2c07;color:var(--warn)}
+.btns{margin-top:8px;display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+button{background:#20242d;border:1px solid var(--bd);color:var(--fg);border-radius:7px;padding:4px 10px;font-size:11px;cursor:pointer}
+button:hover{background:#2a2f3a}
+button.pri{background:var(--acc);color:#0f1115;border-color:var(--acc);font-weight:600}
+.out{background:#0b0d11;border:1px solid var(--bd);border-radius:9px;padding:12px;margin-top:12px;
+font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto;display:none}
+.err{background:#3f1414;border:1px solid #7f1d1d;color:#fca5a5;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:12px}
+.empty{text-align:center;color:var(--mut);padding:34px}
+</style>
+</head>
+<body>
+<h1>Automation Control</h1>
+<div class="sub" id="sub">Loading…</div>
+<div id="err"></div>
+
+<div class="stats">
+  <div class="st"><div class="n" id="s-all">–</div><div class="l">Total</div></div>
+  <div class="st"><div class="n" id="s-live" style="color:var(--ok)">–</div><div class="l">Live</div></div>
+  <div class="st"><div class="n" id="s-dorm" style="color:var(--warn)">–</div><div class="l">Dormant</div></div>
+  <div class="st"><div class="n" id="s-stale" style="color:var(--err)">–</div><div class="l">No heartbeat</div></div>
+  <div class="st"><div class="n" id="s-brow">–</div><div class="l">Need browser</div></div>
+</div>
+
+<div class="bar">
+  <div class="chip on" data-f="all">All</div>
+  <div class="chip" data-f="live">Live</div>
+  <div class="chip" data-f="dormant">Dormant</div>
+  <div class="chip" data-f="bad">Needs attention</div>
+  <div class="chip" data-f="browser">Browser</div>
+  <input class="search" id="q" placeholder="Search id or description…">
+</div>
+<div class="bar">
+  <button class="pri" id="gen-all">Generate all Task Scheduler commands</button>
+  <button id="gen-ps">Generate runner script</button>
+  <button id="export">Export schedules.json</button>
+  <button id="copy-out">Copy output</button>
+  <button id="hide-out">Hide</button>
+</div>
+<pre class="out" id="out"></pre>
+
+<div id="list"><div class="empty">Loading…</div></div>
+
+<script>
+var DATA=null, RUNS={}, F='all', Q='';
+var OVR = (function(){ try { return JSON.parse(localStorage.getItem('sched-overrides')||'{}'); } catch(e){ return {}; } })();
+function saveOvr(){ try{ localStorage.setItem('sched-overrides', JSON.stringify(OVR)); }catch(e){} }
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function eff(t){ var o=OVR[t.id]||{}; return Object.assign({},t,o); }
+
+var DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function human(c){
+  if(!c) return 'manual only';
+  var p=c.trim().split(/\s+/); if(p.length!==5) return c;
+  var mi=p[0],h=p[1],dom=p[2],mon=p[3],dow=p[4];
+  var time=(h.indexOf('*')===0)?null:(h.split(',').map(function(x){
+    var hh=parseInt(x,10); if(isNaN(hh))return x;
+    var m=(mi==='*'?'00':String(mi).padStart(2,'0'));
+    return String(hh).padStart(2,'0')+':'+m; }).join(', '));
+  if(mi.indexOf('*/')===0) return 'every '+mi.slice(2)+' min'+(h==='*'?'':' ('+h+'h)');
+  if(dom!=='*'&&mon==='*') return 'day '+dom+' monthly at '+(time||'?');
+  if(mon!=='*') return dom+'/'+mon+' yearly at '+(time||'?');
+  if(dow!=='*'){
+    var d=dow.split(/[,-]/).map(function(x){return DOW[parseInt(x,10)]||x;});
+    var lbl = dow.indexOf('-')>-1 ? d[0]+'–'+d[d.length-1] : d.join(', ');
+    return lbl+' at '+(time||'?');
+  }
+  return 'daily at '+(time||'?');
+}
+
+function hb(id){ return RUNS[id]||null; }
+function hoursSince(iso){ var t=Date.parse(iso); return isNaN(t)?null:(Date.now()-t)/3600000; }
+function status(t){
+  var e=eff(t);
+  if(!e.registered && !e.enabled) return 'dormant';
+  if(!e.enabled) return 'disabled';
+  var r=hb(t.id);
+  if(!r) return 'nohb';
+  var h=hoursSince(r.ts);
+  var c=e.cron||'';
+  var weekly=/[0-6](-[0-6])?$/.test(c.split(/\s+/)[4]||'*') && (c.split(/\s+/)[4]||'*')!=='*';
+  var monthly=(c.split(/\s+/)[2]||'*')!=='*';
+  var lim = monthly?24*40:(weekly?24*9:48);
+  return (h!==null && h>lim) ? 'stale' : (r.ok===false ? 'failing' : 'ok');
+}
+
+function schtasks(t){
+  var e=eff(t);
+  if(!e.cron) return '# '+e.id+' — manual only, no schedule';
+  var p=e.cron.trim().split(/\s+/), mi=p[0],h=p[1],dom=p[2],dow=p[4];
+  var tn='AI-'+e.id;
+  var tr='powershell -NoProfile -ExecutionPolicy Bypass -File C:\\Users\\sharm\\Automation\\run.ps1 -Task '+e.id;
+  if(mi.indexOf('*/')===0){
+    return 'schtasks /create /f /tn "'+tn+'" /tr "'+tr+'" /sc minute /mo '+mi.slice(2);
+  }
+  var hh=(h.split(',')[0]||'6'), st=String(parseInt(hh,10)).padStart(2,'0')+':'+String(mi==='*'?'00':mi).padStart(2,'0');
+  if(dom!=='*') return 'schtasks /create /f /tn "'+tn+'" /tr "'+tr+'" /sc monthly /d '+dom+' /st '+st;
+  if(dow!=='*'){
+    var map={'0':'SUN','1':'MON','2':'TUE','3':'WED','4':'THU','5':'FRI','6':'SAT'};
+    var days=dow.indexOf('-')>-1
+      ? (function(){var a=dow.split('-'),o=[];for(var i=+a[0];i<=+a[1];i++)o.push(map[String(i)]);return o.join(',');})()
+      : dow.split(',').map(function(x){return map[x]||x;}).join(',');
+    return 'schtasks /create /f /tn "'+tn+'" /tr "'+tr+'" /sc weekly /d '+days+' /st '+st;
+  }
+  var hrs=h.split(',');
+  if(hrs.length>1){
+    return hrs.map(function(x){
+      return 'schtasks /create /f /tn "'+tn+'-'+x+'" /tr "'+tr+'" /sc daily /st '+String(parseInt(x,10)).padStart(2,'0')+':'+String(mi==='*'?'00':mi).padStart(2,'0');
+    }).join('\n');
+  }
+  return 'schtasks /create /f /tn "'+tn+'" /tr "'+tr+'" /sc daily /st '+st;
+}
+
+function runnerScript(){
+  return [
+'# C:\\Users\\sharm\\Automation\\run.ps1',
+'param([Parameter(Mandatory=$true)][string]$Task)',
+'',
+'$Root    = "C:\\Users\\sharm\\Automation"',
+'$Prompt  = Join-Path $Root "prompts\\$Task.md"',
+'$LogDir  = Join-Path $Root "logs"',
+'$Runs    = Join-Path $Root "runs.json"',
+'',
+'if (-not (Test-Path $Prompt)) { Write-Error "No prompt file for $Task"; exit 1 }',
+'New-Item -ItemType Directory -Force -Path $LogDir | Out-Null',
+'',
+'# route per task: gemini for research, qwen for code/file work',
+'$cfg    = Get-Content (Join-Path $Root "schedules.json") -Raw | ConvertFrom-Json',
+'$entry  = $cfg.tasks | Where-Object { $_.id -eq $Task }',
+'$engine = if ($entry.target -eq "qwen") { "qwen" } else { "gemini" }',
+'',
+'$log = Join-Path $LogDir "$Task-$(Get-Date -f yyyy-MM-dd-HHmm).log"',
+'$ok  = $true',
+'try {',
+'  Get-Content $Prompt -Raw | & $engine -p 2>&1 | Tee-Object -FilePath $log',
+'  if ($LASTEXITCODE -ne 0) { $ok = $false }',
+'} catch { $ok = $false; $_ | Out-File $log -Append }',
+'',
+'# heartbeat — this is what the dashboard reads',
+'$runs = @{}',
+'if (Test-Path $Runs) { $runs = Get-Content $Runs -Raw | ConvertFrom-Json -AsHashtable }',
+'$runs[$Task] = @{ ts = (Get-Date).ToString("o"); ok = $ok; engine = $engine; log = $log }',
+'$runs | ConvertTo-Json -Depth 5 | Set-Content $Runs -Encoding UTF8',
+'',
+'if (-not $ok) { exit 1 }'
+  ].join('\n');
+}
+
+function show(txt){ var o=document.getElementById('out'); o.textContent=txt; o.style.display='block'; o.scrollTop=0; }
+
+function render(){
+  var list=document.getElementById('list');
+  var all=DATA.tasks.map(eff);
+  var live=all.filter(function(t){return t.enabled;});
+  var dorm=all.filter(function(t){return !t.registered;});
+  var bad=DATA.tasks.filter(function(t){var s=status(t);return s==='stale'||s==='failing'||s==='nohb';});
+  document.getElementById('s-all').textContent=all.length;
+  document.getElementById('s-live').textContent=live.length;
+  document.getElementById('s-dorm').textContent=dorm.length;
+  document.getElementById('s-stale').textContent=bad.length;
+  document.getElementById('s-brow').textContent=all.filter(function(t){return t.browser;}).length;
+
+  var rows=DATA.tasks.filter(function(t){
+    var e=eff(t), s=status(t);
+    if(Q){ var q=Q.toLowerCase();
+      if((e.id+' '+(e.desc||'')).toLowerCase().indexOf(q)===-1) return false; }
+    if(F==='live') return e.enabled;
+    if(F==='dormant') return !e.registered;
+    if(F==='bad') return s==='stale'||s==='failing'||s==='nohb';
+    if(F==='browser') return e.browser;
+    return true;
+  });
+
+  if(!rows.length){ list.innerHTML='<div class="empty">Nothing matches.</div>'; return; }
+
+  var cats={}; rows.forEach(function(t){ var c=eff(t).category||'other'; (cats[c]=cats[c]||[]).push(t); });
+  var order=['dharmic','kids','finance','work','jobs','trading','content','bhajan','harvest','other'];
+  var html='';
+  order.forEach(function(c){
+    if(!cats[c]) return;
+    html+='<div class="grp">'+esc(c)+' · '+cats[c].length+'</div>';
+    cats[c].forEach(function(t){
+      var e=eff(t), s=status(t);
+      var r=hb(t.id);
+      var pill = s==='ok'?'<span class="pill p-ok">healthy</span>'
+        : s==='stale'?'<span class="pill p-bad">stale</span>'
+        : s==='failing'?'<span class="pill p-bad">failing</span>'
+        : s==='nohb'?'<span class="pill p-new">no heartbeat</span>'
+        : s==='dormant'?'<span class="pill p-new">dormant</span>'
+        : '<span class="pill p-off">disabled</span>';
+      html+='<div class="card'+(e.enabled?'':' off')+((s==='stale'||s==='failing')?' bad':'')+'">'
+        +'<div class="row"><div style="min-width:0">'
+        +'<div class="nm">'+esc(e.id)+'</div>'
+        +'<div class="ds">'+esc(e.desc||'')+'</div>'
+        +'<div class="tags">'
+        +'<span class="tag b">'+esc(e.target||'any')+'</span>'
+        +(e.browser?'<span class="tag">browser</span>':'')
+        +(e.bot&&e.bot!=='none'?'<span class="tag">'+esc(e.bot)+'</span>':'')
+        +(e.registered?'':'<span class="tag">unregistered</span>')
+        +((e.writes||[]).length?'<span class="tag">'+esc(e.writes.join(', '))+'</span>':'')
+        +(r?'<span class="tag">last '+esc(new Date(r.ts).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}))+'</span>':'')
+        +'</div></div>'
+        +'<div class="rt"><div class="when">'+esc(human(e.cron))+'</div>'
+        +'<div class="cron">'+esc(e.cron||'—')+'</div>'+pill
+        +'<div class="btns">'
+        +'<button data-act="toggle" data-id="'+esc(e.id)+'">'+(e.enabled?'Disable':'Enable')+'</button>'
+        +'<button data-act="cron" data-id="'+esc(e.id)+'">Cron</button>'
+        +'<button data-act="engine" data-id="'+esc(e.id)+'">Engine</button>'
+        +'<button data-act="cmd" data-id="'+esc(e.id)+'">Command</button>'
+        +'</div></div></div></div>';
+    });
+  });
+  list.innerHTML=html;
+
+  Array.prototype.forEach.call(list.querySelectorAll('button[data-act]'),function(b){
+    b.addEventListener('click',function(){
+      var id=b.getAttribute('data-id'), act=b.getAttribute('data-act');
+      var t=DATA.tasks.filter(function(x){return x.id===id;})[0]; if(!t) return;
+      var e=eff(t);
+      OVR[id]=OVR[id]||{};
+      if(act==='toggle'){ OVR[id].enabled=!e.enabled; saveOvr(); render(); }
+      if(act==='cron'){ var v=prompt('Cron for '+id+'  (min hour dom mon dow)', e.cron||'0 6 * * *');
+        if(v!==null){ OVR[id].cron=v.trim(); saveOvr(); render(); } }
+      if(act==='engine'){ var g=prompt('Engine for '+id+'  (gemini / qwen / claude / none)', e.target||'gemini');
+        if(g!==null){ OVR[id].target=g.trim(); saveOvr(); render(); } }
+      if(act==='cmd'){ show(schtasks(t)); }
+    });
+  });
+}
+
+function exportJson(){
+  var out=JSON.parse(JSON.stringify(DATA));
+  out.updatedAt=new Date().toISOString().slice(0,10);
+  out.tasks=out.tasks.map(function(t){ return Object.assign({},t,OVR[t.id]||{}); });
+  show(JSON.stringify(out,null,2));
+}
+
+document.getElementById('gen-all').addEventListener('click',function(){
+  var live=DATA.tasks.filter(function(t){var e=eff(t);return e.enabled&&e.cron;});
+  show('REM Run once in an elevated Command Prompt.\nREM '+live.length+' scheduled tasks.\n\n'
+    + live.map(schtasks).join('\n') + '\n');
+});
+document.getElementById('gen-ps').addEventListener('click',function(){ show(runnerScript()); });
+document.getElementById('export').addEventListener('click',exportJson);
+document.getElementById('copy-out').addEventListener('click',function(){
+  var o=document.getElementById('out');
+  navigator.clipboard.writeText(o.textContent).then(function(){
+    var b=document.getElementById('copy-out'); b.textContent='Copied'; setTimeout(function(){b.textContent='Copy output';},1200);
+  }).catch(function(){});
+});
+document.getElementById('hide-out').addEventListener('click',function(){ document.getElementById('out').style.display='none'; });
+Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'),function(c){
+  c.addEventListener('click',function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'),function(x){x.classList.remove('on');});
+    c.classList.add('on'); F=c.getAttribute('data-f'); render();
+  });
+});
+document.getElementById('q').addEventListener('input',function(e){ Q=e.target.value; render(); });
+
+Promise.all([
+  fetch('schedules.json?cb='+Date.now()).then(function(r){ if(!r.ok) throw new Error('schedules.json missing'); return r.json(); }),
+  fetch('runs.json?cb='+Date.now()).then(function(r){ return r.ok?r.json():{}; }).catch(function(){ return {}; })
+]).then(function(res){
+  DATA=res[0]; RUNS=res[1]||{};
+  var n=Object.keys(RUNS).length;
+  document.getElementById('sub').textContent =
+    DATA.tasks.length+' automations · registry v'+DATA.version+' · '
+    + (n? n+' heartbeats' : 'no runs.json yet — heartbeats appear once the runner script is live');
+  render();
+}).catch(function(e){
+  document.getElementById('err').innerHTML='<div class="err">'+esc(e.message)+'</div>';
+  document.getElementById('list').innerHTML='';
+});
+</script>
+</body>
+</html>

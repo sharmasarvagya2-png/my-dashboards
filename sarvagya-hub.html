@@ -767,17 +767,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     <div id="neeta-updates-list" class="sc"></div>
   </div>
 
-  <!-- ─── VRINDA ACTIVITY PLANS ─── -->
-  <div class="g2" style="margin-top:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div>
-        <div style="font-size:15px;font-weight:700;color:var(--fg)">🎯 Activity Planner — Extend School Learning</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px">Ideas to reinforce what Vrinda covered at school</div>
-      </div>
-      <button class="btn-s" onclick="showAddActivity()">+ Add</button>
-    </div>
-    <div id="vrinda-activities-list" class="sc"></div>
-  </div>
 
   <!-- Neeta Update Modal -->
   <div id="neeta-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
@@ -2884,7 +2873,7 @@ function updateStarStats(){
  _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(a.length));
  var c=document.getElementById('c-act');if(c)c.textContent=a.length+' activities';
 }
-renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};
+renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};renderVrindaActivities=function(){};
 function _kGet(){try{return JSON.parse(localStorage.getItem('sv-kids-week')||'{}');}catch(e){return {};}}
 function toggleKidActivity(child,idx){
  var d=_kGet(); if(!d[child]||!d[child].activities||!d[child].activities[idx])return;
@@ -3024,10 +3013,10 @@ function _daysTo(s){
  if(!m[3]&&d<t0) d=new Date(y+1,mo,parseInt(m[1],10));
  return Math.round((d-t0)/86400000);
 }
-function _mins(s){var m=String(s||'').match(/(\d{1,2}):(\d{2})/g);if(!m||!m.length)return null;
- return m.map(function(x){var p=x.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);});}
+function _mins(s){var re=/(\d{1,2}):(\d{2})\s*([AaPp])?[Mm]?/g,o=[],m;
+ while((m=re.exec(String(s||'')))){var h=parseInt(m[1],10),i=parseInt(m[2],10),a=(m[3]||'').toLowerCase(); if(a==='p'&&h!==12)h+=12; if(a==='a'&&h===12)h=0; o.push(h*60+i);} return o.length?o:null;}
 function _inWindow(range){var w=_mins(range); if(!w||w.length<2)return false;
- var n=new Date(), cur=n.getHours()*60+n.getMinutes(); return cur>=w[0]&&cur<=w[1];}
+ var n=new Date(), c=n.getHours()*60+n.getMinutes(), a=w[0], b=w[1]; return (a<=b)?(c>=a&&c<=b):(c>=a||c<=b);}
 function _pill(txt,col){return '<span style="display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:'+col+'22;color:'+col+';border:1px solid '+col+'55">'+_wEsc(txt)+'</span>';}
 function renderPanchangExtras(){
  var host=document.getElementById('panchang-hero'); if(!host)return;
