@@ -522,7 +522,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     </button>
     <button class="ntab" data-tab="kids" data-mode="personal" onclick="goTab('kids',this)">
       <div class="ntab-top"><div class="ntab-ic">&#11088;</div><span class="ntab-lbl">Future Stars</span></div>
-      <div class="ntab-chips"><span class="chip" id="c-vac">Vaccines</span><span class="chip" id="c-ms">Milestones</span><span class="chip" id="c-act">Activity</span></div>
+      <div class="ntab-chips"><span class="chip" id="c-week">&mdash;</span><span class="chip" id="c-done">0 done</span><span class="chip" id="c-act">Activity</span></div>
     </button>
     <button class="ntab" style="display:none" data-tab="life" data-mode="personal" onclick="goTab('life',this)">
       <div class="ntab-top"><div class="ntab-ic">&#129684;</div><span class="ntab-lbl">Lifeline</span></div>
@@ -1240,95 +1240,11 @@ const DEFAULT_PTLOGS=[
 ];
 
 
-const LL_CONTEXT=`ABOUT SARVAGYA SHARMA (Private personal context — treat with deep care and discretion):
-
-AGE & BACKGROUND: 32 years old. B.Tech Mechanical Engineering, PGDBM. Grew up in Gurgaon in a middle-class Indian family. National-level inline skater from Class 3 to 10 — never pursued it due to family pressure toward engineering.
-
-WORK: Currently Training Manager - Customer Experience at Onecom, UK telecoms company. Career path: Convergys (trainer) → Teleperformance (trainer, left due to micromanagement) → Airbnb (Training Business Partner, 4 years) → Onecom. Also handles freelance L&D projects.
-
-WIFE - SHWETA: Married through arranged marriage. Two children together — Vrinda (daughter, born June 2022) and Vedant (son, born Feb 2024). Shweta is deeply supportive, has protected the family through enormous pressure, never misused sensitive information she knows, and chose to stand by Sarvagya even when she had every reason not to. Sarvagya credits her strength greatly. They share an open, friendship-based relationship and discuss everything honestly.
-
-GRANDFATHER (BABA): The most significant relationship of Sarvagya's life. Raised partly by Baba from Class 3. They were best friends — debated life, parenting, the world, death itself. Baba's number in his phone was saved as "A1". Baba built everything from zero (both parents died of TB when he was 2, raised in difficult conditions by uncle). Served in Indian Defence accounts department. Retired Senior Manager. Meticulous — left a suitcase with documented instructions for after his passing. Passed away in December 2021 from COVID (multiple organ failure). Sarvagya was extremely close to him and grieves his absence deeply. Baba was the anchor.
-
-FATHER (PAPA): Retired Senior Manager HR/Admin from GAIL (Gas Authority of India Limited, PSU). Now 66. Has had multiple extramarital affairs throughout his marriage — Sarvagya discovered this gradually. Papa cheated on Mummy repeatedly. A woman filed a rape case against Papa (contested — Sarvagya believes it was consensual); Sarvagya handled legal proceedings, paid ₹2L for settlement, dealt with police visits at 2am, coordinated lawyers — all while protecting Shweta and the children from knowing the full picture. Papa has poor emotional vocabulary — says hurtful things without realising. Has also made classist remarks (about daughter-in-law's car, about not coming to hospital if a girl was born). Relationship is strained but Sarvagya still performs his duty as a son.
-
-MOTHER (MUMMY): 59 years old. Survived Stage 3C breast cancer (diagnosed ~2022, now recovered). Has suffered enormously due to Papa's infidelity but chose to stay and suppress. Became controlling, critical, and at times actively tried to destabilise Sarvagya's marriage — pushed for divorce, made Shweta feel unwelcome, refused her food, instigated conflicts. Also gives silent treatment. Despite all this, Sarvagya deeply loves her and has always seen her as the centre of his world — but has had to draw a firm boundary to protect his own family. Left the house during Holi in anger. Has said "you are dead to me" to Sarvagya. Currently living in Vrindavan (own property). Relationship is strained but Sarvagya keeps reaching out.
-
-SISTER (DIDI): 34 years old (2 years older than Sarvagya). Married to Jiju whose family runs a petrol pump business in Kanpur. Has a son, Yuvan. Has a history of confrontational behaviour — with in-laws, with maternal relatives, with Sarvagya's wife Shweta. Has said hurtful things during family conflicts. Sarvagya still maintains contact, calls regularly, shares videos of his children. The relationship has natural sibling complexity — fights followed by reconnection. Sarvagya has tried to prepare her for years about not forcing him to choose between her and his wife.
-
-MAMA (MATERNAL UNCLE — youngest): Sarvagya's closest maternal relative. Called him when Mummy and Papa left during Holi. Strong bond. From Farrukhabad (Tier 3/4 city, UP). Shweta also bonded with Mama's family when they visited for Nana ji's passing.
-
-NANA JI: Maternal grandfather. Has passed away.
-
-CHILDREN:
-- VRINDA: Daughter, born June 23 2022. Currently ~4 years old. Has stopped drinking milk (happened around Vedant's birth). Sarvagya deeply protective of her.
-- VEDANT: Son, born Feb 15 2024. Currently ~2.3 years old. Spent 5 days in NICU after birth. Sarvagya took 5 weeks paternity leave from Airbnb to be present.
-
-CORE VALUES & WORLDVIEW:
-- Deeply influenced by the Bhagavad Gita — especially karma yoga (do your duty without attachment to outcome). Turns to the Gita in dark moments.
-- Had suicidal thoughts during the worst period — found his way through with the Gita.
-- Believes problems are not bigger than people. Relationships matter more than incidents.
-- Extremely adaptive — believes in adjusting, solving, bridging, not breaking.
-- Has always been the peacemaker, the bridge, the one who absorbs and solves.
-- Trusts slowly due to witnessing Papa's betrayal — wired-in trust issues even with close friends.
-- Does not value material things — refused dowry, contributed his savings to family assets, never asked for property.
-- Deeply private about family pain — has protected everyone's reputation even at cost to himself.
-- Has sometimes felt crushed carrying everyone's weight — sought counselling but found reliving trauma in sessions painful.
-- Smart worker, not necessarily hardest worker. Resourceful and strategic.
-- Loves his children fiercely and is determined not to pass generational trauma to them.
-- Currently navigating estrangement from parents while still reaching out, still performing duty, still hoping.
-
-CURRENT SITUATION: Living with Shweta, Vrinda, and Vedant. Parents living in Vrindavan. Relationship with parents and sister strained but not fully severed. Sarvagya still calls, still tries. Carries a lot — professionally performing well, personally carrying grief, family fracture, and the ongoing effort to be a present father and husband despite everything.`;
+const LL_CONTEXT = '';   // personal context lives only in the encrypted vault, never in this file
 
 
 
-const DEFAULT_FAMILY=[
-  {id:'f1',name:'Shweta',emoji:'🌸',relation:'Wife',color:'#f472b6',
-   context:`Arranged marriage — Sarvagya was going to say no, but she came across as deeply grounded and responsible. Her Air Force father shaped her: she learned to manage alone, values money, understands dunya-dari. This is exactly what Sarvagya needed in a partner. Has fibroids (uterine cysts), on medication and monitored. She used to withhold things early in marriage — contractual job not disclosed, other small untruths. Sarvagya worked on this patiently and she no longer hides things from him. Now his most open relationship. Their dynamic: best friends who tell each other everything including past relationships and crushes.`,
-   tags:['partner','strength','evolved'],lastUpdated:'2026-07'},
-  {id:'f2',name:'Vrinda',emoji:'✨',relation:'Daughter (Kutlu)',color:'#ec4899',
-   context:`4 years old. Attends the same school Sarvagya went to — pre-nursery. Full of energy and personality. Stopped drinking milk during a turbulent family period and still doesn't. Sarvagya never blamed anyone for this. He is buying GPS tracker cards (card form) for her and Vedant so he always knows they are safe, especially with Shweta's family. Deeply protective — determined she grows up without the generational trauma he carried.`,
-   tags:['child','joy','protected'],lastUpdated:'2026-07'},
-  {id:'f3',name:'Vedant',emoji:'⚡',relation:'Son (Vedu)',color:'#60a5fa',
-   context:`2.5 years old. At home with daily nanny. Born around Valentine's Day 2024 — spent 5 days in NICU. Sarvagya took 5 weeks paternity leave from Airbnb to be fully present. Pure joy and light. Sarvagya calls him Vedu. Has a nanny who comes daily so Shweta gets some space and support.`,
-   tags:['child','joy','protected'],lastUpdated:'2026-07'},
-  {id:'f4',name:'Baba',emoji:'🕊️',relation:'Paternal Grandfather (Deceased)',color:'#e8b86d',
-   context:`The most important person in Sarvagya's life. Moved in with Baba from Class 3. Were best friends — not just family. Had Sarvagya's number saved as A1. Discussed everything: life, death, philosophy, how to raise children, how to debate the world. Built his life from zero — both parents died of TB when he was 2. Raised by uncle in difficult conditions (once his chaachi was scolded for putting ghee on his roti). Worked in Indian Defence accounts, built property in Mathura from scratch, left a detailed post-death instruction document in his briefcase so no one would be troubled. Died of COVID multi-organ failure. Sarvagya wants his children to have with Papa and Dadi what he had with Baba — this is why he still reaches out, still hopes.`,
-   tags:['anchor','loss','love','foundation'],lastUpdated:'2026-07'},
-  {id:'f5',name:'Mummy',emoji:'🌿',relation:'Mother',color:'#a78bfa',
-   context:`59 years old. Survived Stage 3C breast cancer, now recovered after chemo and surgery. Suffered enormously due to Papa's repeated infidelity but chose silence and suppression throughout. This likely hardened her over time — she became critical, controlling, harsh with Shweta. Said "you are dead to me" to Sarvagya. Instigated conflict between Sarvagya and Shweta multiple times. Currently living in Vrindavan where Papa is building a hotel property. Sarvagya still calls, video calls with the kids, and hopes she returns when construction is done.`,
-   tags:['mother','complicated','love','grief'],lastUpdated:'2026-07'},
-  {id:'f6',name:'Papa',emoji:'🌊',relation:'Father',color:'#f59e0b',
-   context:`66 years old. Retired Senior Manager HR/Admin from GAIL PSU. Had multiple extramarital affairs over decades. One woman filed a rape case — Sarvagya handled the entire legal situation alone: lawyers, 2am police visits, settlement documents, court preparation. Has poor emotional vocabulary — says hurtful things unintentionally (e.g., would not have come to hospital if granddaughter was born). Plays information games — shares secrets while saying "don't tell Mummy." Said "you are dead to me." Sarvagya still performs his dharma. Building hotel property in Vrindavan. Still tells Sarvagya things privately — the relationship isn't fully dead.`,
-   tags:['father','complicated','forgiveness','duty'],lastUpdated:'2026-07'},
-  {id:'f7',name:'Didi',emoji:'🌻',relation:'Elder Sister',color:'#22d3ee',
-   context:`34 years old. Arranged marriage — husband Jiju has petrol pump business in Kanpur. Had in-law issues that escalated to a women's cell case (later settled through counselling). Tends to escalate conflicts, be rude, and make comparisons with relatives. Has a son named Yuvan. Sarvagya warned her before his own marriage: don't put me in a position of choosing between you and my wife. He applied the same standard to her that he applied to Shweta — fairness regardless of who it is. Still calls regularly, video calls with Yuvan, maintains the brother's role.`,
-   tags:['sister','complicated','same-standard'],lastUpdated:'2026-07'},
-  {id:'f8',name:'Chhote Mama',emoji:'🤝',relation:'Youngest Maternal Uncle',color:'#22c55e',
-   context:`The person Sarvagya calls when things break. Called him on Holi when parents walked out. Advice: stay, keep trying, things will improve. His wife and daughter bonded with Shweta during Nana ji's last rites in Farrukhabad. Trusted for calm, grounded perspective. Based in Farrukhabad, UP.`,
-   tags:['support','trusted','calls-in-crisis'],lastUpdated:'2026-07'},
-  {id:'f9',name:'Yuvan',emoji:'⭐',relation:'Nephew',color:'#86efac',
-   context:`Didi's only son. Sarvagya maintains the bond through regular video calls. Keeps the uncle-nephew connection alive despite the complicated relationship with Didi.`,
-   tags:['family','next-gen'],lastUpdated:'2026-07'},
-  {id:'f10',name:'Vipul',emoji:'🤜',relation:'Best Friend (College)',color:'#818cf8',
-   context:`College best friend since B.Tech days. Lives in Paharganj. His father passed away just 3 weeks after Baba — they've been through parallel grief together. The kind of friend who picks up at 2am. Sarvagya's anchor in the friend world.`,
-   tags:['friend','trusted','grief-shared'],lastUpdated:'2026-07'},
-  {id:'f11',name:'Yafnika',emoji:'🌺',relation:'Best Friend (College, Sister)',color:'#f9a8d4',
-   context:`College friend, close as a sister. Both got married around the same time. Deep, lasting bond. One of Sarvagya's core circle.`,
-   tags:['friend','trusted'],lastUpdated:'2026-07'},
-  {id:'f12',name:'Saas (Mother-in-law)',emoji:'🌾',relation:'Mother-in-Law',color:'#d4a574',
-   context:`Recently had serious breathing difficulties — windpipe partially blocked (Medanta assessment). Family denied further treatment and took her home against medical advice. Sarvagya arranged 7-day Ayurvedic therapy at HIIMS out of his own initiative because he could not watch and do nothing. Frustrates him deeply — the family does not value life urgently enough. He has learned when to act and when to stay silent around this family.`,
-   tags:['inlaw','concern','acted'],lastUpdated:'2026-07'},
-  {id:'f13',name:'Jo Paul',emoji:'👑',relation:'Head of CX — Onecom',color:'#ef4444',
-   context:`Most important stakeholder at Onecom. Head of CX — Sarvagya's ultimate visibility target. The goal is to be seen as proactive, strategic, and data-driven rather than just reactive. Bi-weekly update cadence. Getting on Jo's radar for the right reasons is a core professional objective.`,
-   tags:['work','executive','visibility'],lastUpdated:'2026-07'},
-  {id:'f14',name:'Rohit Karn',emoji:'🎯',relation:'Technical Trainer — UK (Direct Report)',color:'#10b981',
-   context:`UK-based Technical Trainer. One of Sarvagya's two direct UK reports. Weekly touch cadence. Sarvagya manages his development, batch delivery, and day-to-day coordination.`,
-   tags:['work','team','direct-report'],lastUpdated:'2026-07'},
-  {id:'f15',name:'Piyush Patel',emoji:'🎓',relation:'Customer Service Trainer — UK (Direct Report)',color:'#10b981',
-   context:`UK-based Customer Service Trainer. One of Sarvagya's two direct UK reports. Weekly touch cadence. Sarvagya coordinates with him on CS training delivery and quality.`,
-   tags:['work','team','direct-report'],lastUpdated:'2026-07'},
-];
+const DEFAULT_FAMILY = [];   // family data lives only in the encrypted vault, never in this file
 
 const DEFAULT_VACCINES={
   vrinda:[
@@ -2061,23 +1977,7 @@ function dGrowth(id){sv('ks-growth',ld('ks-growth',[]).filter(x=>x.id!==id));ren
 // ═══════════════════════════════════════
 // LIFELINE PERSONAL CONTEXT
 // ═══════════════════════════════════════
-const LL_CONTEXT_DEFAULT=`WHO IS SARVAGYA: Sarvagya Sharma, 32. Training Manager at Onecom (UK telecoms company, Customer Experience team), based in Gurgaon. B.Tech Mechanical Engg (backlogs cleared while working) + PGDM Business Management. Smart worker, not hard worker — always finds elegant solutions. National-level skater as a child who gave it up under family pressure.
-
-PROFESSIONAL ROLE AT ONECOM: Training Manager in the CX team. Manages UK-based trainers Rohit Karn (Technical Trainer) and Piyush Patel (Customer Service Trainer), plus an India-based training team (Aniket, Yuvraj, Subham). Key stakeholders: Jo Paul (Head of CX — most important), Helen Millington (Head of People), Fozia Ishaq (Head of SDM), Kristie Greenbank (Talent Dev Lead), Jessica Knowles (CI Manager), Kirsty Jubb (QC Manager), Miki Hood (CI & Integration Manager). Has largely set up the training function from scratch. Role is now governance-heavy — feels underutilised but stable. Core professional goal: be seen as proactive and strategic, not just reactive. Build visibility with leadership and prove training ROI through data. Active initiatives have included: Go1 learning platform (Idea@onecom), H1 trainer review, SME floor utilisation plan, hiring process improvements. Cannot access Claude at his Onecom office — dashboards must be fully self-sufficient.
-
-CAREER PATH: Convergys (agent→trainer, left after being scapegoated for reporting a harassment incident) → Teleperformance (trainer 1yr, left due to micromanagement by Alex) → Authbridge Sr Trainer (first trainer they ever had, promised TM role that didn't come, took Airbnb offer) → Airbnb Training Business Partner 4 years (strong performer, built acting TL, delivered most batches in team — then manager Prashant Nair blocked all growth, gave unfair 2/5 rating, forced MSA/mutual separation. Left March 2nd.) → Onecom Training Manager (current, joined ~25-26 March). Also freelancing: WaxIndia with Aditya, Grow Grid with Ankit, Cleveratti Skills with Chandni. Freelancing supplements income — nanny, school fees, household costs have grown.
-
-FAMILY CORE: Married to Shweta (arranged marriage, now best friends). Air Force father shaped her — responsible, understands money's value. Has uterine fibroids, on medication. Daughter Vrinda (Kutlu, 4yr, same school Sarvagya attended, pre-nursery). Son Vedant (Vedu, ~2.5yr, at home with nanny). Buying GPS tracker cards for both kids — protective by instinct. Nanny employed to give Shweta space.
-
-DEEPEST LOSS: Baba (paternal grandfather). Moved in with him from Class 3. Best friends. Had Sarvagya saved as A1 on his phone. Discussed everything. Built his life from zero after both parents died of TB when he was 2. Left post-death instruction document in his briefcase. Died of COVID. Sarvagya carries this quietly and deeply. Wants his children to experience what he had with Baba — this is why he still reaches out to his parents despite everything.
-
-FAMILY PAIN: Father (Papa, 66, Vrindavan) had multiple affairs — one woman filed rape case, Sarvagya managed legal proceedings alone for years. Mother (Mummy, 59, Vrindavan) survived Stage 3C breast cancer, recovered. Both said "you are dead to me." Sarvagya continues his dharma. Elder sister Didi (34) complicated but he maintains the bond. Shweta's family: elder brother abusive and disrespectful (Sarvagya has drawn a line), younger brother unemployed and pampered, mother-in-law had windpipe breathing crisis — family refused treatment, Sarvagya arranged Ayurvedic therapy himself.
-
-PHILOSOPHY: Bhagavad Gita is his foundation. Karma without attachment. Problems never outweigh people. Never breaks — always tries to join. Documents everything. Won't comment on others' personal lives (believes it gives them unspoken permission to comment back). Acts only when harm is clear. Doesn't drink, smoke, or eat non-veg — genuinely not his world, not a choice under pressure. Family guy by declaration to every manager.
-
-CLOSE FRIENDS: Vipul (college best friend, both lost a father figure — shared grief), Yafnika (college, sister-friend), Manish (school, drifted after marriages). Small, deep circle. Will pick up at 2am.
-
-WHAT HE NEEDS: To be seen without judgment. He carries everyone — family, team, parents, in-laws — quietly and without complaint. He rarely asks for help. Speak to him as the intelligent, emotionally deep, spiritually grounded, professionally capable person he is. He already knows most answers — sometimes he just needs someone who truly sees him.`;
+const LL_CONTEXT_DEFAULT = '';   // personal context lives only in the encrypted vault, never in this file
 
 function getLLContext(){
   const custom=localStorage.getItem('ll-context');
@@ -2871,7 +2771,7 @@ function updateStarStats(){
  try{n=JSON.parse(localStorage.getItem('sv-neeta-updates')||'[]');}catch(e){}
  try{a=JSON.parse(localStorage.getItem('sv-vrinda-activities')||'[]');}catch(e){}
  _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(a.length));
- var c=document.getElementById('c-act');if(c)c.textContent=a.length+' activities';
+ var c=document.getElementById('c-act'); if(c)c.textContent=(V.length+D.length)+' activities'; var cw=document.getElementById('c-week'); if(cw)cw.textContent=a.weekOf||'no plan'; var cd=document.getElementById('c-done'); if(cd)cd.textContent=done+' done';
 }
 renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};renderVrindaActivities=function(){};
 function _kGet(){try{return JSON.parse(localStorage.getItem('sv-kids-week')||'{}');}catch(e){return {};}}
