@@ -1118,13 +1118,7 @@ function updateChips(){
   const logs=ld('wt2-logs',[]);
   const tds=new Date().toDateString();
   el('c-mtg').textContent=logs.filter(l=>new Date(l.ts).toDateString()===tds).length+' today';
-  const vacs=ld('ks-vaccines',DEFAULT_VACCINES);
-  const vacDone=Object.values(vacs).flat().filter(v=>v.done).length;
-  el('c-vac').textContent=vacDone+' given';
-  const ms=ld('ks-milestones',[]);
-  el('c-ms').textContent=ms.length+' total';
-  const pt=ld('ks-ptlogs',[]);
-  el('c-act').textContent=pt.length+' logs';
+    // kids chips (vaccines/milestones/logs) removed - Future Stars shows week + activities + done via updateStarStats()
   const moods=ld('ll-moods',[]);
   el('c-mood').textContent=moods.length+' logged';
   el('c-gita').textContent='Eternal wisdom';
