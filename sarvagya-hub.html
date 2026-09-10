@@ -861,13 +861,14 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   </div>
   <div class="phdr">
     <div><div class="ptitle" style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px">Life<em>line</em></div>
-      <div class="psub">Your sacred space &mdash; Gita wisdom, mood, gratitude &amp; inner guide</div></div>
+      <div class="psub">Daily sadhana &mdash; mantras, stotras, naam jap &amp; the small things that hold the day</div></div>
     <div class="pstats">
-      <div class="ps"><div class="ps-n" id="st-mds">0</div><div class="ps-l">Mood Days</div></div>
-      <div class="ps"><div class="ps-n" id="st-jdays">0</div><div class="ps-l">Journal Days</div></div>
-      <div class="ps"><div class="ps-n" id="st-grc">0</div><div class="ps-l">Gratitudes</div></div>
+      <div class="ps"><div class="ps-n" id="sd-today">0%</div><div class="ps-l">Today</div></div>
+      <div class="ps"><div class="ps-n" id="sd-streak">0</div><div class="ps-l">Day Streak</div></div>
+      <div class="ps"><div class="ps-n" id="sd-jap">0</div><div class="ps-l">Jap Rounds</div></div>
     </div>
   </div>
+  <div id="sadhana-wrap"></div>
   <div class="g2">
     <div class="card">
       <div class="chdr"><div class="chdr-l"><div class="cic">&#9728;</div><div>
@@ -2994,7 +2995,206 @@ function renderWealthExtras(){
  }
  host.innerHTML=h;
 }
-setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} }, 0);
+
+var SD_SLOTS=[
+ {id:'wake',   icon:'\u{1F305}', title:'On Waking',        note:'Before your feet touch the floor'},
+ {id:'bath',   icon:'\u{1FAA5}', title:'After Bath · Morning Pooja', note:''},
+ {id:'leave',  icon:'\u{1F6AA}', title:'Before Leaving Home', note:''},
+ {id:'jap',    icon:'\u{1F4FF}', title:'Naam Jap · Anytime', note:'Count rounds as you go'},
+ {id:'evening',icon:'\u{1F56F}', title:'Evening',            note:''},
+ {id:'sleep',  icon:'\u{1F319}', title:'Before Sleep',       note:''},
+ {id:'basic',  icon:'✅',    title:'Daily Basics',       note:''}
+];
+var SD_ITEMS=[
+ {id:'kardarshan',slot:'wake',title:'Kar Darshan',text:'कराग्रे वसते लक्ष्मीः करमध्ये सरस्वती।\nकरमूले तु गोविन्दः प्रभाते करदर्शनम्॥',note:'Look at your palms as you say it'},
+ {id:'krishna',slot:'bath',title:'Krishna Vandana',text:'ओं कृष्णाय वासुदेवाय हरये परमात्मने।\nप्रणतः क्लेशनाशाय गोविंदाय नमो नमः॥'},
+ {id:'ramraksha',slot:'bath',title:'Shri Ram Raksha Stotram',note:'Daily'},
+ {id:'aditya',slot:'bath',title:'Aditya Hridaya Stotram',note:'Facing the sun if you can'},
+ {id:'gajendra',slot:'bath',title:'Gajendra Moksha',note:'Daily'},
+ {id:'chalisa',slot:'bath',title:'Hanuman Chalisa',note:'Daily'},
+ {id:'anjaneya',slot:'bath',title:'Rin Mochan — Anjaneya',days:[2,6],text:'ओं नमो भगवते आंजनियाय महाबलाय मम ऋणेम मोचय मोचय मम शत्रुन भंजय भंजय मम कार्यम साधय साधय स्वाहा',note:'Tuesday & Saturday'},
+ {id:'bhavani',slot:'leave',title:'Raksha Shloka',text:'ओं सदा भवानी दाहिने गौरी पुत्र गणेश।\nपांच देव रक्षा करे ब्रह्मा विष्णु महेश॥'},
+ {id:'radhavallabh',slot:'jap',title:'Radhavallabh · Hari Sharanam',text:'श्री राधावल्लभ श्री हरिवंश\nहरि शरणम् हरि शरणम् हरि शरणम्',jap:true},
+ {id:'radha28',slot:'jap',title:'Radha Ji — 28 Names',text:'1 Radha · 2 Rasheshwari · 3 Ramya · 4 Krishnamantradhidevata · 5 Sarvadya · 6 Sarvavandya · 7 Vrindavanavihaarini · 8 Vrindaradha · 9 Rama · 10 Asheshagopimandalapujita · 11 Satya · 12 Satyapara · 13 Satyabhama · 14 Shrikrishnavallabha · 15 Vrishabhanusuta · 16 Gopi · 17 Mula Prakriti · 18 Ishwari · 19 Gandharva · 20 Radhika · 21 Ramya · 22 Rukmini · 23 Parameshwari · 24 Paratpartara · 25 Purna · 26 Purnachandravimanana · 27 Bhukti-Mukti Prada · 28 Bhavavyadhi-Vinashini'},
+ {id:'sant',slot:'jap',title:'Sant Smaran',text:'Naval Nagari Baba · Hit Kishori Sharan · Hit Rasik Sharan · Hit Brajraj Sharan · Hit Anuragi Sharan'},
+ {id:'bajrang',slot:'evening',title:'Bajrang Baan',days:[2,6],note:'Tuesday & Saturday'},
+ {id:'shani',slot:'evening',title:'Shani Chalisa',days:[6],note:'Saturday'},
+ {id:'aghora',slot:'evening',title:'Aghora Mantra — Rudra',text:'ओं अघोरेभ्यो̥थ घोरेभ्यो घोरघोरतरेभ्यः।\nसर्वेभ्यः सर्वसर्वेभ्यो नमस्ते̥स्तु रुद्ररूपेभ्यः॥'},
+ {id:'shivastuti',slot:'evening',title:'Shiva Stuti',text:'कलातीतकल्याण कल्पान्तकारी\nसदा सज्जनानन्ददाता पुरा।\nचिदानन्दसंदोह मोहापहारी\nप्रसीद प्रसीद प्रभो मन्मथारी॥'},
+ {id:'nrisimha',slot:'sleep',title:'Narasimha Rakshaa',text:'नारायणानन्त हरे नृसिंह\nप्रह्लाद बाधा हर हे कृपालु'},
+ {id:'yugal',slot:'sleep',title:'Yugal Jyoti — Vrindavan',text:'सदानन्द वृन्दावननवलतामन्दिरवरेष्वमन्दैः\nकन्दर्पोन्मदरतिकलाकौतुकरसम्।\nकिशोरं तज्ज्योतिर्युगलमतिघोरं मम भवं\nज्वलज्ज्वालं शीतैः स्वपदमकरन्दैः शमयतु॥'}
+];
+function _sdGet(){ try{ return JSON.parse(localStorage.getItem('sv-sadhana')||'{}'); }catch(e){ return {}; } }
+function _sdSave(d){ try{ localStorage.setItem('sv-sadhana',JSON.stringify(d)); }catch(e){} }
+function _sdToday(){ return new Date().toISOString().slice(0,10); }
+function _sdCustom(){ var d=_sdGet(); return d.custom||[]; }
+function _sdAll(){ return SD_ITEMS.concat(_sdCustom()); }
+function _sdDue(it){ if(!it.days) return true; return it.days.indexOf(new Date().getDay())>-1; }
+function sdToggle(id){
+ var d=_sdGet(); d.log=d.log||{}; var t=_sdToday(); d.log[t]=d.log[t]||{};
+ if(d.log[t][id]) delete d.log[t][id]; else d.log[t][id]=true;
+ var keys=Object.keys(d.log).sort(); if(keys.length>90){ keys.slice(0,keys.length-90).forEach(function(k){ delete d.log[k]; }); }
+ _sdSave(d); renderSadhana();
+}
+function sdJap(delta){
+ var d=_sdGet(); d.jap=d.jap||{}; var t=_sdToday();
+ d.jap[t]=Math.max(0,(d.jap[t]||0)+delta); _sdSave(d); renderSadhana();
+}
+function sdAddTask(){
+ var name=prompt('New daily task'); if(!name) return;
+ var d=_sdGet(); d.custom=d.custom||[];
+ d.custom.push({id:'c'+Date.now(), slot:'basic', title:name.trim()});
+ _sdSave(d); renderSadhana();
+}
+function sdRemove(id){
+ var d=_sdGet(); d.custom=(d.custom||[]).filter(function(x){ return x.id!==id; }); _sdSave(d); renderSadhana();
+}
+function _sdStreak(d){
+ var log=d.log||{}, n=0, day=new Date();
+ for(var i=0;i<400;i++){
+  var k=day.toISOString().slice(0,10);
+  var done=Object.keys(log[k]||{}).length;
+  if(done===0){ if(i===0){ day.setDate(day.getDate()-1); continue; } break; }
+  n++; day.setDate(day.getDate()-1);
+ }
+ return n;
+}
+function renderSadhana(){
+ var host=document.getElementById('sadhana-wrap'); if(!host) return;
+ var d=_sdGet(), t=_sdToday(), today=(d.log&&d.log[t])||{}, items=_sdAll();
+ var due=items.filter(_sdDue);
+ var doneN=due.filter(function(i){ return today[i.id]; }).length;
+ var pct=due.length?Math.round(doneN/due.length*100):0;
+ _wTxt('sd-today',pct+'%'); _wTxt('sd-streak',String(_sdStreak(d))); _wTxt('sd-jap',String((d.jap&&d.jap[t])||0));
+ var h='';
+ SD_SLOTS.forEach(function(s){
+  var list=due.filter(function(i){ return i.slot===s.id; });
+  if(!list.length && s.id!=='basic') return;
+  h+='<div class="card" style="margin-bottom:10px"><div class="chdr"><div class="chdr-l"><div class="cic">'+s.icon+'</div><div class="ctit">'+_wEsc(s.title)+'</div></div>'+(s.note?'<div class="cmeta">'+_wEsc(s.note)+'</div>':'')+'</div>';
+  h+=list.map(function(i){
+   var on=!!today[i.id];
+   var body=i.text?'<div style="font-size:12px;line-height:1.9;opacity:.75;margin-top:6px;white-space:pre-line">'+_wEsc(i.text)+'</div>':'';
+   return '<div class="irow" style="align-items:flex-start;cursor:pointer;opacity:'+(on?'.6':'1')+'" onclick="sdToggle(\''+i.id+'\')">'+
+    '<div style="display:flex;gap:10px;align-items:flex-start;min-width:0">'+
+    '<div style="font-size:16px;line-height:1.3">'+(on?'✅':'⬜')+'</div>'+
+    '<div style="min-width:0"><div style="font-weight:600'+(on?';text-decoration:line-through':'')+'">'+_wEsc(i.title)+'</div>'+
+    (i.note?'<div style="font-size:11px;opacity:.55;margin-top:2px">'+_wEsc(i.note)+'</div>':'')+body+'</div></div>'+
+    (i.id.indexOf('c')===0&&i.slot==='basic'?'<div onclick="event.stopPropagation();sdRemove(\''+i.id+'\')" style="opacity:.4;font-size:14px">✕</div>':'')+
+    '</div>';
+  }).join('');
+  if(s.id==='jap'){
+   h+='<div class="irow"><div style="font-weight:600">Rounds today</div><div style="display:flex;gap:8px;align-items:center">'+
+     '<button class="btn-s" onclick="sdJap(-1)">−</button><div style="min-width:28px;text-align:center;font-weight:700">'+((d.jap&&d.jap[t])||0)+'</div>'+
+     '<button class="btn-s" onclick="sdJap(1)">+</button></div></div>';
+  }
+  if(s.id==='basic') h+='<div style="padding:8px 2px"><button class="btn-s" onclick="sdAddTask()">+ Add daily task</button></div>';
+  h+='</div>';
+ });
+ host.innerHTML=h;
+}
+function sdHideLegacy(){
+ ['ll-mood-log','ll-ai-out','ll-verse','ll-journals','ll-grats','ll-calendar','ll-saved-verses'].forEach(function(id){
+  var e=document.getElementById(id); if(!e) return;
+  var c=e.closest('.card')||e.parentElement; if(c) c.style.display='none';
+ });
+}
+
+// ---- manual editing for any task-fed section -------------------------------
+function editSection(key,label){
+ var cur='';
+ try{ cur=JSON.stringify(JSON.parse(localStorage.getItem(key)||'{}'),null,2); }catch(e){ cur=localStorage.getItem(key)||''; }
+ var box=document.getElementById('js-edit-box');
+ if(!box){
+  box=document.createElement('div'); box.id='js-edit-box';
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  box.innerHTML='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;width:min(760px,96vw);max-height:88vh;display:flex;flex-direction:column;gap:10px">'+
+   '<div style="display:flex;justify-content:space-between;align-items:center"><div id="js-edit-title" style="font-weight:700"></div>'+
+   '<button class="btn-s" onclick="document.getElementById(\'js-edit-box\').style.display=\'none\'">Close</button></div>'+
+   '<div style="font-size:12px;opacity:.6">Edit the JSON and save. Shapes are documented in hub-migration-spec.md.</div>'+
+   '<textarea id="js-edit-ta" style="width:100%;flex:1;min-height:340px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:10px"></textarea>'+
+   '<div id="js-edit-err" style="color:#f87171;font-size:12px;min-height:16px"></div>'+
+   '<div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-p" id="js-edit-save">Save</button></div></div>';
+  document.body.appendChild(box);
+ }
+ box.style.display='flex';
+ document.getElementById('js-edit-title').textContent=label+'  ('+key+')';
+ document.getElementById('js-edit-ta').value=cur;
+ document.getElementById('js-edit-err').textContent='';
+ document.getElementById('js-edit-save').onclick=function(){
+  var v=document.getElementById('js-edit-ta').value;
+  try{ JSON.parse(v); }catch(e){ document.getElementById('js-edit-err').textContent='Not valid JSON: '+e.message; return; }
+  localStorage.setItem(key,v);
+  ['renderWealth','renderMailReview','renderWealthExtras','renderPanchang','renderPanchangExtras','renderKidsWeek','updateStarStats','renderSadhana'].forEach(function(f){ try{ if(typeof window[f]==='function') window[f](); }catch(e){} });
+  box.style.display='none';
+ };
+}
+function addEditButtons(){
+ [['tab-wealth','sv-wealth','Wealth'],['tab-panchang','sv-panchang','Panchang'],['tab-kids','sv-kids-week','This Week']].forEach(function(t){
+  var p=document.getElementById(t[0]); if(!p||p.querySelector('.js-edit-btn')) return;
+  var hdr=p.querySelector('.phdr'); if(!hdr) return;
+  var b=document.createElement('button'); b.className='btn-s js-edit-btn'; b.textContent='⚙ Edit data';
+  b.style.cssText='margin-top:8px'; b.onclick=function(){ editSection(t[1],t[2]); };
+  hdr.appendChild(b);
+ });
+}
+// ---- Telegram feed ---------------------------------------------------------
+function renderTgFeed(){
+ var host=document.getElementById('tg-feed'); if(!host) return;
+ var f=[]; try{ f=JSON.parse(localStorage.getItem('sv-tg-feed')||'[]'); }catch(e){}
+ if(!f.length){ host.innerHTML=_wEmpty('No Telegram messages captured yet. Tasks append here as they send.'); return; }
+ host.innerHTML=f.slice(0,12).map(function(m){
+  return '<div class="irow" style="align-items:flex-start"><div style="min-width:0">'+
+   '<div style="font-weight:600">'+_wEsc(m.bot||'bot')+' <span style="opacity:.5;font-weight:400">'+_wEsc(m.date||'')+'</span></div>'+
+   '<div style="font-size:12px;opacity:.75;line-height:1.6;margin-top:3px;white-space:pre-line">'+_wEsc((m.text||'').slice(0,420))+'</div>'+
+   '</div></div>';
+ }).join('');
+}
+function mountTgFeed(){
+ var p=document.getElementById('tab-kids'); if(!p||document.getElementById('tg-feed')) return;
+ var card=document.createElement('div'); card.className='card'; card.style.marginTop='14px';
+ card.innerHTML='<div class="chdr"><div class="chdr-l"><div class="cic">\u{1F4EC}</div><div class="ctit">Telegram Log</div></div><div class="cmeta">last 12</div></div><div id="tg-feed"></div>';
+ p.appendChild(card); renderTgFeed();
+}
+// ---- today's activities for the kids --------------------------------------
+function renderKidsToday(){
+ var host=document.getElementById('kids-today'); if(!host) return;
+ var d={}; try{ d=JSON.parse(localStorage.getItem('sv-kids-week')||'{}'); }catch(e){}
+ var V=(d.vrinda&&d.vrinda.activities)||[], D=(d.vedant&&d.vedant.activities)||[];
+ if(!V.length&&!D.length){ host.innerHTML=''; return; }
+ var dow=new Date().getDay(); var idx=(dow+6)%7;   // Mon=0
+ var pick=function(list){ return list.length?list[idx%list.length]:null; };
+ var v=pick(V), b=pick(D);
+ var log={}; try{ log=JSON.parse(localStorage.getItem('sv-kids-daily')||'{}'); }catch(e){}
+ var t=new Date().toISOString().slice(0,10); var done=log[t]||{};
+ var row=function(who,a,key){
+  if(!a) return '';
+  var on=!!done[key];
+  return '<div class="irow" style="align-items:flex-start;cursor:pointer;opacity:'+(on?'.6':'1')+'" onclick="kidsDailyToggle(\''+key+'\')">'+
+   '<div style="display:flex;gap:10px;align-items:flex-start;min-width:0"><div style="font-size:16px">'+(on?'✅':'⬜')+'</div>'+
+   '<div><div style="font-size:11px;opacity:.6">'+who+'</div>'+
+   '<div style="font-weight:600'+(on?';text-decoration:line-through':'')+'">'+_wEsc(a.title)+'</div>'+
+   '<div style="font-size:12px;opacity:.7;line-height:1.6;margin-top:2px">'+_wEsc(a.how||'')+'</div></div></div>'+
+   (a.minutes?'<div style="font-size:11px;opacity:.5;white-space:nowrap">'+_wEsc(a.minutes)+' min</div>':'')+'</div>';
+ };
+ host.innerHTML='<div class="card" style="margin-bottom:14px"><div class="chdr"><div class="chdr-l"><div class="cic">\u{1F31F}</div><div class="ctit">Today</div></div><div class="cmeta">'+
+  new Date().toLocaleDateString('en-GB',{weekday:'long'})+'</div></div>'+row('Vrinda',v,'v')+row('Vedant',b,'d')+'</div>';
+}
+function kidsDailyToggle(k){
+ var log={}; try{ log=JSON.parse(localStorage.getItem('sv-kids-daily')||'{}'); }catch(e){}
+ var t=new Date().toISOString().slice(0,10); log[t]=log[t]||{};
+ if(log[t][k]) delete log[t][k]; else log[t][k]=true;
+ var keys=Object.keys(log).sort(); if(keys.length>90) keys.slice(0,keys.length-90).forEach(function(x){ delete log[x]; });
+ try{ localStorage.setItem('sv-kids-daily',JSON.stringify(log)); }catch(e){}
+ renderKidsToday();
+}
+function mountKidsToday(){
+ var p=document.getElementById('tab-kids'); if(!p||document.getElementById('kids-today')) return;
+ var d=document.createElement('div'); d.id='kids-today';
+ var anchor=p.querySelector('.phdr');
+ if(anchor&&anchor.nextSibling) p.insertBefore(d,anchor.nextSibling); else p.appendChild(d);
+ renderKidsToday();
+}
+setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{renderSadhana();sdHideLegacy();}catch(e){console.error(e);} try{addEditButtons();mountKidsToday();mountTgFeed();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} }, 0);
 
 
 
