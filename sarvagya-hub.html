@@ -2768,7 +2768,7 @@ function updateStarStats(){
  _wTxt('st-teacher',String(n.length));_wTxt('st-acts',String(a.length));
  var c=document.getElementById('c-act'); if(c)c.textContent=(V.length+D.length)+' activities'; var cw=document.getElementById('c-week'); if(cw)cw.textContent=a.weekOf||'no plan'; var cd=document.getElementById('c-done'); if(cd)cd.textContent=done+' done';
 }
-renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};renderVrindaActivities=function(){};
+renderVaccines=function(){};renderPtLogs=function(){};renderMemories=function(){};renderGrowth=function(){};renderMilestones=function(){};renderVrindaActivities=function(){};renderMoodLog=function(){};renderLLJournals=function(){};renderGrats=function(){};saveMood=function(){};
 function _kGet(){try{return JSON.parse(localStorage.getItem('sv-kids-week')||'{}');}catch(e){return {};}}
 function toggleKidActivity(child,idx){
  var d=_kGet(); if(!d[child]||!d[child].activities||!d[child].activities[idx])return;
@@ -3194,7 +3194,7 @@ function mountKidsToday(){
  if(anchor&&anchor.nextSibling) p.insertBefore(d,anchor.nextSibling); else p.appendChild(d);
  renderKidsToday();
 }
-setTimeout(function(){ init(); try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{renderSadhana();sdHideLegacy();}catch(e){console.error(e);} try{addEditButtons();mountKidsToday();mountTgFeed();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} }, 0);
+setTimeout(function(){ try{ init(); }catch(e){ console.error('init failed, running renderers individually', e); ['renderPulse','renderCoworkNotes','renderTodos','renderInitiatives','renderNotes','renderPeople','renderNeetaUpdates','renderTasks','renderProjects','renderChildren','renderEvidence','updateChips'].forEach(function(f){ try{ if(typeof window[f]==='function') window[f](); }catch(x){ console.error(f, x); } }); } try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} try{renderSadhana();sdHideLegacy();}catch(e){console.error(e);} try{addEditButtons();mountKidsToday();mountTgFeed();}catch(e){console.error(e);} }, 0);
 
 
 
