@@ -524,8 +524,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
       <div class="ntab-top"><div class="ntab-ic">&#11088;</div><span class="ntab-lbl">Future Stars</span></div>
       <div class="ntab-chips"><span class="chip" id="c-week">&mdash;</span><span class="chip" id="c-done">0 done</span><span class="chip" id="c-act">Activity</span></div>
     </button>
-    <button class="ntab" style="display:none" data-tab="life" data-mode="personal" onclick="goTab('life',this)">
-      <div class="ntab-top"><div class="ntab-ic">&#129684;</div><span class="ntab-lbl">Lifeline</span></div>
+    <button class="ntab" data-tab="life" data-mode="personal" onclick="goTab('life',this)">
+      <div class="ntab-top"><div class="ntab-ic">&#129684;</div><span class="ntab-lbl">Sadhana</span></div>
       <div class="ntab-chips"><span class="chip" id="c-mood">Mood</span><span class="chip" id="c-gita">Gita</span><span class="chip" id="c-grat">Gratitude</span></div>
     </button>
     <button class="ntab" data-tab="wealth" data-mode="personal" onclick="goTab('wealth',this)">
@@ -3193,6 +3193,122 @@ function mountKidsToday(){
  var anchor=p.querySelector('.phdr');
  if(anchor&&anchor.nextSibling) p.insertBefore(d,anchor.nextSibling); else p.appendChild(d);
  renderKidsToday();
+}
+
+// Texts, meaning and audio for each sadhana item.
+// verified:true  = full text included and checked
+// verified:false = opening verses only; paste your own from a trusted gutka via Edit
+var SD_LIB={
+ kardarshan:{why:'The first thing the eyes see each day. Lakshmi at the fingertips, Saraswati in the palm, Govinda at the root — wealth, knowledge and the divine, before anything else of the world.',verified:true,
+  text:'कराग्रे वसते लक्ष्मीः करमध्ये सरस्वती।\nकरमूले तु गोविन्दः प्रभाते करदर्शनम्॥'},
+ krishna:{why:'A surrender at the start of the day — Vasudeva as the Self, Govinda as the remover of affliction. Short enough to never be skipped.',verified:true,
+  text:'ओं कृष्णाय वासुदेवाय हरये परमात्मने।\nप्रणतः क्लेशनाशाय गोविंदाय नमो नमः॥'},
+ bhavani:{why:'Said at the threshold. Bhavani on the right, Gauri and Ganesha beside — the five devas travelling with you. A protection said before stepping out.',verified:true,
+  text:'ओं सदा भवानी दाहिने गौरी पुत्र गणेश।\nपांच देव रक्षा करे ब्रह्मा विष्णु महेश॥'},
+ anjaneya:{why:'The Rin Mochan — the debt-remover. Taken on Tuesday and Saturday, Hanuman’s days, when the weight being carried is not only financial.',verified:true,
+  text:'ओं नमो भगवते आंजनेयाय महाबलाय\nमम ऋणेम मोचय मोचय\nमम शत्रुन भंजय भंजय\nमम कार्यम साधय साधय स्वाहा'},
+ radhavallabh:{why:'Hit Harivansh’s sharanagati. Not a request for anything — only taking refuge. The jap where the counting stops mattering.',verified:true,
+  text:'श्री राधावल्लभ श्री हरिवंश\nहरि शरणम् हरि शरणम् हरि शरणम्'},
+ aghora:{why:'From the Rudram. Calling Rudra in every form — the gentle, the terrible, and beyond both. Said in the evening, when the day’s edges need softening.',verified:true,
+  text:'ओं अघोरेभ्योथ घोरेभ्यो घोरघोरतरेभ्यः।\nसर्वेभ्यः सर्वसर्वेभ्यो नमस्तेस्तु रुद्ररूपेभ्यः॥'},
+ nrisimha:{why:'Prahlada’s protector. Said last thing at night — the one who appears exactly where the danger is, and is never late.',verified:true,
+  text:'नारायणानन्त हरे नृसिंह\nप्रह्लाद बाधा हर हे कृपालु'},
+ chalisa:{why:'Forty verses of Tulsidas. Recited daily for steadiness — the fear that leaves, the strength that arrives without being asked for.',verified:true,
+  text:'दोहा\nश्रीगुरु चरन सरोज रज, निज मन मुकुर सुधार।\nबरनऊँ रघुबर बिमल जसु, जो दायकु फल चार।\nबुद्धिहीन तनु जानिके, सुमिरौँ पवन‐कुमार।\nबल बुद्धि बिद्या देहु मोहि, हरहु कलेस बिकार।\n\nचौपाई\nजय हनुमान ज्ञान गुन सागर।\nजय कपीस तिहुँ लोक उजागर॥\nरामदूत अतुलित बल धामा।\nअंजनि‐पुत्र पवनसुत नामा॥\n\n[क्रमशः — the remaining 38 chaupais are not included here. Tap Edit and paste the full text from your own gutka so every syllable is one you trust.]'},
+ ramraksha:{why:'Budhakaushika’s armour for Rama. Recited after bath — each limb placed under protection before the day can touch it.',verified:false,
+  text:'विनियोगः\nअस्य श्रीरामरक्षास्तोत्रमन्त्रस्य\nबुधकौशिक ऋषिः।\nश्री सीतारामचन्द्रो देवता।\n\n[Opening only — paste your full text via Edit.]'},
+ aditya:{why:'Agastya to Rama on the battlefield, when his arms would not lift. Said facing the sun — the stotra for the morning you do not feel able to begin.',verified:false,
+  text:'ततो युद्धपरिश्रान्तं समरे चिन्तया स्थितम्।\nरावणं चाग्रतो दृष्ट्वा युद्धाय समुपस्थितम्॥\n\n[Opening only — paste your full text via Edit.]'},
+ gajendra:{why:'The elephant in the crocodile’s grip, calling out only when his own strength was finished. The prayer for what cannot be solved by effort.',verified:false,
+  text:'ओं नमो भगवते तस्मै यत एतच्चिदात्मकम्।\nपुरुषायादिबीजाय परेशायाभिधीमहि॥\n\n[Opening only — paste your full text via Edit.]'},
+ bajrang:{why:'The most forceful of the Hanuman texts. Taken on Tuesday and Saturday evening when something needs to be cut through rather than endured.',verified:false,
+  text:'दोहा\nनिश्चय प्रेम प्रतीति ते, बिनय करैं सनमान।\nतेहि के कारज सकल शुभ, सिद्ध करैं हनुमान।\n\n[Opening only — paste your full text via Edit.]'},
+ shani:{why:'Saturday’s text. Shani as the teacher who takes rather than gives — recited not to avoid the lesson but to meet it with a steadier head.',verified:false,
+  text:'दोहा\nजय गणेश गिरिजा सुवन, मंगल करण कृपाल।\nदीनन के दुख दूर करि, कीजै नाथ निहाल।\n\n[Opening only — paste your full text via Edit.]'},
+ radha28:{why:'The twenty-eight names. Each one a different door to the same presence — read slowly, not counted.',verified:true},
+ sant:{why:'The lineage. Remembering those who walked it before, so the path is not walked alone.',verified:true},
+ shivastuti:{why:'Beyond kala, beyond kalpa — the one who ends what must end. Prasida prasida: be pleased, be pleased.',verified:true},
+ yugal:{why:'The Yugal Jyoti of Vrindavan. The last thing before sleep — asking that the burning of the day be cooled by the nectar of those feet.',verified:true}
+};
+function _sdLib(){ var o={}; try{ o=JSON.parse(localStorage.getItem('sv-sadhana-lib')||'{}'); }catch(e){}
+ var out={}; Object.keys(SD_LIB).forEach(function(k){ out[k]=Object.assign({},SD_LIB[k],o[k]||{}); });
+ Object.keys(o).forEach(function(k){ if(!out[k]) out[k]=o[k]; });
+ return out; }
+function _sdLibSave(id,patch){ var o={}; try{ o=JSON.parse(localStorage.getItem('sv-sadhana-lib')||'{}'); }catch(e){}
+ o[id]=Object.assign({},o[id]||{},patch); try{ localStorage.setItem('sv-sadhana-lib',JSON.stringify(o)); }catch(e){} }
+function sdExpand(id){ var d=document.getElementById('sdx-'+id); if(!d) return;
+ d.style.display = d.style.display==='none' ? 'block' : 'none'; }
+function sdEditText(id){
+ var lib=_sdLib(), cur=(lib[id]&&lib[id].text)||'';
+ var v=prompt('Paste the full text for this item.\nUse Enter for line breaks.', cur);
+ if(v===null) return; _sdLibSave(id,{text:v, verified:true}); renderSadhana();
+}
+function sdSetAudio(id){
+ var lib=_sdLib(), cur=(lib[id]&&lib[id].audio)||'';
+ var v=prompt('Paste an audio or YouTube URL for this item.\nLeave blank to remove.', cur);
+ if(v===null) return; _sdLibSave(id,{audio:v.trim()}); renderSadhana();
+}
+function _sdMedia(id,it,lib){
+ var e=lib[id]||{}, h='';
+ if(e.audio){
+  if(/\.(mp3|m4a|ogg|wav)(\?|$)/i.test(e.audio)) h+='<audio controls preload="none" src="'+_wEsc(e.audio)+'" style="width:100%;margin-top:8px;height:34px"></audio>';
+  else h+='<div style="margin-top:8px"><a href="'+_wEsc(e.audio)+'" target="_blank" rel="noopener" class="btn-s">▶ Play</a></div>';
+ } else {
+  h+='<div style="margin-top:8px"><a class="btn-s" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query='+encodeURIComponent(it.title+' chant')+'">\u{1F50E} Find audio</a> '+
+     '<button class="btn-s" onclick="event.stopPropagation();sdSetAudio(\''+id+'\')">+ Add audio link</button></div>';
+ }
+ return h;
+}
+
+// Sadhana is no longer PIN-gated — it has its own open tab.
+llInit=function(){
+ var p=document.getElementById('tab-life'); if(p) p.classList.remove('ll-locked');
+ var lk=document.getElementById('ll-lock'); if(lk) lk.style.display='none';
+};
+function renderSadhana(){
+ var host=document.getElementById('sadhana-wrap'); if(!host) return;
+ var d=_sdGet(), t=_sdToday(), today=(d.log&&d.log[t])||{}, items=_sdAll(), lib=_sdLib();
+ var due=items.filter(_sdDue);
+ var doneN=due.filter(function(i){ return today[i.id]; }).length;
+ _wTxt('sd-today',(due.length?Math.round(doneN/due.length*100):0)+'%');
+ _wTxt('sd-streak',String(_sdStreak(d)));
+ _wTxt('sd-jap',String((d.jap&&d.jap[t])||0));
+ var h='';
+ SD_SLOTS.forEach(function(s){
+  var list=due.filter(function(i){ return i.slot===s.id; });
+  if(!list.length && s.id!=='basic') return;
+  h+='<div class="card" style="margin-bottom:10px"><div class="chdr"><div class="chdr-l"><div class="cic">'+s.icon+'</div><div class="ctit">'+_wEsc(s.title)+'</div></div>'+(s.note?'<div class="cmeta">'+_wEsc(s.note)+'</div>':'')+'</div>';
+  h+=list.map(function(i){
+   var on=!!today[i.id], e=lib[i.id]||{};
+   var verse=(e.text||i.text||'');
+   var hasMore=!!(e.why||verse);
+   var x='<div id="sdx-'+i.id+'" style="display:none;padding:2px 2px 10px 44px">';
+   if(e.why) x+='<div style="font-size:12px;line-height:1.75;opacity:.72;margin-bottom:10px">'+_wEsc(e.why)+'</div>';
+   if(verse) x+='<div style="font-size:14px;line-height:2.15;white-space:pre-line;text-align:center;padding:12px 10px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-family:Nirmala UI,Mangal,serif">'+_wEsc(verse)+'</div>';
+   if(e.verified===false) x+='<div style="font-size:11px;color:#fbbf24;margin-top:7px">Opening verses only — paste your full text so every syllable is one you trust.</div>';
+   x+=_sdMedia(i.id,i,lib);
+   x+='<div style="margin-top:8px;display:flex;gap:6px"><button class="btn-s" onclick="event.stopPropagation();sdEditText(\''+i.id+'\')">Edit text</button>'+
+      '<button class="btn-s" onclick="event.stopPropagation();sdSetAudio(\''+i.id+'\')">Audio link</button></div>';
+   x+='</div>';
+   return '<div class="irow" style="align-items:flex-start;display:block;padding-top:8px">'+
+     '<div style="display:flex;gap:12px;align-items:flex-start">'+
+       '<div onclick="sdToggle(\''+i.id+'\')" style="cursor:pointer;font-size:17px;line-height:1.25;user-select:none">'+(on?'✅':'⬜')+'</div>'+
+       '<div style="min-width:0;flex:1;cursor:'+(hasMore?'pointer':'default')+'" '+(hasMore?'onclick="sdExpand(\''+i.id+'\')"':'')+'>'+
+         '<div style="font-weight:600;'+(on?'text-decoration:line-through;opacity:.55':'')+'">'+_wEsc(i.title)+(hasMore?' <span style="opacity:.35;font-weight:400;font-size:11px">tap to open</span>':'')+'</div>'+
+         (i.note?'<div style="font-size:11px;opacity:.55;margin-top:2px">'+_wEsc(i.note)+'</div>':'')+
+       '</div>'+
+       (i.slot==='basic'&&i.id.charAt(0)==='c'?'<div onclick="event.stopPropagation();sdRemove(\''+i.id+'\')" style="opacity:.4;cursor:pointer">✕</div>':'')+
+     '</div>'+x+'</div>';
+  }).join('');
+  if(s.id==='jap'){
+   h+='<div class="irow"><div style="font-weight:600">Rounds today</div><div style="display:flex;gap:8px;align-items:center">'+
+     '<button class="btn-s" onclick="sdJap(-1)">−</button><div style="min-width:28px;text-align:center;font-weight:700">'+((d.jap&&d.jap[t])||0)+'</div>'+
+     '<button class="btn-s" onclick="sdJap(1)">+</button></div></div>';
+  }
+  if(s.id==='basic') h+='<div style="padding:8px 2px"><button class="btn-s" onclick="sdAddTask()">+ Add daily task</button></div>';
+  h+='</div>';
+ });
+ host.innerHTML=h;
 }
 setTimeout(function(){ try{ init(); }catch(e){ console.error('init failed, running renderers individually', e); ['renderPulse','renderCoworkNotes','renderTodos','renderInitiatives','renderNotes','renderPeople','renderNeetaUpdates','renderTasks','renderProjects','renderChildren','renderEvidence','updateChips'].forEach(function(f){ try{ if(typeof window[f]==='function') window[f](); }catch(x){ console.error(f, x); } }); } try{renderWealth();renderMailReview();}catch(e){console.error(e);} try{renderPanchang();setPanchangView('daily');}catch(e){console.error(e);} try{renderKidsWeek();updateStarStats();}catch(e){console.error(e);} try{bindLifelineSecret();}catch(e){console.error(e);} try{llInit();}catch(e){console.error(e);} try{renderWealthExtras();renderPanchangExtras();}catch(e){console.error(e);} try{renderSadhana();sdHideLegacy();}catch(e){console.error(e);} try{addEditButtons();mountKidsToday();mountTgFeed();}catch(e){console.error(e);} }, 0);
 
