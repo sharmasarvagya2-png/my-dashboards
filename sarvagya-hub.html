@@ -3638,5 +3638,41 @@ function updateActivityStatus(id,status){
   </div>
 </div>
 
+<!-- panchang.json loader - added 2026-09-22 -->
+<!-- Lets an agent WITHOUT browser-JS access feed the Panchang tab by writing a file. -->
+<!-- Remote data merges UNDER localStorage: a newer local copy always wins. -->
+<!-- PUBLIC REPO: impersonal calendar data only. Never personal content. -->
+<script>
+(function(){
+  var U = "https://raw.githubusercontent.com/sharmasarvagya2-png/my-dashboards/main/panchang.json?t=" + Date.now();
+  function applyRemote(){
+    fetch(U).then(function(r){
+      if (!r.ok) { throw new Error("HTTP " + r.status); }
+      return r.json();
+    }).then(function(remote){
+      var local = {};
+      try { local = JSON.parse(localStorage.getItem("sv-panchang") || "{}"); } catch (e) {}
+      var lt = Date.parse(local.updatedAt || "") || 0;
+      var rt = Date.parse((remote._meta || {}).updatedAt || "") || 0;
+      if (!rt || rt <= lt) { return; }
+      var merged = {
+        updatedAt: (remote._meta || {}).updatedAt || local.updatedAt,
+        daily:   remote.daily   || local.daily   || {},
+        weekly:  remote.weekly  || local.weekly  || {},
+        monthly: remote.monthly || local.monthly || {},
+        yearly:  remote.yearly  || local.yearly  || {}
+      };
+      localStorage.setItem("sv-panchang", JSON.stringify(merged));
+      if (typeof renderPanchang === "function") { renderPanchang(); }
+      if (typeof renderPanchangExtras === "function") { renderPanchangExtras(); }
+      console.log("panchang.json applied:", merged.updatedAt);
+    })["catch"](function(e){
+      console.warn("panchang.json not applied:", e.message);
+    });
+  }
+  setTimeout(applyRemote, 1500);
+})();
+</script>
+
 </body>
 </html>
