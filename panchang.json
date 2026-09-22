@@ -1,0 +1,161 @@
+{
+  "_meta": {
+    "purpose": "Impersonal panchang data for the Sarvagya Hub Panchang tab. Fetched on page load and merged UNDER localStorage, so anything typed locally always wins.",
+    "rule": "PUBLIC REPO - calendar data only. Never put wealth, kids, school, notes or Lifeline content in this file.",
+    "updatedAt": "22 Sep 2026",
+    "updatedBy": "seeded by Claude 2026-09-22; thereafter written by Vellum task 'Panchang - Hub Sync'",
+    "source": "drikpanchang.com, geoname-id 1270642 (Gurgaon)"
+  },
+  "daily": {
+    "date": "Tuesday, 22 September 2026 — Bhadrapada Shukla Paksha, Vikram Samvat 2083 Siddharthi",
+    "tithi": "Ekadashi upto 09:43 PM, then Dwadashi",
+    "paksha": "Shukla Paksha",
+    "vaar": "Mangalawara (Tuesday)",
+    "varDeity": "Hanuman ji / Mangal",
+    "nakshatra": "Uttara Ashadha upto 07:06 AM, then Shravana",
+    "yoga": "Atiganda upto 04:29 PM, then Sukarma",
+    "yogaType": "Ravi Yoga 06:10 AM to 07:06 AM",
+    "karana": "Vanija upto 08:55 AM, then Vishti upto 09:43 PM, then Bava",
+    "brahmaMuhurta": "04:35 AM to 05:23 AM",
+    "sunrise": "06:10 AM",
+    "sunset": "06:19 PM",
+    "rahuKaal": "03:17 PM to 04:48 PM",
+    "abhijit": "11:50 AM to 12:39 PM",
+    "festivals": [
+      "Parsva Ekadashi",
+      "Kalki Dwadashi",
+      "2nd Chaturmasa — Last Day",
+      "Bhadra 08:55 AM to 09:43 PM"
+    ],
+    "significance": "Parsva Ekadashi — also called Parivartini or Vamana Ekadashi. Vishnu is said to turn onto his other side during his four months of yogic sleep, which is why today closes the second Chaturmasa period. It is one of the more significant Ekadashis of the year. Being Tuesday it also belongs to Hanuman ji, so the fast and the Chalisa sit naturally together today.",
+    "whatToDo": [
+      "Ekadashi vrat if you keep it — Vishnu is the presiding deity",
+      "Hanuman Chalisa and Bajrang Baan — Tuesday is his day",
+      "Ravi Yoga runs 06:10-07:06 AM; the early window is the cleanest today",
+      "Abhijit 11:50 AM-12:39 PM for anything important later in the day"
+    ],
+    "whatToAvoid": [
+      "Rahu Kaal 03:17 PM to 04:48 PM — start nothing new",
+      "Bhadra 08:55 AM to 09:43 PM is long today — hold auspicious beginnings",
+      "Rice on Ekadashi, per the usual observance",
+      "Curd — last day of the Chaturmasa yogurt prohibition"
+    ],
+    "familyTip": "Vishnu turning over in his sleep is a story that lands well with a four-year-old — Vrinda can picture it. It also explains why the grown-ups stop eating certain things today, which makes the fast less arbitrary to her.",
+    "video": {
+      "title": "Ekadashi and Vishnu — story for children",
+      "url": "https://www.youtube.com/watch?v=k4X3HarFTu0",
+      "note": "Short and gentle; pairs with today's vrat."
+    }
+  },
+  "weekly": {
+    "rangeLabel": "Tue 22 Sep – Mon 28 Sep 2026 · Bhadrapada Shukla, closing Ganeshotsav (Gurgaon)",
+    "days": [
+      {
+        "date": "22 Sep",
+        "weekday": "Tuesday",
+        "tithi": "Ekadashi upto 09:43 PM",
+        "nakshatra": "Uttara Ashadha, then Shravana",
+        "festival": "Parsva Ekadashi · Kalki Dwadashi",
+        "note": "Second Chaturmasa closes."
+      },
+      {
+        "date": "23 Sep",
+        "weekday": "Wednesday",
+        "tithi": "Dwadashi",
+        "nakshatra": "Shravana, then Dhanishtha",
+        "festival": "—",
+        "note": "Ganesha's day."
+      },
+      {
+        "date": "24 Sep",
+        "weekday": "Thursday",
+        "tithi": "Trayodashi",
+        "nakshatra": "Dhanishtha",
+        "festival": "Pradosh Vrat",
+        "note": "Vishnu's day; Pradosh falls in the evening."
+      },
+      {
+        "date": "25 Sep",
+        "weekday": "Friday",
+        "tithi": "Chaturdashi",
+        "nakshatra": "Shatabhisha",
+        "festival": "Anant Chaturdashi · Ganesh Visarjan",
+        "note": "The big one — Ganeshotsav closes. Plan the visarjan."
+      },
+      {
+        "date": "26 Sep",
+        "weekday": "Saturday",
+        "tithi": "Purnima",
+        "nakshatra": "Purva Bhadrapada",
+        "festival": "Bhadrapada Purnima",
+        "note": "Full moon. Shani's day — Shani Chalisa."
+      },
+      {
+        "date": "27 Sep",
+        "weekday": "Sunday",
+        "tithi": "Pratipada",
+        "nakshatra": "Uttara Bhadrapada",
+        "festival": "Pitrupaksha begins",
+        "note": "The fortnight for the ancestors opens."
+      },
+      {
+        "date": "28 Sep",
+        "weekday": "Monday",
+        "tithi": "Dwitiya",
+        "nakshatra": "Revati",
+        "festival": "—",
+        "note": "Shiva's day."
+      }
+    ],
+    "highlights": [
+      "Anant Chaturdashi and Ganesh Visarjan on Fri 25 Sep — the week's centre of gravity.",
+      "Pitrupaksha opens Sun 27 Sep and runs to Sarva Pitru Amavasya on 10 Oct.",
+      "Parsva Ekadashi today closes the second Chaturmasa."
+    ]
+  },
+  "monthly": {
+    "monthLabel": "September 2026 (remaining)",
+    "festivals": [
+      {
+        "date": "22 Sep",
+        "name": "Parsva Ekadashi",
+        "type": "Ekadashi",
+        "note": "Vishnu turns to his other side; Chaturmasa closes."
+      },
+      {
+        "date": "24 Sep",
+        "name": "Pradosh Vrat",
+        "type": "Vrat",
+        "note": "Shukla Trayodashi, evening observance."
+      },
+      {
+        "date": "25 Sep",
+        "name": "Anant Chaturdashi",
+        "type": "Festival",
+        "note": "Also Ganesh Visarjan — close of Ganeshotsav."
+      },
+      {
+        "date": "26 Sep",
+        "name": "Bhadrapada Purnima",
+        "type": "Purnima",
+        "note": "Full moon."
+      },
+      {
+        "date": "27 Sep",
+        "name": "Pitrupaksha Begins",
+        "type": "Observance",
+        "note": "Fortnight for the ancestors."
+      }
+    ],
+    "ekadashi": [
+      "22 Sep — Parsva Ekadashi (Shukla)"
+    ],
+    "purnima": "26 Sep — Bhadrapada Purnima",
+    "amavasya": "10 Oct — Sarva Pitru Amavasya (closes Pitrupaksha)",
+    "prepList": [
+      "Ganesh Visarjan on 25 Sep — plan it with Vrinda and Vedant.",
+      "Pitrupaksha opens 27 Sep — decide in advance how you want to mark it.",
+      "Purnima 26 Sep falls on a Saturday this month."
+    ]
+  }
+}
