@@ -3674,5 +3674,47 @@ function updateActivityStatus(id,status){
 })();
 </script>
 
+<!-- Sadhana additions - added 2026-09-29. Two items plus default audio links.
+     Definitions and links only, no scripture text, so this stays small and
+     the repo carries no personal practice data. localStorage still wins:
+     an audio link you change by hand is never overwritten by these defaults. -->
+<script>
+(function () {
+  try {
+    var ADD = [
+      { id: "gopigeet",   slot: "evening", title: "Gopi Geet",              note: "Bhagavatam 10.31 - 19 verses" },
+      { id: "geetgovind", slot: "sleep",   title: "Geet Govind - Jayadeva", note: "24 ashtapadis - sung at bedtime" }
+    ];
+    if (typeof SD_ITEMS !== "undefined" && Array.isArray(SD_ITEMS)) {
+      ADD.forEach(function (it) {
+        if (!SD_ITEMS.some(function (x) { return x && x.id === it.id; })) SD_ITEMS.push(it);
+      });
+    }
+    var LIB_ADD = {
+      gopigeet: { text: "", verified: false,
+        why: "Nineteen verses the gopis sing when Krishna vanishes from the raas. For evenings when the heart feels far from what it loves." },
+      geetgovind: { text: "", verified: false,
+        why: "Jayadeva 12th century - 24 ashtapadis across 12 sargas. Sung to Jagannath at Puri at bedtime, hence the sleep slot." }
+    };
+    if (typeof SD_LIB !== "undefined" && SD_LIB) {
+      Object.keys(LIB_ADD).forEach(function (k) { if (!SD_LIB[k]) SD_LIB[k] = LIB_ADD[k]; });
+    }
+    var AUDIO = {
+      gopigeet:   "https://www.youtube.com/watch?v=6G7UidabSW8",
+      geetgovind: "https://www.youtube.com/watch?v=vfmg3O0yEOc",
+      chalisa:    "https://www.youtube.com/watch?v=AETFvQonfV8",
+      ramraksha:  "https://www.youtube.com/watch?v=-_axSlApc98",
+      aditya:     "https://www.youtube.com/watch?v=O00BFBR6hoM",
+      gajendra:   "https://www.youtube.com/watch?v=qesueS2kW8M",
+      bajrang:    "https://www.youtube.com/watch?v=h1lT6cxwsPw",
+      shani:      "https://www.youtube.com/watch?v=stSZnoIqKgU"
+    };
+    Object.keys(AUDIO).forEach(function (k) {
+      if (!localStorage.getItem("sdx-" + k)) localStorage.setItem("sdx-" + k, AUDIO[k]);
+    });
+    if (typeof renderSadhana === "function") renderSadhana();
+  } catch (e) { /* never block the rest of the hub */ }
+})();
+</script>
 </body>
 </html>
