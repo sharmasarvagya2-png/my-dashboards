@@ -130,6 +130,46 @@
       return '<div style="color:var(--mu);font-size:12.5px;padding:8px 2px;line-height:1.5">'+t+'</div>';
     }
 
+    /* ─── payments that are BOUNCING ───────────────────────────────
+       Added 17 Oct 2026, after finding ICICI "Transaction failure for
+       Standing Instruction" notices for three different merchants,
+       repeating over more than a week, sitting unread in the inbox.
+
+       This outranks everything else on the page. A bill you have not
+       paid yet is a plan; a payment that keeps being refused is a
+       subscription quietly dying, and in one case the cloud billing
+       behind your own automation. It renders first and in red. */
+    function renderFailing(w){
+      var si = (w.standingInstructions||[]).filter(function(s){
+        return /fail/i.test(s.status||'');
+      });
+      if(!si.length) return '';
+      var total = si.reduce(function(s,x){ return s+(Number(x.amount)||0); },0);
+      var rows = si.map(function(s){
+        var n = Number(s.attempts)||0;
+        return '<div class="irow" style="justify-content:space-between;align-items:baseline;gap:12px">'+
+          '<div style="min-width:0;flex:1">'+
+            '<div style="color:var(--tx);font-size:13.5px">'+esc(s.payee||'—')+
+              (s.card?' <span style="color:var(--mu);font-size:12px">'+esc(s.card)+'</span>':'')+'</div>'+
+            '<div style="color:var(--col-red);font-size:11.5px;margin-top:2px">'+
+              (n?('refused '+n+' time'+(n===1?'':'s')):'refused')+
+              (s.lastFailed?' · last '+esc(s.lastFailed):'')+'</div>'+
+          '</div>'+
+          '<div style="color:var(--col-red);font-family:Syne,sans-serif;font-weight:700;font-size:14px">'+
+            inr(s.amount,{paise:true})+'</div></div>';
+      }).join('');
+      var note = '<div style="color:var(--t2);font-size:11.5px;margin-top:11px;padding-top:11px;'+
+        'border-top:1px solid var(--bd);line-height:1.5">'+
+        'Repeated refusals on one card usually mean the card is at its limit, blocked, or the '+
+        'e-mandate has lapsed — not that the merchants are at fault. Worth fixing at the card, once, '+
+        'rather than per merchant.</div>';
+      return '<div class="card" style="margin-bottom:14px;border-color:var(--col-red)">'+
+        '<div class="chdr"><div class="chdr-l"><div class="cic">⚠</div>'+
+        '<div class="ctit" style="color:var(--col-red)">Payments being refused</div></div>'+
+        '<div class="cmeta"><span style="color:var(--col-red)">'+inr(total,{paise:true})+' across '+si.length+'</span></div></div>'+
+        rows + note + '</div>';
+    }
+
     /* ─── the one that matters: money leaving soon ──────────────── */
     function collectDues(w){
       var out = [];
@@ -380,6 +420,7 @@
           'Source: '+esc(w.source||'—')+' · updated '+esc(w.updatedAt||'never')+
         '</div>'+
         renderHero(w)+
+        renderFailing(w)+
         renderDues(w)+
         renderCash(w)+
         renderOwed(w)+
