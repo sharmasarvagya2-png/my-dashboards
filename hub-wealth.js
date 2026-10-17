@@ -262,6 +262,19 @@
 
     function renderInvestments(w){
       var funds = w.funds||[];
+
+      /* "Nothing held" and "we failed to capture it" look identical if
+         you only ever draw an empty state. They are opposite facts.
+         17 Oct 2026: the MF folios were all redeemed and there is no
+         trading account in use — so this is genuinely nil, and saying
+         "not captured" here would send you looking for data that does
+         not exist. w.investmentsNote carries the explanation. */
+      if(!funds.length && w.investmentsNote){
+        return card('📈','Investments','<span style="color:var(--mu)">none held</span>',
+          '<div style="color:var(--t2);font-size:12.5px;padding:6px 2px;line-height:1.55">'+
+            esc(w.investmentsNote)+'</div>');
+      }
+
       var known = funds.filter(function(f){ return Number(f.value) > 0; });
       var unknown = funds.filter(function(f){ return !(Number(f.value) > 0); });
       var total = known.reduce(function(s,f){ return s+Number(f.value); },0);
@@ -374,8 +387,12 @@
                          .reduce(function(s,a){ return s+(Number(a.balance)||0); },0);
       var owedTotal = acc.filter(isCard)
                          .reduce(function(s,a){ return s+Math.abs(Number(a.balance)||0); },0);
-      var invTotal  = (w.funds||[]).reduce(function(s,f){ return s+(Number(f.value)||0); },0);
-      var invUnknown = (w.funds||[]).some(function(f){ return !(Number(f.value)>0); });
+      var funds = w.funds||[];
+      var invTotal  = funds.reduce(function(s,f){ return s+(Number(f.value)||0); },0);
+      // Only "unknown" if something IS held and we failed to value it.
+      // Nothing held is a known quantity: nil.
+      var invUnknown = funds.some(function(f){ return !(Number(f.value)>0); });
+      var invNil = !funds.length;
       var net = cashTotal + invTotal - owedTotal;
 
       var dues = collectDues(w).filter(function(d){ var n=daysUntil(d.date); return n!==null && n>=0 && n<=30; });
@@ -384,9 +401,12 @@
       return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:16px">'+
         statTile('Cash', inr(cashTotal), 'in the bank', 'var(--col-green)')+
         statTile('Owed', inr(owedTotal), (acc.filter(isCard).length)+' cards', 'var(--col-red)')+
-        statTile('Investments', invUnknown?'incomplete':inr(invTotal),
-                 invUnknown?'units not captured':'valued', invUnknown?'var(--col-yellow)':'var(--tx)')+
-        statTile('Net', inr(net), invUnknown?'excludes funds':'cash + funds − cards',
+        statTile('Investments',
+                 invNil ? '—' : (invUnknown ? 'incomplete' : inr(invTotal)),
+                 invNil ? 'none held' : (invUnknown ? 'units not captured' : 'valued'),
+                 invNil ? 'var(--mu)' : (invUnknown ? 'var(--col-yellow)' : 'var(--tx)'))+
+        statTile('Net', inr(net),
+                 invNil ? 'cash − cards' : (invUnknown ? 'excludes funds' : 'cash + funds − cards'),
                  net<0?'var(--col-red)':'var(--col-green)')+
         statTile('Next 30 days', inr(dueTotal), dues.length+' payment'+(dues.length===1?'':'s'), 'var(--ac)')+
       '</div>';
