@@ -3756,5 +3756,105 @@ function updateActivityStatus(id,status){
 </script>
 <script src="hub-nitya.js"></script>
 <script src="hub-wealth.js"></script>
+
+<!-- Wealth tab redesign - 2026-10-31. Takes over #tab-wealth at runtime.
+     The old markup is left on disk untouched; delete this block to restore it.
+     Spend lives in sv-spend (accumulating). Only rows marked mine AND not in
+     Investments count toward any total - the bitter truth, not a flattering one.
+     PUBLIC REPO: code only. No balances, no amounts, no personal data here. -->
+<script>
+(function(){"use strict";
+var CATS=["Groceries","Eating Out","Transport & Fuel","Bills & Utilities","Subscriptions",
+"Health & Medical","Kids & School","Shopping","Travel","Home & Rent","Cash & ATM",
+"Fees & Charges","Gifts & Donations","Other"],INVEST="Investments & Premiums";
+function rj(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+function wj(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function led(){var l=rj("sv-spend",[]);return Array.isArray(l)?l:[]}
+function cfg(){return rj("sv-spend-cfg",{budgets:{},rules:{}})}
+function scfg(c){c.updatedAt=new Date().toISOString();wj("sv-spend-cfg",c)}
+function nm(s){return String(s||"").toLowerCase().replace(/[^a-z0-9\s]/g," ").replace(/\d+/g," ")
+.replace(/\b(pvt|private|ltd|limited|india|online|payments?|services?|retail|store|www|com|in|order|txn|transaction|ref|purchase|paid|payment|upi|neft|imps|pos|card|debit|credit)\b/g," ")
+.replace(/\s+/g," ").trim()}
+function inr(n){return "₹"+(Number(n)||0).toLocaleString("en-IN",{maximumFractionDigits:0})}
+var P={today:1,week:7,month:30,quarter:90,year:365,all:0},st={period:"month",showNM:false};
+function inP(r){if(st.period==="all")return true;var d=P[st.period]||30,c=new Date();
+c.setDate(c.getDate()-d+1);c.setHours(0,0,0,0);return new Date(r.date)>=c}
+function sp(rs){return rs.filter(function(r){return r.mine!==false&&r.category!==INVEST})}
+function med(a){if(!a.length)return 0;var s=a.slice().sort(function(x,y){return x-y}),m=Math.floor(s.length/2);
+return s.length%2?s[m]:(s[m-1]+s[m])/2}
+function derive(rs){var per={};sp(rs).forEach(function(r){var mo=String(r.date||"").slice(0,7);
+if(mo.length!==7)return;var c=r.category||"Other";per[c]=per[c]||{};per[c][mo]=(per[c][mo]||0)+(+r.amount||0)});
+var o={};Object.keys(per).forEach(function(c){var v=Object.keys(per[c]).map(function(m){return per[c][m]});
+if(v.length)o[c]=Math.round(med(v)/50)*50});return o}
+function over(rs,b){var mo=new Date().toISOString().slice(0,7),s={};
+sp(rs).forEach(function(r){if(String(r.date||"").slice(0,7)!==mo)return;var c=r.category||"Other";
+s[c]=(s[c]||0)+(+r.amount||0)});var o=[];Object.keys(s).forEach(function(c){var bb=b[c];if(!bb)return;
+if(s[c]>bb)o.push({cat:c,spent:s[c],budget:bb,over:s[c]-bb,pct:Math.round((s[c]-bb)/bb*100)})});
+return o.sort(function(a,b2){return b2.over-a.over})}
+function act(o,rs){var mo=new Date().toISOString().slice(0,7);
+var inc=sp(rs).filter(function(r){return (r.category||"Other")===o.cat&&String(r.date||"").slice(0,7)===mo});
+var bm={};inc.forEach(function(r){var k=nm(r.merchant)||r.merchant||"?";bm[k]=bm[k]||{n:0,s:0,name:r.merchant};
+bm[k].n++;bm[k].s+=(+r.amount||0)});
+var top=Object.keys(bm).map(function(k){return bm[k]}).sort(function(a,b){return b.s-a.s})[0];
+if(!top)return "Review this category.";var pv=top.s/top.n;
+if(top.n>=4)return top.name+": "+top.n+" times this month, "+inr(top.s)+". Halving that saves about "+inr(top.s-Math.ceil(top.n/2)*pv)+".";
+return top.name+" is "+inr(top.s)+" of "+inr(o.spent)+" - "+Math.round(top.s/o.spent*100)+"% of the category."}
+function rowH(r){var op=CATS.concat([INVEST]).map(function(c){
+return '<option value="'+c+'"'+(r.category===c?" selected":"")+'>'+c+'</option>'}).join("");
+return '<div class="sp-row" data-id="'+r.id+'" style="display:flex;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.07);'+(r.mine===false?"opacity:.55;":"")+'">'+
+'<span style="width:80px;opacity:.7;font-size:.86em">'+(r.date||"")+'</span>'+
+'<span style="flex:1;min-width:0"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(r.merchant||"?")+'</span>'+
+'<span style="opacity:.6;font-size:.84em">'+(r.what||"")+'</span></span>'+
+'<select class="sp-cat" style="background:#1b1b1b;color:#eee;border:1px solid #444;border-radius:6px;padding:3px">'+op+'</select>'+
+'<span style="width:94px;text-align:right">'+inr(r.amount)+'</span>'+
+'<button class="cbtn sp-mine">'+(r.mine===false?"not mine":"mine")+'</button>'+
+(r.mine===false?'<input class="sp-person" placeholder="who?" value="'+(r.person||"")+'" style="width:84px;background:#1b1b1b;color:#eee;border:1px solid #444;border-radius:6px;padding:3px">':"")+
+'</div>'}
+function upd(id,fn){var rs=led();for(var i=0;i<rs.length;i++){if(rs[i].id===id){fn(rs[i]);break}}wj("sv-spend",rs);render()}
+function render(){var host=document.getElementById("tab-wealth");if(!host)return;
+var rs=led(),c=cfg(),b=Object.keys(c.budgets||{}).length?c.budgets:derive(rs);
+var pr=rs.filter(inP),mine=sp(pr),tot=mine.reduce(function(a,r){return a+(+r.amount||0)},0);
+var nmr=pr.filter(function(r){return r.mine===false}),owed=nmr.reduce(function(a,r){return a+(+r.amount||0)},0);
+var q=pr.filter(function(r){return r.catBy==="unknown"||!r.category}),os=over(rs,b);
+var bc={};mine.forEach(function(r){var k=r.category||"Other";bc[k]=(bc[k]||0)+(+r.amount||0)});
+var cats=Object.keys(bc).sort(function(a,b2){return bc[b2]-bc[a]});var h=[];
+h.push('<div class="phdr"><div><div class="ptitle">Spending</div><div class="psub">Your money only. Reimbursables and investments excluded.</div></div><div class="pstats">'+
+'<div class="ps"><div class="ps-n">'+inr(tot)+'</div><div class="ps-l">Real spend</div></div>'+
+'<div class="ps"><div class="ps-n">'+mine.length+'</div><div class="ps-l">Transactions</div></div>'+
+'<div class="ps"><div class="ps-n">'+q.length+'</div><div class="ps-l">To review</div></div></div></div>');
+h.push('<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px 2px">');
+[["today","Today"],["week","7 days"],["month","30 days"],["quarter","90 days"],["year","1 year"],["all","All"]]
+.forEach(function(p){h.push('<button class="cbtn'+(st.period===p[0]?" p":"")+'" data-period="'+p[0]+'">'+p[1]+'</button>')});
+h.push('</div>');
+if(!rs.length)h.push('<div style="padding:22px;border:1px dashed #555;border-radius:10px;opacity:.85"><b>No spend data yet.</b><br>Run spend_ingest.py to read Yahoo.</div>');
+if(os.length){h.push('<div style="border:1px solid #c0392b;background:rgba(192,57,43,.12);border-radius:12px;padding:14px;margin-bottom:16px"><div style="font-weight:700;color:#e74c3c;margin-bottom:8px">Over budget this month - '+os.length+' categor'+(os.length>1?"ies":"y")+'</div>');
+os.forEach(function(o){h.push('<div style="margin:9px 0;padding:9px;background:rgba(0,0,0,.18);border-radius:8px"><div><b>'+o.cat+'</b> '+inr(o.spent)+' of '+inr(o.budget)+' <span style="color:#e74c3c">+'+inr(o.over)+' ('+o.pct+'%)</span></div><div style="opacity:.85;font-size:.92em;margin-top:4px">'+act(o,rs)+'</div></div>')});h.push('</div>')}
+if(q.length){h.push('<div style="border:1px solid #d4a017;background:rgba(212,160,23,.1);border-radius:12px;padding:14px;margin-bottom:16px"><div style="font-weight:700;color:#d4a017;margin-bottom:6px">'+q.length+' need a category</div><div style="opacity:.8;font-size:.9em;margin-bottom:8px">Set one and it is remembered for that merchant.</div>');
+q.slice(0,30).forEach(function(r){h.push(rowH(r))});h.push('</div>')}
+if(cats.length){h.push('<div style="margin-bottom:16px"><div style="font-weight:700;margin-bottom:8px">By category</div>');
+cats.forEach(function(k){var bb=b[k],pc=bb?Math.min(100,bc[k]/bb*100):0;
+h.push('<div style="margin:7px 0"><div style="display:flex;justify-content:space-between;font-size:.94em"><span>'+k+'</span><span>'+inr(bc[k])+(bb?' <span style="opacity:.6">/ '+inr(bb)+'</span>':"")+'</span></div><div style="height:6px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:3px"><div style="height:6px;border-radius:4px;width:'+pc+'%;background:'+(bb&&bc[k]>bb?"#e74c3c":"#4a9")+'"></div></div></div>')});h.push('</div>')}
+h.push('<div style="font-weight:700;margin:18px 0 8px">Transactions'+(nmr.length?' <button class="cbtn" id="sp-nm" style="margin-left:8px">'+(st.showNM?"Hide":"Show")+' '+nmr.length+' not mine ('+inr(owed)+' owed to you)</button>':"")+'</div>');
+(st.showNM?pr:mine).slice(0,200).forEach(function(r){h.push(rowH(r))});
+var w=rj("sv-wealth",{});
+h.push('<div style="margin-top:26px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12)"><div style="font-weight:700;margin-bottom:4px">Investments &amp; Policies</div><div style="opacity:.75;font-size:.9em;margin-bottom:10px">Kept out of every spend total above - money moved here is not money spent.</div>');
+["accounts","funds","policies"].forEach(function(s){var a=(w&&w[s])||[];
+h.push('<div style="margin:8px 0"><b style="text-transform:capitalize">'+s+'</b> ('+a.length+')');
+a.forEach(function(it){var l=it.bank||it.scheme||it.insurer||"?",v=it.balance||it.value||it.premium||"";
+h.push('<div style="display:flex;justify-content:space-between;opacity:.9;font-size:.93em;margin:3px 0"><span>'+l+'</span><span>'+(v===""?"&mdash;":inr(v))+'</span></div>')});h.push('</div>')});
+h.push('</div>');host.innerHTML=h.join("");wire()}
+function wire(){var host=document.getElementById("tab-wealth");if(!host)return;
+host.querySelectorAll("[data-period]").forEach(function(b){b.onclick=function(){st.period=b.getAttribute("data-period");render()}});
+var n=host.querySelector("#sp-nm");if(n)n.onclick=function(){st.showNM=!st.showNM;render()};
+host.querySelectorAll(".sp-row").forEach(function(el){var id=el.getAttribute("data-id");
+var s=el.querySelector(".sp-cat");if(s)s.onchange=function(){var v=s.value;
+upd(id,function(r){r.category=v;r.catBy="manual";var c=cfg();c.rules=c.rules||{};c.rules[nm(r.merchant)]=v;scfg(c)})};
+var m=el.querySelector(".sp-mine");if(m)m.onclick=function(){upd(id,function(r){r.mine=(r.mine===false);if(r.mine)r.person=""})};
+var p=el.querySelector(".sp-person");if(p)p.onchange=function(){upd(id,function(r){r.person=p.value})}})}
+window.renderSpend=render;
+document.addEventListener("click",function(e){var t=e.target.closest?e.target.closest("[onclick*='wealth'],[data-tab='wealth']"):null;if(t)setTimeout(render,60)},true);
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){setTimeout(render,400)});else setTimeout(render,400);
+})();
+</script>
 </body>
 </html>
