@@ -836,57 +836,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   <div id="wealth-hero"></div>
   <div class="g2">
     
-<!-- ===== WEALTH OVERVIEW — 25 Nov 2026 =====
-     Derived from sv-wealth. Figures are device-local; this repo is public. -->
-<div class="card" id="wo-card">
-  <div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div>
-    <div><div class="ctit">Overview</div>
-    <div class="cmeta">Net worth, runway, debt, protection &mdash; derived, not typed</div></div></div>
-    <div class="cbtns"><button class="cbtn" onclick="woToggleEdit()" id="wo-edit-btn">Figures</button></div>
-  </div>
-  <div class="wo-tiles" id="wo-tiles"></div>
-  <div class="wo-spark" id="wo-spark"></div>
-  <div class="wo-alloc" id="wo-alloc"></div>
-  <div class="wo-stale" id="wo-stale"></div>
-
-  <div class="wo-edit" id="wo-edit">
-    <div class="wo-grid wo-f">
-      <div><label>Monthly essentials</label><input id="wo-ess" type="number" placeholder="rent, food, fees, EMIs"></div>
-      <div><label>Annual income</label><input id="wo-inc" type="number" placeholder="take-home, a year"></div>
-      <div><label>Term cover</label><input id="wo-term" type="number" placeholder="sum assured"></div>
-    </div>
-
-    <div class="wo-sub">Assets not synced automatically</div>
-    <div id="wo-assets"></div>
-    <div class="wo-grid wo-f" style="margin-top:8px">
-      <div><label>Name</label><input id="wo-a-n" placeholder="PPF, EPF, gold, flat"></div>
-      <div><label>Kind</label><select id="wo-a-k">
-        <option value="debt">Debt / fixed</option><option value="equity">Equity</option>
-        <option value="cash">Cash</option><option value="gold">Gold</option>
-        <option value="property">Property</option><option value="other">Other</option></select></div>
-      <div><label>Value</label><input id="wo-a-v" type="number"></div>
-    </div>
-    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddAsset()">Add asset</button></div>
-
-    <div class="wo-sub">Liabilities</div>
-    <div id="wo-liabs"></div>
-    <div class="wo-grid wo-f" style="margin-top:8px">
-      <div><label>Name</label><input id="wo-l-n" placeholder="home loan, card"></div>
-      <div><label>Outstanding</label><input id="wo-l-v" type="number"></div>
-      <div><label>EMI (optional)</label><input id="wo-l-e" type="number"></div>
-    </div>
-    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddLiab()">Add liability</button></div>
-
-    <div class="wo-sub">Goals</div>
-    <div id="wo-goals"></div>
-    <div class="wo-grid wo-f" style="margin-top:8px">
-      <div><label>Goal</label><input id="wo-g-n" placeholder="Vrinda's fees, 2030"></div>
-      <div><label>Target</label><input id="wo-g-t" type="number"></div>
-      <div><label>Saved so far</label><input id="wo-g-s" type="number"></div>
-    </div>
-    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddGoal()">Add goal</button></div>
-  </div>
-</div>
 <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127974;</div><div class="ctit">Bank Accounts</div></div></div><div id="wealth-accounts-list"></div></div>
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div><div class="ctit">Mutual Funds</div></div></div><div id="wealth-funds-list"></div></div>
   </div>
@@ -4490,8 +4439,32 @@ function woAllocation(d){
   return '<div class="wo-bar">'+bar+'</div><div class="wo-leg">'+leg+'</div>';
 }
 
+
+/* The card used to sit in the markup, and it kept vanishing: it had landed
+   inside #wealth-hero, whose innerHTML renderWealth() replaces on every pass.
+   So the script owns it now. woEnsureCard() appends it as a direct child of
+   #tab-wealth and rebuilds it if anything ever removes it again. */
+var WO_HTML = '<div class="card" id="wo-card">\n  <div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div>\n    <div><div class="ctit">Overview</div>\n    <div class="cmeta">Net worth, runway, debt, protection &mdash; derived, not typed</div></div></div>\n    <div class="cbtns"><button class="cbtn" onclick="woToggleEdit()" id="wo-edit-btn">Figures</button></div>\n  </div>\n  <div class="wo-tiles" id="wo-tiles"></div>\n  <div class="wo-spark" id="wo-spark"></div>\n  <div class="wo-alloc" id="wo-alloc"></div>\n  <div class="wo-stale" id="wo-stale"></div>\n\n  <div class="wo-edit" id="wo-edit">\n    <div class="wo-grid wo-f">\n      <div><label>Monthly essentials</label><input id="wo-ess" type="number" placeholder="rent, food, fees, EMIs"></div>\n      <div><label>Annual income</label><input id="wo-inc" type="number" placeholder="take-home, a year"></div>\n      <div><label>Term cover</label><input id="wo-term" type="number" placeholder="sum assured"></div>\n    </div>\n\n    <div class="wo-sub">Assets not synced automatically</div>\n    <div id="wo-assets"></div>\n    <div class="wo-grid wo-f" style="margin-top:8px">\n      <div><label>Name</label><input id="wo-a-n" placeholder="PPF, EPF, gold, flat"></div>\n      <div><label>Kind</label><select id="wo-a-k">\n        <option value="debt">Debt / fixed</option><option value="equity">Equity</option>\n        <option value="cash">Cash</option><option value="gold">Gold</option>\n        <option value="property">Property</option><option value="other">Other</option></select></div>\n      <div><label>Value</label><input id="wo-a-v" type="number"></div>\n    </div>\n    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddAsset()">Add asset</button></div>\n\n    <div class="wo-sub">Liabilities</div>\n    <div id="wo-liabs"></div>\n    <div class="wo-grid wo-f" style="margin-top:8px">\n      <div><label>Name</label><input id="wo-l-n" placeholder="home loan, card"></div>\n      <div><label>Outstanding</label><input id="wo-l-v" type="number"></div>\n      <div><label>EMI (optional)</label><input id="wo-l-e" type="number"></div>\n    </div>\n    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddLiab()">Add liability</button></div>\n\n    <div class="wo-sub">Goals</div>\n    <div id="wo-goals"></div>\n    <div class="wo-grid wo-f" style="margin-top:8px">\n      <div><label>Goal</label><input id="wo-g-n" placeholder="Vrinda\'s fees, 2030"></div>\n      <div><label>Target</label><input id="wo-g-t" type="number"></div>\n      <div><label>Saved so far</label><input id="wo-g-s" type="number"></div>\n    </div>\n    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddGoal()">Add goal</button></div>\n  </div>\n</div>';
+function woEnsureCard(){
+  var panel=document.getElementById('tab-wealth');
+  if(!panel) return null;
+  var card=document.getElementById('wo-card');
+  if(card && card.parentElement===panel) return card;
+  if(card) card.remove();
+  var box=document.createElement('div');
+  box.innerHTML=WO_HTML;
+  card=box.firstElementChild;
+  var hero=document.getElementById('wealth-hero');
+  if(hero && hero.parentElement===panel && hero.nextSibling) panel.insertBefore(card, hero.nextSibling);
+  else panel.appendChild(card);
+  ['wo-ess:essentials','wo-inc:annualIncome','wo-term:termCover'].forEach(function(p){
+    var a=p.split(':'), el=document.getElementById(a[0]);
+    if(el) el.addEventListener('change', function(){ woField(a[0], a[1]); });
+  });
+  return card;
+}
 function renderWealthOverview(){
-  var card=document.getElementById('wo-card'); if(!card) return;
+  var card=woEnsureCard(); if(!card) return;
   var w=woRead(), d=woDerive(w);
 
   var monthDelta='';
@@ -4637,6 +4610,18 @@ function woDel(list, i){
         if(el) el.addEventListener('change', function(){ woField(a[0], a[1]); });
       });
       renderWealthOverview();
+      // renderWealth() rewrites the hero; re-assert afterwards so the card
+      // survives every later pass too.
+      if(typeof renderWealth==='function' && !window.__woWrapped){
+        window.__woWrapped=true;
+        var orig=renderWealth;
+        window.renderWealth=function(){ var r=orig.apply(this,arguments);
+          try{ renderWealthOverview(); }catch(e){} return r; };
+      }
+      document.querySelectorAll('.ntab').forEach(function(t){
+        t.addEventListener('click', function(){ setTimeout(function(){
+          try{ renderWealthOverview(); }catch(e){} }, 80); });
+      });
     }catch(e){}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go);
