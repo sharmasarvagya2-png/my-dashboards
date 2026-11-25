@@ -835,7 +835,59 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   <div style="font-size:12px;opacity:.6;margin:0 0 14px 2px" id="w-updated">Never synced</div>
   <div id="wealth-hero"></div>
   <div class="g2">
-    <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127974;</div><div class="ctit">Bank Accounts</div></div></div><div id="wealth-accounts-list"></div></div>
+    
+<!-- ===== WEALTH OVERVIEW — 25 Nov 2026 =====
+     Derived from sv-wealth. Figures are device-local; this repo is public. -->
+<div class="card" id="wo-card">
+  <div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div>
+    <div><div class="ctit">Overview</div>
+    <div class="cmeta">Net worth, runway, debt, protection &mdash; derived, not typed</div></div></div>
+    <div class="cbtns"><button class="cbtn" onclick="woToggleEdit()" id="wo-edit-btn">Figures</button></div>
+  </div>
+  <div class="wo-tiles" id="wo-tiles"></div>
+  <div class="wo-spark" id="wo-spark"></div>
+  <div class="wo-alloc" id="wo-alloc"></div>
+  <div class="wo-stale" id="wo-stale"></div>
+
+  <div class="wo-edit" id="wo-edit">
+    <div class="wo-grid wo-f">
+      <div><label>Monthly essentials</label><input id="wo-ess" type="number" placeholder="rent, food, fees, EMIs"></div>
+      <div><label>Annual income</label><input id="wo-inc" type="number" placeholder="take-home, a year"></div>
+      <div><label>Term cover</label><input id="wo-term" type="number" placeholder="sum assured"></div>
+    </div>
+
+    <div class="wo-sub">Assets not synced automatically</div>
+    <div id="wo-assets"></div>
+    <div class="wo-grid wo-f" style="margin-top:8px">
+      <div><label>Name</label><input id="wo-a-n" placeholder="PPF, EPF, gold, flat"></div>
+      <div><label>Kind</label><select id="wo-a-k">
+        <option value="debt">Debt / fixed</option><option value="equity">Equity</option>
+        <option value="cash">Cash</option><option value="gold">Gold</option>
+        <option value="property">Property</option><option value="other">Other</option></select></div>
+      <div><label>Value</label><input id="wo-a-v" type="number"></div>
+    </div>
+    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddAsset()">Add asset</button></div>
+
+    <div class="wo-sub">Liabilities</div>
+    <div id="wo-liabs"></div>
+    <div class="wo-grid wo-f" style="margin-top:8px">
+      <div><label>Name</label><input id="wo-l-n" placeholder="home loan, card"></div>
+      <div><label>Outstanding</label><input id="wo-l-v" type="number"></div>
+      <div><label>EMI (optional)</label><input id="wo-l-e" type="number"></div>
+    </div>
+    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddLiab()">Add liability</button></div>
+
+    <div class="wo-sub">Goals</div>
+    <div id="wo-goals"></div>
+    <div class="wo-grid wo-f" style="margin-top:8px">
+      <div><label>Goal</label><input id="wo-g-n" placeholder="Vrinda's fees, 2030"></div>
+      <div><label>Target</label><input id="wo-g-t" type="number"></div>
+      <div><label>Saved so far</label><input id="wo-g-s" type="number"></div>
+    </div>
+    <div class="cbtns" style="margin-top:8px"><button class="cbtn" onclick="woAddGoal()">Add goal</button></div>
+  </div>
+</div>
+<div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#127974;</div><div class="ctit">Bank Accounts</div></div></div><div id="wealth-accounts-list"></div></div>
     <div class="card"><div class="chdr"><div class="chdr-l"><div class="cic">&#128200;</div><div class="ctit">Mutual Funds</div></div></div><div id="wealth-funds-list"></div></div>
   </div>
   <div class="g2">
@@ -1008,6 +1060,57 @@ body[data-tab="tab-life"]    {--tabglow:rgba(245,158,11,.09)}
 .flr-acts button:active{transform:scale(.95)}
 .flr-acts .yes{background:var(--ac);color:#07090F;border-color:var(--ac);font-weight:700}
 .flr-empty{font-size:12.5px;color:var(--mu);padding:14px 0 4px}
+
+/* ===== WEALTH OVERVIEW — 25 Nov 2026 =====
+   The old tab showed gross assets and called it net worth, with no
+   liabilities, no trend and no allocation. This adds the six tiles every
+   serious personal-finance dashboard settles on - net worth, savings
+   runway, debt ratio, protection, allocation, trend - and derives all of
+   them, so the only things typed by hand are figures that change rarely.
+   NOTE: every figure lives in localStorage on this device only. This repo
+   is public. Nothing numeric is ever committed. */
+.wo-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0 4px}
+.wo-t{background:var(--tg);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;position:relative}
+.wo-t b{display:block;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mu);font-weight:600;margin-bottom:4px}
+.wo-t .v{font-size:21px;font-weight:700;color:var(--tx);line-height:1.15}
+.wo-t .s{font-size:11px;margin-top:4px;color:var(--mu);line-height:1.45}
+.wo-t.good .v{color:var(--col-green)}
+.wo-t.warn .v{color:var(--col-yellow)}
+.wo-t.bad  .v{color:var(--col-red)}
+.wo-t .dot{position:absolute;top:10px;right:11px;width:6px;height:6px;border-radius:99px;background:var(--mu)}
+.wo-t.good .dot{background:var(--col-green)}
+.wo-t.warn .dot{background:var(--col-yellow)}
+.wo-t.bad  .dot{background:var(--col-red)}
+.wo-spark{margin:14px 0 2px}
+.wo-spark svg{width:100%;height:62px;display:block;overflow:visible}
+.wo-alloc{margin-top:16px}
+.wo-bar{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--tg);border:1px solid var(--bd)}
+.wo-bar i{display:block;height:100%}
+.wo-leg{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px}
+.wo-leg span{font-size:11.5px;color:var(--t2);display:flex;align-items:center;gap:6px}
+.wo-leg s{width:9px;height:9px;border-radius:2px;display:inline-block}
+.wo-stale{margin-top:14px;font-size:11.5px;color:var(--mu);padding-top:10px;border-top:1px dashed var(--bd)}
+.wo-stale.old{color:var(--col-yellow)}
+.wo-edit{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);display:none}
+.wo-edit.on{display:block}
+.wo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px}
+.wo-f label{display:block;font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--mu);font-weight:600;margin-bottom:3px}
+.wo-f input,.wo-f select{width:100%;background:var(--tg);border:1px solid var(--bd);color:var(--tx);
+  border-radius:var(--rx);padding:7px 9px;font-size:13px;font-family:inherit}
+.wo-f input:focus,.wo-f select:focus{outline:none;border-color:var(--ac)}
+.wo-sub{font-size:11px;color:var(--mu);margin:12px 0 6px;letter-spacing:.3px;text-transform:uppercase;font-weight:600}
+.wo-row{display:flex;align-items:center;gap:8px;background:var(--tg);border:1px solid var(--bd);
+  border-radius:var(--rx);padding:8px 10px;margin-top:7px;flex-wrap:wrap}
+.wo-row .n{flex:1 1 130px;font-size:13px;color:var(--tx)}
+.wo-row .a{font-size:13px;font-weight:600;color:var(--ac)}
+.wo-row .k{font-size:10px;color:var(--mu);letter-spacing:.6px;text-transform:uppercase}
+.wo-row button{background:none;border:0;color:var(--mu);cursor:pointer;font-size:15px;padding:0 3px}
+.wo-row button:hover{color:var(--col-red)}
+.wo-goal{margin-top:9px}
+.wo-goal .gt{display:flex;justify-content:space-between;font-size:12.5px;color:var(--t2);margin-bottom:5px}
+.wo-goal .gb{height:6px;border-radius:99px;background:var(--tg);overflow:hidden}
+.wo-goal .gf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a2),var(--ac))}
+.wo-none{font-size:12.5px;color:var(--mu);padding:10px 0 2px}
 </style>
   <div id="ll-lock" style="display:none;max-width:340px;margin:60px auto;text-align:center">
     <div style="font-size:34px;margin-bottom:10px">&#128274;</div>
@@ -4251,6 +4354,291 @@ function flrDismissAll(){
 }
 (function(){
   function go(){ try{ renderFreelanceReview(); }catch(e){} }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go);
+  else go();
+})();
+</script>
+
+<script>
+/* ===== WEALTH OVERVIEW — 25 Nov 2026 =====
+   Everything on this card is DERIVED from sv-wealth. The only hand-typed
+   figures are ones that change a couple of times a year: monthly essentials,
+   annual income, term cover, and the assets nobody can sync for you (PPF,
+   EPF, gold, property). That is the whole point - the last version of this
+   tab died of asking too much.
+
+   Thresholds used, and where they come from (they are rules of thumb, not
+   law, and they are stated on the card so they can be argued with):
+     runway    6 months of essentials is the common floor, 3 the danger line
+     debt      under 20% of assets is comfortable, over 50% is dominating
+     cover     10x annual income is the usual term-insurance yardstick
+   None of this is advice. It is arithmetic with a label on it. */
+
+function woRead(){
+  var w={}; try{ w=JSON.parse(localStorage.getItem('sv-wealth')||'{}')||{}; }catch(e){ w={}; }
+  w.accounts=w.accounts||[]; w.funds=w.funds||[]; w.policies=w.policies||[];
+  w.history=w.history||[]; w.assets=w.assets||[]; w.liabilities=w.liabilities||[];
+  w.goals=w.goals||[]; w.inputs=w.inputs||{};
+  return w;
+}
+function woSave(w){
+  try{ localStorage.setItem('sv-wealth', JSON.stringify(w)); }catch(e){}
+}
+function woN(x){ var n=Number(x); return isFinite(n)?n:0; }
+function woR(n){
+  n=woN(n);
+  var a=Math.abs(n);
+  if(a>=1e7) return 'Rs '+(n/1e7).toFixed(2)+' cr';
+  if(a>=1e5) return 'Rs '+(n/1e5).toFixed(2)+' L';
+  return 'Rs '+Math.round(n).toLocaleString('en-IN');
+}
+function woEsc(s){ return String(s==null?'':s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function woAge(d){
+  if(!d) return null;
+  var t=Date.parse(d); if(isNaN(t)) return null;
+  return Math.floor((Date.now()-t)/86400000);
+}
+
+/* ---- the one function that decides what everything else shows ---- */
+function woDerive(w){
+  var cash=0, equity=0, debt=0, gold=0, property=0, other=0;
+  var ages=[];
+  w.accounts.forEach(function(a){ cash+=woN(a.balance); if(a.asOf) ages.push(a.asOf); });
+  w.funds.forEach(function(f){ equity+=woN(f.value); if(f.asOf) ages.push(f.asOf); });
+  w.assets.forEach(function(a){
+    var v=woN(a.value);
+    if(a.kind==='cash') cash+=v;
+    else if(a.kind==='equity') equity+=v;
+    else if(a.kind==='gold') gold+=v;
+    else if(a.kind==='property') property+=v;
+    else if(a.kind==='debt') debt+=v;
+    else other+=v;
+    if(a.asOf) ages.push(a.asOf);
+  });
+  var assets = cash+equity+debt+gold+property+other;
+  var liab = w.liabilities.reduce(function(s,l){ return s+woN(l.outstanding); },0);
+  var net = assets - liab;
+
+  var ess = woN(w.inputs.essentials);
+  var inc = woN(w.inputs.annualIncome);
+  var cover = woN(w.inputs.termCover);
+  // Term policies already on record count towards cover if nothing was typed.
+  if(!cover) cover = w.policies.reduce(function(s,p){
+      return s + (/term/i.test(p.type||'') ? woN(p.sumAssured) : 0); },0);
+
+  return {
+    buckets:{cash:cash, equity:equity, debt:debt, gold:gold, property:property, other:other},
+    assets:assets, liab:liab, net:net,
+    runway: ess>0 ? cash/ess : null,
+    debtRatio: assets>0 ? liab/assets : null,
+    coverX: inc>0 ? cover/inc : null,
+    oldestDays: ages.length ? Math.max.apply(null, ages.map(woAge).filter(function(x){return x!=null;})) : null,
+    hasAnything: assets>0 || liab>0
+  };
+}
+
+function woTile(label, value, sub, band){
+  return '<div class="wo-t '+(band||'')+'"><span class="dot"></span><b>'+label+'</b>'
+       + '<div class="v">'+value+'</div><div class="s">'+sub+'</div></div>';
+}
+
+function woSparkline(hist){
+  var pts=(hist||[]).slice(-26).filter(function(p){ return p && isFinite(Number(p.v)); });
+  if(pts.length<2) return '<div class="wo-none">Trend needs at least two readings. '
+    + 'SS-WealthSync adds one a day once it is running.</div>';
+  var vs=pts.map(function(p){ return Number(p.v); });
+  var min=Math.min.apply(null,vs), max=Math.max.apply(null,vs);
+  var span=(max-min)||1, W=600, H=56;
+  var d=pts.map(function(p,i){
+    var x=(i/(pts.length-1))*W, y=H-((Number(p.v)-min)/span)*H;
+    return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+  }).join(' ');
+  var area=d+' L'+W+' '+H+' L0 '+H+' Z';
+  var first=vs[0], last=vs[vs.length-1];
+  var pct = first ? ((last-first)/Math.abs(first)*100) : 0;
+  var up = last>=first;
+  return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+    + '<defs><linearGradient id="woG" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="var(--ac)" stop-opacity=".30"/>'
+    + '<stop offset="100%" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs>'
+    + '<path d="'+area+'" fill="url(#woG)"/>'
+    + '<path d="'+d+'" fill="none" stroke="var(--ac)" stroke-width="2" '
+    + 'stroke-linejoin="round" stroke-linecap="round"/></svg>'
+    + '<div class="s" style="font-size:11.5px;color:var(--mu);margin-top:6px">'
+    + pts.length+' readings &middot; '+(up?'up ':'down ')+Math.abs(pct).toFixed(1)
+    + '% across the series</div>';
+}
+
+var WO_COLS={cash:'#22d3ee',equity:'#22c55e',debt:'#60a5fa',gold:'#C8A84C',
+             property:'#a78bfa',other:'#4E5A6B'};
+var WO_NAMES={cash:'Cash',equity:'Equity',debt:'Debt / fixed',gold:'Gold',
+              property:'Property',other:'Other'};
+
+function woAllocation(d){
+  var total=d.assets;
+  if(!total) return '<div class="wo-none">No assets recorded yet. Open Figures and add what is not synced.</div>';
+  var ks=Object.keys(d.buckets).filter(function(k){ return d.buckets[k]>0; })
+          .sort(function(a,b){ return d.buckets[b]-d.buckets[a]; });
+  var bar=ks.map(function(k){
+    return '<i style="width:'+(d.buckets[k]/total*100).toFixed(2)+'%;background:'+WO_COLS[k]+'"></i>';
+  }).join('');
+  var leg=ks.map(function(k){
+    return '<span><s style="background:'+WO_COLS[k]+'"></s>'+WO_NAMES[k]+' '
+         + (d.buckets[k]/total*100).toFixed(0)+'% &middot; '+woR(d.buckets[k])+'</span>';
+  }).join('');
+  return '<div class="wo-bar">'+bar+'</div><div class="wo-leg">'+leg+'</div>';
+}
+
+function renderWealthOverview(){
+  var card=document.getElementById('wo-card'); if(!card) return;
+  var w=woRead(), d=woDerive(w);
+
+  var monthDelta='';
+  var h=(w.history||[]).filter(function(p){return p&&isFinite(Number(p.v));});
+  if(h.length>1){
+    var prev=Number(h[Math.max(0,h.length-31)].v), now=Number(h[h.length-1].v);
+    if(prev){ var pc=(now-prev)/Math.abs(prev)*100;
+      monthDelta=(pc>=0?'up ':'down ')+Math.abs(pc).toFixed(1)+'% over the last ~30 readings'; }
+  }
+
+  var tiles='';
+  tiles += woTile('Net worth', d.hasAnything?woR(d.net):'&mdash;',
+    d.hasAnything ? (woR(d.assets)+' assets less '+woR(d.liab)+' owed'
+       + (monthDelta?('<br>'+monthDelta):''))
+                  : 'Nothing recorded yet',
+    d.net>0?'good':(d.hasAnything?'bad':''));
+
+  tiles += woTile('Runway',
+    d.runway==null?'&mdash;':d.runway.toFixed(1)+' mo',
+    d.runway==null ? 'Set monthly essentials to see this'
+      : (d.runway>=6 ? 'Above the 6-month floor'
+        : d.runway>=3 ? 'Below 6 months, the usual floor'
+                      : 'Under 3 months. This is the thin one.'),
+    d.runway==null?'':(d.runway>=6?'good':d.runway>=3?'warn':'bad'));
+
+  tiles += woTile('Debt ratio',
+    d.debtRatio==null?'&mdash;':(d.debtRatio*100).toFixed(0)+'%',
+    d.debtRatio==null ? 'No assets recorded'
+      : (d.debtRatio<0.2 ? 'Comfortable, under 20% of assets'
+        : d.debtRatio<0.5 ? 'Carrying real debt, under half'
+                          : 'Debt is over half of what you own'),
+    d.debtRatio==null?'':(d.debtRatio<0.2?'good':d.debtRatio<0.5?'warn':'bad'));
+
+  tiles += woTile('Protection',
+    d.coverX==null?'&mdash;':d.coverX.toFixed(1)+'x',
+    d.coverX==null ? 'Set annual income and term cover'
+      : (d.coverX>=10 ? 'At or above the 10x yardstick'
+        : d.coverX>=5 ? 'Between 5x and 10x of income'
+                      : 'Under 5x income. Thin for a family.'),
+    d.coverX==null?'':(d.coverX>=10?'good':d.coverX>=5?'warn':'bad'));
+
+  document.getElementById('wo-tiles').innerHTML=tiles;
+  document.getElementById('wo-spark').innerHTML=woSparkline(w.history);
+  document.getElementById('wo-alloc').innerHTML=woAllocation(d);
+
+  var st=document.getElementById('wo-stale');
+  if(d.oldestDays==null){ st.className='wo-stale'; st.textContent=
+    'No "as of" date on any holding yet, so none of this can be aged honestly.'; }
+  else { var old=d.oldestDays>30;
+    st.className='wo-stale'+(old?' old':'');
+    st.textContent = old
+      ? ('Oldest figure here is '+d.oldestDays+' days stale. Treat the totals as indicative.')
+      : ('Every figure is within '+d.oldestDays+' day(s).'); }
+
+  woRenderLists(w);
+}
+
+function woRenderLists(w){
+  var ia=document.getElementById('wo-assets');
+  if(ia) ia.innerHTML = w.assets.length ? w.assets.map(function(a,i){
+      return '<div class="wo-row"><span class="n">'+woEsc(a.name)+'</span>'
+        + '<span class="k">'+woEsc(a.kind)+'</span>'
+        + '<span class="a">'+woR(a.value)+'</span>'
+        + '<button onclick="woDel(\'assets\','+i+')" title="remove">&times;</button></div>';
+    }).join('') : '<div class="wo-none">Nothing added.</div>';
+
+  var il=document.getElementById('wo-liabs');
+  if(il) il.innerHTML = w.liabilities.length ? w.liabilities.map(function(l,i){
+      return '<div class="wo-row"><span class="n">'+woEsc(l.name)+'</span>'
+        + (l.emi?'<span class="k">EMI '+woR(l.emi)+'</span>':'')
+        + '<span class="a">'+woR(l.outstanding)+'</span>'
+        + '<button onclick="woDel(\'liabilities\','+i+')" title="remove">&times;</button></div>';
+    }).join('') : '<div class="wo-none">None recorded. If that is wrong, net worth is wrong.</div>';
+
+  var ig=document.getElementById('wo-goals');
+  if(ig) ig.innerHTML = w.goals.length ? w.goals.map(function(g,i){
+      var pct=woN(g.target)?Math.min(100,woN(g.saved)/woN(g.target)*100):0;
+      return '<div class="wo-goal"><div class="gt"><span>'+woEsc(g.name)+'</span>'
+        + '<span>'+woR(g.saved)+' of '+woR(g.target)+' &middot; '+pct.toFixed(0)+'%'
+        + ' <button onclick="woDel(\'goals\','+i+')" style="background:none;border:0;color:var(--mu);cursor:pointer">&times;</button>'
+        + '</span></div><div class="gb"><div class="gf" style="width:'+pct.toFixed(1)+'%"></div></div></div>';
+    }).join('') : '<div class="wo-none">No goals set.</div>';
+
+  var e=document.getElementById('wo-ess'), i2=document.getElementById('wo-inc'),
+      t=document.getElementById('wo-term');
+  if(e && document.activeElement!==e) e.value = w.inputs.essentials||'';
+  if(i2&& document.activeElement!==i2) i2.value= w.inputs.annualIncome||'';
+  if(t && document.activeElement!==t) t.value = w.inputs.termCover||'';
+}
+
+function woToggleEdit(){
+  var box=document.getElementById('wo-edit');
+  var on=box.classList.toggle('on');
+  document.getElementById('wo-edit-btn').textContent = on?'Done':'Figures';
+  if(!on) renderWealthOverview();
+}
+function woField(id, key){
+  var el=document.getElementById(id); if(!el) return;
+  var w=woRead(); w.inputs[key]=woN(el.value); w.updatedAt=new Date().toISOString();
+  woSave(w); renderWealthOverview();
+}
+function woAddAsset(){
+  var n=document.getElementById('wo-a-n').value.trim();
+  var v=woN(document.getElementById('wo-a-v').value);
+  if(!n||!v) return;
+  var w=woRead();
+  w.assets.push({name:n, kind:document.getElementById('wo-a-k').value,
+                 value:v, asOf:new Date().toISOString().slice(0,10)});
+  woSave(w);
+  document.getElementById('wo-a-n').value=''; document.getElementById('wo-a-v').value='';
+  renderWealthOverview();
+}
+function woAddLiab(){
+  var n=document.getElementById('wo-l-n').value.trim();
+  var v=woN(document.getElementById('wo-l-v').value);
+  if(!n||!v) return;
+  var w=woRead();
+  w.liabilities.push({name:n, outstanding:v,
+                      emi:woN(document.getElementById('wo-l-e').value),
+                      asOf:new Date().toISOString().slice(0,10)});
+  woSave(w);
+  ['wo-l-n','wo-l-v','wo-l-e'].forEach(function(k){ document.getElementById(k).value=''; });
+  renderWealthOverview();
+}
+function woAddGoal(){
+  var n=document.getElementById('wo-g-n').value.trim();
+  var t=woN(document.getElementById('wo-g-t').value);
+  if(!n||!t) return;
+  var w=woRead();
+  w.goals.push({name:n, target:t, saved:woN(document.getElementById('wo-g-s').value)});
+  woSave(w);
+  ['wo-g-n','wo-g-t','wo-g-s'].forEach(function(k){ document.getElementById(k).value=''; });
+  renderWealthOverview();
+}
+function woDel(list, i){
+  var w=woRead(); (w[list]||[]).splice(i,1); woSave(w); renderWealthOverview();
+}
+(function(){
+  function go(){
+    try{
+      ['wo-ess:essentials','wo-inc:annualIncome','wo-term:termCover'].forEach(function(p){
+        var a=p.split(':'), el=document.getElementById(a[0]);
+        if(el) el.addEventListener('change', function(){ woField(a[0], a[1]); });
+      });
+      renderWealthOverview();
+    }catch(e){}
+  }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go);
   else go();
 })();
