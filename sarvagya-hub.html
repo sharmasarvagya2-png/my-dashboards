@@ -4610,6 +4610,28 @@ function woDel(list, i){
         if(el) el.addEventListener('change', function(){ woField(a[0], a[1]); });
       });
       renderWealthOverview();
+
+      /* The Wealth panel is not static: the hub builds #wealth-hero and the
+         rest of the tab AFTER load, replacing the panel's children wholesale.
+         An appended card therefore disappears a moment after it is added -
+         which is exactly what happened on the first two attempts. A
+         MutationObserver on the panel's own child list puts it back. The
+         "is it already there" check is what stops this looping on its own
+         insertion, and the observer is not subtree:true, so the card's own
+         internal re-renders never retrigger it. */
+      var wpanel=document.getElementById('tab-wealth');
+      if(wpanel && !window.__woObserving && typeof MutationObserver==='function'){
+        window.__woObserving=true;
+        new MutationObserver(function(){
+          if(!document.getElementById('wo-card')){
+            try{ renderWealthOverview(); }catch(e){}
+          }
+        }).observe(wpanel, {childList:true});
+      }
+      [600,1800,4000].forEach(function(ms){
+        setTimeout(function(){ try{ renderWealthOverview(); }catch(e){} }, ms);
+      });
+
       // renderWealth() rewrites the hero; re-assert afterwards so the card
       // survives every later pass too.
       if(typeof renderWealth==='function' && !window.__woWrapped){
