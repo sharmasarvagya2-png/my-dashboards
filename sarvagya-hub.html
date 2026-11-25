@@ -695,7 +695,22 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
     </div>
   </div>
   <div class="g2">
-    <div class="card">
+    
+<!-- ===== FREELANCE REVIEW QUEUE — 25 Nov 2026 =====
+     Filled by qwen-cowork\freelance_scan.py (daily 06:50, SS-FreelanceScan).
+     That job only ever writes sv-fl-review. Nothing here enters sv-initiatives
+     or sv-pulse until Sarvagya clicks Add on the row himself. -->
+<div class="card" id="flr-card">
+  <div class="chdr"><div class="chdr-l"><div class="cic">&#128276;</div>
+    <div><div class="ctit">Review queue <span id="flr-count" class="badge">0</span></div>
+    <div class="cmeta" id="flr-sub">Mail + WhatsApp, scanned each morning. Nothing is added until you say so.</div></div></div>
+    <div class="cbtns"><button class="cbtn" onclick="flrDismissAll()">Clear decided</button></div>
+  </div>
+  <div id="flr-money" class="flr-money"></div>
+  <div id="flr-summary" class="flr-summary"></div>
+  <div id="flr-list"></div>
+</div>
+<div class="card">
       <div class="chdr"><div class="chdr-l"><div class="cic">💼</div><div><div class="ctit">Projects</div><div class="cmeta">WaxIndia · Grow Grid · Cleveratti &amp; more</div></div></div>
         <div class="cbtns"><button class="cbtn p" onclick="openProjectModal(null)">+ Project</button></div></div>
       <div id="wt-projects" class="sc"></div>
@@ -849,7 +864,151 @@ input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 
   <div id="panchang-body"></div>
 </div>
 <div id="tab-life" class="panel">
-  <style>#tab-life.ll-locked > *:not(#ll-lock){display:none !important}</style>
+  <style>#tab-life.ll-locked > *:not(#ll-lock){display:none !important}
+/* ========== LIVELINESS PASS — 25 Nov 2026 ==========
+   Appended, never rewritten. Everything here is additive: delete this
+   block and the hub returns to exactly how it looked before.
+   Same gold-on-black identity, just with depth, motion and a per-tab hue. */
+
+/* --- 1. ambient aurora, one fixed layer, cheap on a phone --- */
+#sv-aurora{position:fixed;inset:-25%;z-index:-2;pointer-events:none;opacity:.9;
+  background:
+    radial-gradient(44vw 44vw at 12% 6%, rgba(200,168,76,.13), transparent 62%),
+    radial-gradient(40vw 40vw at 88% 20%, var(--tabglow, rgba(96,165,250,.08)), transparent 62%),
+    radial-gradient(48vw 48vw at 72% 98%, rgba(167,139,250,.07), transparent 64%);
+  animation:svDrift 44s ease-in-out infinite alternate;
+  transition:background 1.2s ease}
+@keyframes svDrift{from{transform:translate3d(-2%,-1%,0) scale(1)}
+                   to{transform:translate3d(2%,2%,0) scale(1.09)}}
+
+/* --- 2. the today strip, under the tabs --- */
+#sv-strip{margin:10px 14px 2px;padding:12px 15px;border:1px solid var(--bd);
+  border-radius:var(--r);background:linear-gradient(135deg,var(--sf),rgba(17,25,40,.55));
+  box-shadow:var(--sh);position:relative;overflow:hidden}
+#sv-strip::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:.6}
+#sv-strip .svs-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#sv-strip .svs-g{font-size:17px;font-weight:600;color:var(--tx);letter-spacing:.2px}
+#sv-strip .svs-d{font-size:12px;color:var(--mu)}
+#sv-strip .svs-bar{margin-top:9px;height:4px;border-radius:99px;background:var(--tg);overflow:hidden}
+#sv-strip .svs-fill{height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--a2),var(--ac));
+  box-shadow:0 0 10px var(--glow);transition:width 1s ease}
+#sv-strip .svs-pct{margin-top:5px;font-size:10.5px;color:var(--mu);letter-spacing:.3px;
+  display:flex;justify-content:space-between;gap:8px}
+#sv-strip .svs-line{margin-top:9px;padding-top:9px;border-top:1px dashed var(--bd);
+  font-size:13.5px;line-height:1.6;color:var(--t2);min-height:22px;
+  transition:opacity .6s ease}
+#sv-strip .svs-line b{display:block;font-size:9.5px;letter-spacing:1.3px;
+  text-transform:uppercase;color:var(--mu);font-weight:600;margin-bottom:3px}
+@media(max-width:520px){#sv-strip{margin:8px 10px 2px;padding:11px 13px}
+  #sv-strip .svs-g{font-size:15.5px}}
+
+/* --- 3. cards lift and light up --- */
+.card{transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s,box-shadow .22s}
+.card{position:relative}
+.card::after{content:'';position:absolute;left:8px;right:8px;top:0;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--ac),transparent);
+  opacity:0;transition:opacity .28s;pointer-events:none}
+.card:hover{transform:translateY(-3px);border-color:var(--b2);
+  box-shadow:0 12px 34px rgba(0,0,0,.52),0 0 0 1px var(--glow)}
+.card:hover::after{opacity:.85}
+.card:active{transform:translateY(-1px)}
+.cic{transition:transform .28s cubic-bezier(.34,1.4,.64,1),box-shadow .28s}
+.card:hover .cic{transform:scale(1.09) rotate(-4deg);
+  box-shadow:0 0 0 1px var(--glow),0 7px 18px rgba(0,0,0,.45)}
+
+/* --- 4. cards rise in when a tab opens --- */
+@keyframes svRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.panel.on .card{animation:svRise .44s cubic-bezier(.2,.8,.2,1) both}
+.panel.on .card:nth-of-type(1){animation-delay:.02s}
+.panel.on .card:nth-of-type(2){animation-delay:.06s}
+.panel.on .card:nth-of-type(3){animation-delay:.10s}
+.panel.on .card:nth-of-type(4){animation-delay:.14s}
+.panel.on .card:nth-of-type(5){animation-delay:.18s}
+.panel.on .card:nth-of-type(6){animation-delay:.21s}
+.panel.on .card:nth-of-type(7){animation-delay:.24s}
+.panel.on .card:nth-of-type(8){animation-delay:.26s}
+.panel.on .card:nth-of-type(n+9){animation-delay:.28s}
+
+/* --- 5. tab bar: press response + a pop on the active icon --- */
+.ntab{transition:transform .18s,box-shadow .25s,border-color .25s}
+.ntab:active{transform:scale(.94)}
+.ntab.on{box-shadow:0 0 0 1px var(--glow),0 6px 20px rgba(200,168,76,.13)}
+@keyframes svPop{0%{transform:scale(1)}40%{transform:scale(1.22) rotate(-6deg)}100%{transform:scale(1)}}
+.ntab.on .ntab-ic{animation:svPop .5s cubic-bezier(.34,1.56,.64,1)}
+
+/* --- 6. gradient ink on the section titles --- */
+.ptitle em{background:linear-gradient(92deg,var(--ac),#F4E3AC 42%,var(--ac));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  color:var(--ac)}
+
+/* --- 7. progress bars get a slow sheen --- */
+.pfill{position:relative;overflow:hidden}
+.pfill::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.26),transparent 80%);
+  transform:translateX(-100%);animation:svSheen 3.2s ease-in-out infinite}
+@keyframes svSheen{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* --- 8. only things that actually need attention pulse --- */
+@keyframes svPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.34)}
+                   50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
+.overdue,.badge.overdue{animation:svPulse 2.6s ease-in-out infinite;border-radius:var(--rx)}
+
+/* --- 9. buttons answer the finger --- */
+.btn,.cbtn,.btn-s,.mbtn,.btn-sm,.chip{transition:transform .14s,filter .2s,box-shadow .2s}
+.btn:active,.cbtn:active,.btn-s:active,.mbtn:active,.btn-sm:active{transform:scale(.955)}
+.btn-p:hover{filter:brightness(1.13);box-shadow:0 5px 18px rgba(200,168,76,.26)}
+
+/* --- 10. per-tab hue, set on <body> by the script below --- */
+body[data-tab="tab-vis"]     {--tabglow:rgba(200,168,76,.10)}
+body[data-tab="tab-work"]    {--tabglow:rgba(34,211,238,.09)}
+body[data-tab="tab-kids"]    {--tabglow:rgba(244,114,182,.09)}
+body[data-tab="tab-wealth"]  {--tabglow:rgba(34,197,94,.09)}
+body[data-tab="tab-panchang"]{--tabglow:rgba(167,139,250,.10)}
+body[data-tab="tab-life"]    {--tabglow:rgba(245,158,11,.09)}
+
+/* --- 11. anyone who asked for less motion gets less motion --- */
+@media (prefers-reduced-motion:reduce){
+  #sv-aurora{animation:none}
+  *,*::before,*::after{animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+
+/* ===== freelance review queue, 25 Nov 2026 ===== */
+.flr-money{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+.flr-money div{flex:1 1 140px;background:var(--tg);border:1px solid var(--bd);
+  border-radius:var(--rs);padding:9px 12px}
+.flr-money b{display:block;font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--mu);font-weight:600;margin-bottom:3px}
+.flr-money span{font-size:18px;font-weight:700;color:var(--tx)}
+.flr-money .pos span{color:var(--col-green)}
+.flr-money .due span{color:var(--col-yellow)}
+.flr-summary{font-size:13px;line-height:1.6;color:var(--t2);margin:10px 0 2px}
+.flr-row{border:1px solid var(--bd);border-radius:var(--rs);background:var(--tg);
+  padding:11px 12px;margin-top:9px;transition:opacity .3s,border-color .2s}
+.flr-row:hover{border-color:var(--b2)}
+.flr-row.gone{opacity:.32}
+.flr-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flr-kind{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700;
+  padding:2px 7px;border-radius:99px}
+.flr-kind.task{background:var(--col-blue-bg);color:var(--col-blue)}
+.flr-kind.payment{background:var(--col-green-bg);color:var(--col-green)}
+.flr-kind.project{background:var(--col-purple-bg);color:var(--col-purple)}
+.flr-kind.followup{background:var(--col-yellow-bg);color:var(--col-yellow)}
+.flr-t{font-size:14px;font-weight:600;color:var(--tx);flex:1 1 180px}
+.flr-amt{font-size:13.5px;font-weight:700;color:var(--ac)}
+.flr-meta{font-size:11.5px;color:var(--mu);margin-top:4px}
+.flr-ev{font-size:11.5px;color:var(--t2);margin-top:6px;padding-left:9px;
+  border-left:2px solid var(--bd);font-style:italic}
+.flr-acts{display:flex;gap:7px;margin-top:9px}
+.flr-acts button{flex:0 0 auto;font-size:11.5px;padding:5px 12px;border-radius:var(--rx);
+  border:1px solid var(--bd);background:var(--s2);color:var(--t2);cursor:pointer;
+  transition:transform .14s,filter .18s}
+.flr-acts button:active{transform:scale(.95)}
+.flr-acts .yes{background:var(--ac);color:#07090F;border-color:var(--ac);font-weight:700}
+.flr-empty{font-size:12.5px;color:var(--mu);padding:14px 0 4px}
+</style>
   <div id="ll-lock" style="display:none;max-width:340px;margin:60px auto;text-align:center">
     <div style="font-size:34px;margin-bottom:10px">&#128274;</div>
     <div style="font-weight:600;font-size:16px;margin-bottom:4px">Lifeline is locked</div>
@@ -3230,6 +3389,34 @@ var SD_LIB={
  shivastuti:{why:'Beyond kala, beyond kalpa — the one who ends what must end. Prasida prasida: be pleased, be pleased.',verified:true},
  yugal:{why:'The Yugal Jyoti of Vrindavan. The last thing before sleep — asking that the burning of the day be cooled by the nectar of those feet.',verified:true}
 };
+
+/* --- sadhana additions, 25 Nov 2026. Hanuman Dwadash Naam as asked, plus
+   eight gaps in the existing set. Raksha Shloka deliberately NOT added again:
+   it is already here as id bhavani. Appended here, after SD_LIB, so the
+   original arrays above stay exactly as they were. --- */
+SD_ITEMS = SD_ITEMS.concat([
+  {id:'bhumi',slot:'wake',title:'Bhumi Vandana',text:'समुद्रवसने देवि पर्वतस्तनमण्डले।\nविष्णुपत्नि नमस्तुभ्यं पादस्पर्शं क्षमस्व मे॥',note:'Before the first step off the bed'},
+  {id:'bhojan',slot:'basic',title:'Bhojan Mantra',text:'ब्रह्मार्पणं ब्रह्म हविर्ब्रह्माग्नौ ब्रह्मणा हुतम्।\nब्रह्मैव तेन गन्तव्यं ब्रह्मकर्मसमाधिना॥',note:'Before the first bite'},
+  {id:'guru',slot:'jap',title:'Guru Vandana',text:'गुरुर्ब्रह्मा गुरुर्विष्णुः गुरुर्देवो महेश्वरः।\nगुरुः साक्षात् परब्रह्म तस्मै श्री गुरवे नमः॥'},
+  {id:'radhakripa',slot:'jap',title:'Radha Kripa Kataksha Stotram',note:'Long, nineteen verses, use the link. Radha Ashtami especially',audio:'https://www.youtube.com/results?search_query=Radha%20Kripa%20Kataksha%20Stotram%20with%20lyrics'},
+  {id:'mahamrityunjaya',slot:'evening',title:'Mahamrityunjaya Mantra',text:'ओं त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्।\nउर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥',note:'11 or 108, Mondays especially',jap:true,audio:'https://www.youtube.com/results?search_query=Mahamrityunjaya%20Mantra%20108%20times'},
+  {id:'karpur',slot:'evening',title:'Karpur Gauram, aarti close',text:'कर्पूरगौरं करुणावतारं संसारसारं भुजगेन्द्रहारम्।\nसदा वसन्तं हृदयारविन्दे भवं भवानीसहितं नमामि॥',note:'As the aarti flame comes down',audio:'https://www.youtube.com/results?search_query=Karpur%20Gauram%20Karunavtaram'},
+  {id:'hanuman12',slot:'sleep',title:'Hanuman Dwadash Naam, the 12 names',text:'हनुमानञ्जनीसूनुर्वायुपुत्रो महाबलः।\nरामेष्टः फाल्गुनसखः पिङ्गाक्षोऽमितविक्रमः॥\nउदधिक्रमणश्चैव सीताशोकविनाशकः।\nलक्ष्मणप्राणदाता च दशग्रीवस्य दर्पहा॥\nद्वादशैतानि नामानि कपीन्द्रस्य महात्मनः।\nस्वापकाले पठेन्नित्यं यात्राकाले विशेषतः।\nतस्य मृत्युभयं नास्ति सर्वत्र विजयी भवेत्॥\n\nबारह नाम, गिनकर\n१. हनुमान   २. अंजनीसुत   ३. वायुपुत्र   ४. महाबल\n५. रामेष्ट   ६. फाल्गुनसख   ७. पिंगाक्ष   ८. अमितविक्रम\n९. उदधिक्रमण   १०. सीताशोकविनाशक   ११. लक्ष्मणप्राणदाता   १२. दशग्रीवदर्पहा',note:'At bedtime daily; before any journey without fail',audio:'https://www.youtube.com/results?search_query=Hanuman%20Dwadash%20Naam%20Stotra%2012%20names'},
+  {id:'madhurashtakam',slot:'sleep',title:'Madhurashtakam',text:'अधरं मधुरं वदनं मधुरं नयनं मधुरं हसितं मधुरम्।\nहृदयं मधुरं गमनं मधुरं मधुराधिपतेरखिलं मधुरम्॥१॥\nवचनं मधुरं चरितं मधुरं वसनं मधुरं वलितं मधुरम्।\nचलितं मधुरं भ्रमितं मधुरं मधुराधिपतेरखिलं मधुरम्॥२॥\nवेणुर्मधुरो रेणुर्मधुरः पाणिर्मधुरः पादौ मधुरौ।\nनृत्यं मधुरं सख्यं मधुरं मधुराधिपतेरखिलं मधुरम्॥३॥\nगीतं मधुरं पीतं मधुरं भुक्तं मधुरं सुप्तं मधुरम्।\nरूपं मधुरं तिलकं मधुरं मधुराधिपतेरखिलं मधुरम्॥४॥\nकरणं मधुरं तरणं मधुरं हरणं मधुरं रमणं मधुरम्।\nवमितं मधुरं शमितं मधुरं मधुराधिपतेरखिलं मधुरम्॥५॥\nगुञ्जा मधुरा माला मधुरा यमुना मधुरा वीची मधुरा।\nसलिलं मधुरं कमलं मधुरं मधुराधिपतेरखिलं मधुरम्॥६॥\nगोपी मधुरा लीला मधुरा युक्तं मधुरं मुक्तं मधुरम्।\nदृष्टं मधुरं शिष्टं मधुरं मधुराधिपतेरखिलं मधुरम्॥७॥\nगोपा मधुरा गावो मधुरा यष्टिर्मधुरा सृष्टिर्मधुरा।\nदलितं मधुरं फलितं मधुरं मधुराधिपतेरखिलं मधुरम्॥८॥',note:'Vallabhacharya, eight verses',audio:'https://www.youtube.com/results?search_query=Madhurashtakam%20Adharam%20Madhuram'},
+  {id:'shanti',slot:'sleep',title:'Shanti Path',text:'ओं सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥\nओं शान्तिः शान्तिः शान्तिः॥',note:'The last words of the day'}
+]);
+Object.assign(SD_LIB, {
+  bhumi:{why:'A word of apology to the earth before you stand on her for another day. Sea for a garment, mountains for her form, forgive the touch of my feet.',verified:true},
+  bhojan:{why:'Gita 4.24. The offering, the fire and the one offering are all the same Brahman. Turns eating from consumption into yajna, and it takes four seconds, so there is no excuse to skip it.',verified:true},
+  guru:{why:'Sant Smaran is already in this slot; this is the one that names the guru as the three and then beyond the three. Traditionally said before any paath begins.',verified:true},
+  radhakripa:{why:'From the Urdhvamnaya Tantra, the stotra of the sidelong glance of Radha kripa. Given Radhavallabh this belongs in your jap slot more than almost anything else. Link only, by your rule for the long ones.',verified:true},
+  mahamrityunjaya:{why:'Rigveda 7.59.12. You keep the Aghora mantra and Shiva Stuti in the evening but not this one, which is the health and protection mantra of that set. Ripen me and release me, as a cucumber falls from its stem.',verified:true},
+  karpur:{why:'The last thing said at almost every aarti in India. White as camphor, mercy itself, wearing the king of serpents, dwelling always in the lotus of the heart.',verified:true},
+  hanuman12:{why:'The stotra carries its own instruction: recite it at the time of sleep every day and especially at the time of a journey, then there is no fear of death and one is victorious everywhere. The shortest complete Hanuman paath there is, for nights when the Chalisa will not fit.',verified:true},
+  madhurashtakam:{why:'Eight verses in which every single thing about Him is sweet, and the word sweet is the only thing that repeats. Closest in mood to Yugal Jyoti, and short enough to say lying down.',verified:true},
+  shanti:{why:'Ends the day on everyone else rather than on yourself. May all be happy, all be free of illness, all see what is good, and may no one carry sorrow.',verified:true}
+});
+
 function _sdLib(){ var o={}; try{ o=JSON.parse(localStorage.getItem('sv-sadhana-lib')||'{}'); }catch(e){}
  var out={}; Object.keys(SD_LIB).forEach(function(k){ out[k]=Object.assign({},SD_LIB[k],o[k]||{}); });
  Object.keys(o).forEach(function(k){ if(!out[k]) out[k]=o[k]; });
@@ -3851,6 +4038,221 @@ document.addEventListener("click",function(e){
 function boot(){ relabel(); render(); }
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",function(){setTimeout(boot,400)});
 else setTimeout(boot,400);
+})();
+</script>
+
+<script>
+/* ===== LIVELINESS PASS — runtime bits, 25 Nov 2026 =====
+   Additive and defensive: every step is wrapped, so a failure here can
+   never stop the rest of the hub from rendering. */
+(function(){
+  function go(){
+    try{
+      if(!document.getElementById('sv-aurora')){
+        var a=document.createElement('div'); a.id='sv-aurora';
+        document.body.insertBefore(a, document.body.firstChild);
+      }
+    }catch(e){}
+
+    /* --- today strip --- */
+    var strip;
+    try{
+      var nav=document.querySelector('nav.nav')||document.querySelector('.nav');
+      if(nav && !document.getElementById('sv-strip')){
+        strip=document.createElement('div'); strip.id='sv-strip';
+        strip.innerHTML='<div class="svs-top"><div class="svs-g"></div><div class="svs-d"></div></div>'
+          +'<div class="svs-bar"><div class="svs-fill" style="width:0%"></div></div>'
+          +'<div class="svs-pct"><span class="svs-l"></span><span class="svs-r"></span></div>'
+          +'<div class="svs-line"></div>';
+        nav.insertAdjacentElement('afterend', strip);
+      }
+    }catch(e){}
+
+    function greet(h){
+      if(h<4)  return 'Still awake';
+      if(h<6)  return 'Brahma muhurat';
+      if(h<12) return 'Good morning';
+      if(h<16) return 'Good afternoon';
+      if(h<19) return 'Good evening';
+      if(h<23) return 'Good night';
+      return 'Still awake';
+    }
+    function paint(){
+      try{
+        var s=document.getElementById('sv-strip'); if(!s) return;
+        var d=new Date(), h=d.getHours();
+        s.querySelector('.svs-g').textContent=greet(h)+', Sarvagya';
+        s.querySelector('.svs-d').textContent=d.toLocaleDateString('en-IN',
+          {weekday:'long',day:'numeric',month:'long'});
+        var START=6, END=23, mins=h*60+d.getMinutes();
+        var pct=Math.max(0,Math.min(100,Math.round((mins-START*60)/((END-START)*60)*100)));
+        s.querySelector('.svs-fill').style.width=pct+'%';
+        var left=Math.max(0,END*60-mins);
+        s.querySelector('.svs-l').textContent=pct+'% of the working day gone';
+        s.querySelector('.svs-r').textContent = left>0
+          ? (Math.floor(left/60)+'h '+(left%60)+'m to 11 pm') : 'past 11 pm';
+      }catch(e){}
+    }
+
+    /* --- a line from your own sadhana, rotating --- */
+    var pool=[];
+    try{
+      if(typeof SD_ITEMS!=='undefined'){
+        var lib=(typeof SD_LIB!=='undefined')?SD_LIB:{};
+        SD_ITEMS.forEach(function(it){
+          var t=it.text||(lib[it.id]&&lib[it.id].text)||'';
+          if(!t) return;
+          t.split('\n').forEach(function(ln){
+            ln=ln.trim();
+            if(ln.length>14 && ln.length<120 && /[\u0900-\u097F]/.test(ln))
+              pool.push({t:ln, src:it.title});
+          });
+        });
+      }
+    }catch(e){}
+    var pi=Math.floor(Math.random()*(pool.length||1));
+    function rotate(){
+      try{
+        var el=document.querySelector('#sv-strip .svs-line');
+        if(!el||!pool.length) return;
+        el.style.opacity='0';
+        setTimeout(function(){
+          var p=pool[pi%pool.length]; pi++;
+          el.innerHTML='<b>'+p.src.replace(/[<>&]/g,'')+'</b>'+p.t.replace(/[<>&]/g,'');
+          el.style.opacity='1';
+        },600);
+      }catch(e){}
+    }
+
+    /* --- per-tab hue on <body> --- */
+    function hue(){
+      try{
+        var on=document.querySelector('.panel.on');
+        if(on&&on.id) document.body.setAttribute('data-tab',on.id);
+      }catch(e){}
+    }
+
+    paint(); hue();
+    if(pool.length){ var el=document.querySelector('#sv-strip .svs-line');
+      if(el){ var p=pool[pi%pool.length]; pi++;
+        el.innerHTML='<b>'+p.src.replace(/[<>&]/g,'')+'</b>'+p.t.replace(/[<>&]/g,''); } }
+    setInterval(paint, 60000);
+    setInterval(rotate, 14000);
+    try{
+      document.querySelectorAll('.ntab').forEach(function(t){
+        t.addEventListener('click', function(){ setTimeout(hue,60); });
+      });
+    }catch(e){}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go);
+  else go();
+})();
+</script>
+
+<script>
+/* ===== freelance review queue — 25 Nov 2026 =====
+   Reads sv-fl-review, which only freelance_scan.py writes. Accepting a row is
+   the ONLY path from a proposal into sv-initiatives / sv-pulse, and it is a
+   click he makes. Rejecting just marks it decided so it stops coming back. */
+function flrRead(){
+  try{ return JSON.parse(localStorage.getItem('sv-fl-review')||'{}')||{}; }
+  catch(e){ return {}; }
+}
+function flrWrite(o){
+  try{ localStorage.setItem('sv-fl-review', JSON.stringify(o)); }catch(e){}
+}
+function flrEsc(s){ return String(s==null?'':s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function flrMoney(n){
+  n = Number(n)||0;
+  return 'Rs ' + n.toLocaleString('en-IN',{maximumFractionDigits:0});
+}
+function renderFreelanceReview(){
+  var card=document.getElementById('flr-card'); if(!card) return;
+  var d=flrRead(), q=(d.queue||[]).filter(function(x){return !x.decided;});
+  var cnt=document.getElementById('flr-count'); if(cnt) cnt.textContent=q.length;
+  var sub=document.getElementById('flr-sub');
+  if(sub) sub.textContent = d.ranAt
+    ? ('Last scan ' + (d.date||'') + '. Nothing is added until you say so.')
+    : 'Mail + WhatsApp, scanned each morning. Nothing is added until you say so.';
+
+  var m=d.money||{};
+  var mo=document.getElementById('flr-money');
+  if(mo) mo.innerHTML =
+      '<div class="pos"><b>Received</b><span>'+flrMoney(m.received)+'</span></div>'
+    + '<div class="due"><b>Invoiced, unpaid</b><span>'+flrMoney(m.invoiced_unpaid)+'</span></div>'
+    + '<div><b>Open items</b><span>'+q.length+'</span></div>';
+
+  var su=document.getElementById('flr-summary');
+  if(su) su.textContent = d.summary || '';
+
+  var list=document.getElementById('flr-list'); if(!list) return;
+  if(!q.length){
+    var why = d.ranAt ? 'Nothing new since the last scan.'
+                      : 'No scan has run yet. SS-FreelanceScan runs daily at 6:50 am.';
+    var bad = [];
+    try{ Object.keys(d.sources||{}).forEach(function(k){
+      if(d.sources[k]!=='ok') bad.push(k+' ('+d.sources[k]+')'); }); }catch(e){}
+    list.innerHTML = '<div class="flr-empty">'+why
+      + (bad.length ? '<br>Sources not read: '+flrEsc(bad.join(', ')) : '') + '</div>';
+    return;
+  }
+  list.innerHTML = q.map(function(p){
+    var bits=[];
+    if(p.client) bits.push(flrEsc(p.client));
+    if(p.due) bits.push('due '+flrEsc(p.due));
+    if(p.source) bits.push('from '+flrEsc(p.source));
+    if(p.confidence!=null) bits.push(Math.round(p.confidence*100)+'% sure');
+    return '<div class="flr-row" data-h="'+flrEsc(p.h)+'">'
+      + '<div class="flr-top"><span class="flr-kind '+flrEsc(p.kind||'task')+'">'
+        + flrEsc(p.kind||'task')+'</span>'
+      + '<span class="flr-t">'+flrEsc(p.title)+'</span>'
+      + (p.amount ? '<span class="flr-amt">'+flrMoney(p.amount)+'</span>' : '')
+      + '</div>'
+      + '<div class="flr-meta">'+bits.join(' &middot; ')+'</div>'
+      + (p.evidence ? '<div class="flr-ev">'+flrEsc(p.evidence)+'</div>' : '')
+      + '<div class="flr-acts">'
+        + '<button class="yes" onclick="flrDecide(\''+flrEsc(p.h)+'\',\'add\')">Add it</button>'
+        + '<button onclick="flrDecide(\''+flrEsc(p.h)+'\',\'skip\')">Not this</button>'
+      + '</div></div>';
+  }).join('');
+}
+function flrDecide(h, how){
+  var d=flrRead(), q=d.queue||[];
+  var p=q.find(function(x){return x.h===h;});
+  if(!p) return;
+  if(how==='add'){
+    try{
+      if(p.kind==='project'){
+        var inits=[]; try{ inits=JSON.parse(localStorage.getItem('sv-initiatives')||'[]')||[]; }catch(e){}
+        inits.push({ id:'fl'+Date.now(), title:p.title,
+          status:'active', deadline:p.due||'', owner:'Sarvagya',
+          notes:(p.client?('Client: '+p.client+'. '):'')+(p.evidence||''), progress:0 });
+        localStorage.setItem('sv-initiatives', JSON.stringify(inits));
+        if(typeof renderProjects==='function') renderProjects();
+      }
+      var pulse=[]; try{ pulse=JSON.parse(localStorage.getItem('sv-pulse')||'[]')||[]; }catch(e){}
+      var line=p.title + (p.client?(' — '+p.client):'')
+             + (p.amount?(' — '+flrMoney(p.amount)):'');
+      pulse.unshift({ id:'fl'+Date.now(), text:line, cat:'freelance',
+                      ts:new Date().toISOString() });
+      localStorage.setItem('sv-pulse', JSON.stringify(pulse));
+      if(typeof renderPulse==='function') renderPulse();
+    }catch(e){}
+  }
+  p.decided = how;
+  p.decidedAt = new Date().toISOString();
+  flrWrite(d);
+  renderFreelanceReview();
+}
+function flrDismissAll(){
+  var d=flrRead(); d.queue=(d.queue||[]).filter(function(x){return !x.decided;});
+  flrWrite(d); renderFreelanceReview();
+}
+(function(){
+  function go(){ try{ renderFreelanceReview(); }catch(e){} }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go);
+  else go();
 })();
 </script>
 </body>
