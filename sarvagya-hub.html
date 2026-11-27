@@ -1060,6 +1060,81 @@ body[data-tab="tab-life"]    {--tabglow:rgba(245,158,11,.09)}
 .wo-goal .gb{height:6px;border-radius:99px;background:var(--tg);overflow:hidden}
 .wo-goal .gf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a2),var(--ac))}
 .wo-none{font-size:12.5px;color:var(--mu);padding:10px 0 2px}
+
+/* ================= TABLET TIER — 27 Nov 2026 =================
+   The hub had exactly two breakpoints, 900px and 520px. Everything between
+   521 and 900 therefore got the PHONE layout: every grid collapsed to one
+   column, the brand name hidden, the panel header stacked. That is every
+   tablet in portrait — iPad is 768 CSS px, most Android tablets 800. And
+   anything over 900 jumped straight to the full desktop grid, so a 1024
+   landscape tablet was being asked to render five columns side by side.
+   Measured on the live page at 768: g2 and g5 both resolved to 1 column
+   and .brand-name computed to display:none.
+
+   This block fills in the missing middle. It is appended after the old
+   media queries, so it wins on source order without touching them. */
+
+/* --- tablet portrait: two up, not one up --- */
+@media (min-width:521px) and (max-width:900px){
+  .g2,.g3,.g4,.g5{grid-template-columns:1fr 1fr}
+  .s2,.s3,.s4{grid-column:span 2}
+  .brand-name,.brand-sub{display:block}
+  .phdr{flex-direction:row;align-items:flex-start;flex-wrap:wrap}
+  .pstats{width:auto}
+  .gmodes{flex-direction:row;flex-wrap:wrap}
+  .panel{padding:16px 18px 44px}
+}
+
+/* --- tablet landscape and small laptops: three up, not four or five --- */
+@media (min-width:901px) and (max-width:1180px){
+  .g4,.g5{grid-template-columns:repeat(3,1fr)}
+  .s3,.s4{grid-column:span 3}
+}
+
+/* --- the panchang header overflowed at EVERY width, not just on tablet ---
+   .pstats is flex-shrink:0 inside a flex .phdr, so once there were enough
+   .ps chips it pushed the panel to 2463px inside a 1320px column instead
+   of wrapping. Measured 27 Nov against the real data. */
+.phdr{flex-wrap:wrap}
+.pstats{flex-shrink:1;min-width:0}
+
+/* --- touch targets ---
+   Measured on the live page: .cbtn renders 22px tall, .chip 15px, .btn 34px.
+   A fingertip needs about 44. Only applied on a coarse pointer, so the
+   desktop layout is untouched. */
+@media (pointer:coarse){
+  .cbtn{min-height:38px;padding:9px 14px;font-size:12px;
+        display:inline-flex;align-items:center}
+  .btn,.btn-s,.btn-sm,.mbtn{min-height:44px;padding-top:11px;padding-bottom:11px}
+  .chip{min-height:32px;padding:7px 13px;display:inline-flex;align-items:center}
+  .modal-close{min-width:44px;min-height:44px;
+               display:inline-flex;align-items:center;justify-content:center}
+  .ntab{min-height:54px;padding:0 20px}
+  .wo-row button,.flr-row button,.flr-acts button{min-height:38px;min-width:38px}
+  .calcell{min-height:40px}
+  /* iOS zooms the whole page when a focused field is under 16px. */
+  input,select,textarea{font-size:16px}
+}
+
+/* --- no sticky hover on a touch screen ---
+   :hover latches after a tap on iPad, so a card you touched stays lifted
+   until you tap elsewhere. */
+@media (hover:none){
+  .card:hover{transform:none;border-color:var(--bd);box-shadow:var(--sh)}
+  .card:hover::after{opacity:0}
+  .card:hover .cic{transform:none;box-shadow:none}
+  .card:active{transform:scale(.995)}
+  .ntab:active{transform:scale(.97)}
+}
+
+/* --- a bottom sheet is a phone idea ---
+   .modal-overlay is flex/align-items:flex-end and .modal-box slides up from
+   translateY(100%). Centring it keeps that animation and stops a 600px
+   dialog sitting against the bottom edge of a landscape tablet. */
+@media (min-width:700px){
+  .modal-overlay{align-items:center}
+  .modal-box{border-radius:18px;max-height:86vh;overflow:auto;padding:24px 24px 26px}
+}
 </style>
   <div id="ll-lock" style="display:none;max-width:340px;margin:60px auto;text-align:center">
     <div style="font-size:34px;margin-bottom:10px">&#128274;</div>
